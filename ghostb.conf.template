@@ -1,0 +1,18 @@
+{
+    "db": {
+        "host": "localhost",
+        "user": "root",
+        "password": ""
+    },
+
+    "instagram": {
+        "client_id": "CLIENT_ID",
+        "client_secret": "CLIENT_SECRET"
+    },
+
+    "time_range": {
+        "min_ts": 0,
+        "_comment": "1 Nov 2014",
+        "max_ts": 1414800000
+    }
+}
