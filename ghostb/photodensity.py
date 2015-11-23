@@ -1,4 +1,4 @@
-from phantomb.locmap import LocMap
+from ghostb.locmap import LocMap
 
 
 class PhotoDensity:

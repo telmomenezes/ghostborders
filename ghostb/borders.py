@@ -1,5 +1,5 @@
-from phantomb.locmap import LocMap
-from phantomb import voronoi
+from ghostb.locmap import LocMap
+from ghostb import voronoi
 from os import walk
 
 

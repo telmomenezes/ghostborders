@@ -1,21 +1,21 @@
 import click
-from phantomb.db import DB
-from phantomb.locations import Locations
-from phantomb.config import Config
-from phantomb.retriever import Retriever
-from phantomb.fixlocations import FixLocations
-from phantomb.cropborders import CropBorders
-from phantomb.useractivity import UserActivity
-from phantomb.monthly import Monthly
-from phantomb.userhome import UserHome
-from phantomb.photodensity import PhotoDensity
-from phantomb.cropdata import CropData
-from phantomb.comment_locations import CommentLocations
-from phantomb.locsgraph import LocsGraph
-from phantomb.confmodel import confmodel
-from phantomb.communities import Communities
-from phantomb.distances import Distances
-from phantomb.borders import Borders
+from ghostb.db import DB
+from ghostb.locations import Locations
+from ghostb.config import Config
+from ghostb.retriever import Retriever
+from ghostb.fixlocations import FixLocations
+from ghostb.cropborders import CropBorders
+from ghostb.useractivity import UserActivity
+from ghostb.monthly import Monthly
+from ghostb.userhome import UserHome
+from ghostb.photodensity import PhotoDensity
+from ghostb.cropdata import CropData
+from ghostb.comment_locations import CommentLocations
+from ghostb.locsgraph import LocsGraph
+from ghostb.confmodel import confmodel
+from ghostb.communities import Communities
+from ghostb.distances import Distances
+from ghostb.borders import Borders
 
 
 @click.group()

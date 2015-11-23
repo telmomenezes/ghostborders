@@ -1,5 +1,5 @@
-from phantomb.locmap import LocMap
-import phantomb.geo as geo
+from ghostb.locmap import LocMap
+import ghostb.geo as geo
 
 
 def comp_mean_dist(center, locs):

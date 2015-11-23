@@ -1,11 +1,13 @@
-## What is PhantomBorders? ##
+## What is GhostBorders? ##
 
 * TBD
 
 ## Installation ##
 
-    export LC_ALL=C.UTF-8
-    export LANG=C.UTF-8
+    $ export LC_ALL=C.UTF-8
+    $ export LANG=C.UTF-8
+    $ virtualenv -p /usr/local/bin/python3 venv
+    $ source venv/bin/activate
 
 ### OS X ###
 
@@ -29,23 +31,23 @@ http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error
 
 Creates the database to be used by further operations.
 
-    $ phantomb --db <db_name> create_db
+    $ ghostb --db <db_name> create_db
 
 #### Create locations ####
 
 Add a grid of points:
 
-    $ phantomb --db <db_name> --min_lat <min_lat> --min_lng <min_lng> --max_lat <max_lat> --max_lng <max_lng> --rows <rows> --cols <cols> add_grid
+    $ ghostb --db <db_name> --min_lat <min_lat> --min_lng <min_lng> --max_lat <max_lat> --max_lng <max_lng> --rows <rows> --cols <cols> add_grid
 
 #### Retrive data from Instagram ####
 
-    $ phantomb --db <db_name> retrieve
+    $ ghostb --db <db_name> retrieve
 
 #### Crop borders ####
 
 Takes a .csv borders file and a shapefile and outputs a new .csv borders file with the borders cropped as to not extend beyond the country limits defines in the shapefile.
 
-    $ phantomb --infile <input file> --shapefile <shapefile> crop_borders > <output file>
+    $ ghostb --infile <input file> --shapefile <shapefile> crop_borders > <output file>
 
 The shapefile should be specified without the extension. Shapefiles can be obtained here:
 http://www.gadm.org/country

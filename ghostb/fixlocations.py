@@ -1,4 +1,4 @@
-import phantomb.geo
+import ghostb.geo
 
 
 def nearest(photo, locs):
@@ -8,7 +8,7 @@ def nearest(photo, locs):
     }
 
     for loc in locs:
-        dist = phantomb.geo.distance(photo, loc)
+        dist = ghostb.geo.distance(photo, loc)
         if dist < new_loc['dist']:
             new_loc['id'] = loc['id']
             new_loc['dist'] = dist

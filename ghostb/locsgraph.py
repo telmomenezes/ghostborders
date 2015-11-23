@@ -1,5 +1,5 @@
 import itertools
-import phantomb.monthly as monthly
+import ghostb.monthly as monthly
 
 
 class LocsGraph:
