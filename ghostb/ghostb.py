@@ -42,7 +42,7 @@ from ghostb.borders import Borders
 def cli(ctx, db, locs_file, country_code, min_lat, max_lat, min_lng, max_lng, rows, cols, infile, outfile, indir,
         outdir, shapefile, directed, bymonth, table, runs, two):
     ctx.obj = {
-        'config': Config('phantomb.conf'),
+        'config': Config('ghostb.conf'),
         'dbname': db,
         'locs_file': locs_file,
         'country_code': country_code,
