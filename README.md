@@ -11,6 +11,7 @@
 
 ### OS X ###
 
+* Install XCode
     $ brew install homebrew/science/igraph
     $ pip install --editable .
     $ pip install basemap --allow-external basemap --allow-unverified basemap

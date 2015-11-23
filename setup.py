@@ -16,6 +16,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        phantomb=phantomb.phantomb:cli
+        ghostb=ghostb.ghostb:cli
     ''',
 )
