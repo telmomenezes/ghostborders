@@ -4,6 +4,9 @@
 
 ## Installation ##
 
+* Install MySQL
+* Create config file
+
     $ export LC_ALL=C.UTF-8
     $ export LANG=C.UTF-8
     $ virtualenv -p /usr/local/bin/python3 venv
@@ -12,19 +15,23 @@
 ### OS X ###
 
 * Install XCode
+
     $ brew install homebrew/science/igraph
-    $ pip install --editable .
-    $ pip install basemap --allow-external basemap --allow-unverified basemap
 
 #### ValueError: unknown locale: UTF-8 ####
 
 Solution:
 http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error-valueerror-unknown-locale-utf-8
 
-### Linux (Debian) ###
+### Linux (Debian / Ubuntu) ###
 
+    $ sudo apt-get install gfortran libopenblas-dev liblapack-dev
     $ sudo apt-get install -y libigraph0-dev
+
+### All -- next steps ###
+
     $ pip install --editable .
+    $ pip install basemap --allow-external basemap --allow-unverified basemap
 
 ## How to use ##
 
@@ -43,6 +50,10 @@ Add a grid of points:
 #### Retrive data from Instagram ####
 
     $ ghostb --db <db_name> retrieve
+
+#### Fix locations (attaches photos to the closest known location) ####
+
+    $ ghostb --db <db_name> fix_locations
 
 #### Crop borders ####
 
