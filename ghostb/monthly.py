@@ -35,7 +35,7 @@ class Monthly:
 
     def __inc_field(self, month, field):
         if month not in self.table:
-            self.table[month] = {'first_ts': 0, 'last_ts': 0}
+            self.table[month] = {'first_seen': 0, 'last_seen': 0}
         self.table[month][field] += 1
 
     def process_user(self, user):
@@ -43,9 +43,9 @@ class Monthly:
         last_ts = user[1]
         if first_ts and (first_ts > 0):
             month = ts2year_month(first_ts)
-            self.__inc_field(month, 'first_ts')
+            self.__inc_field(month, 'first_seen')
             month = ts2year_month(last_ts)
-            self.__inc_field(month, 'last_ts')
+            self.__inc_field(month, 'last_seen')
 
     def write_month_table(self):
         for month in self.table:

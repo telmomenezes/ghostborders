@@ -61,6 +61,10 @@ Add a grid of points:
 
     $ ghostb --db <db_name> user_activity
 
+#### Compute month data ####
+
+    $ ghostb --db <db_name> monthly
+
 #### Crop borders ####
 
 Takes a .csv borders file and a shapefile and outputs a new .csv borders file with the borders cropped as to not extend beyond the country limits defines in the shapefile.
