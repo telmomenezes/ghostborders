@@ -3,7 +3,7 @@ class UserActivity:
         self.db = db
 
     def update_user_activity(self, updates):
-        args = [(x['first_ts'], x['last_ts'], x['photos'], x['id']) for x in updates]
+        args = [(x['first_ts'], x['last_ts'], x['photos'], x['user']) for x in updates]
         self.db.cur.executemany("UPDATE user SET first_ts=%s, last_ts=%s, photos=%s WHERE id=%s", args)
         self.db.conn.commit()
 
