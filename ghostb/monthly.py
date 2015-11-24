@@ -51,7 +51,7 @@ class Monthly:
         for month in self.table:
             first_seen = self.table[month]['first_seen']
             last_seen = self.table[month]['last_seen']
-            self.db.cur.execute("INSERT INTO month (id, first_seen_users, last_seen_users) VALUES (%s, %s , %s)"
+            self.db.cur.execute("INSERT INTO month (id, first_seen_users, last_seen_users) VALUES ('%s', %s , %s)"
                                 % (month, first_seen, last_seen))
     
         self.db.conn.commit()
