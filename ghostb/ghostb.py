@@ -188,6 +188,7 @@ def monthly(ctx):
     db.open()
     m = Monthly(db)
     m.generate()
+    m.update_photos_month()
     db.close()
 
 

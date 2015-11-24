@@ -38,7 +38,7 @@ class Monthly:
             self.table[month] = {'first_ts': 0, 'last_ts': 0}
         self.table[month][field] += 1
 
-    def __process_user(self, user):
+    def process_user(self, user):
         first_ts = user[0]
         last_ts = user[1]
         if first_ts and (first_ts > 0):
@@ -66,7 +66,7 @@ class Monthly:
         self.table = {}
 
         while True:
-            self.db.cur.execute("SELECT first_ts, last_ts, photos FROM user LIMIT %s,1000" % n)
+            self.db.cur.execute("SELECT first_ts, last_ts FROM user LIMIT %s,1000" % n)
             users = self.db.cur.fetchall()
       
             if len(users) == 0:
@@ -75,7 +75,7 @@ class Monthly:
                 percent = float(n) / float(nusers) * 100.0
                 n += len(users)
                 for user in users:
-                    self.__process_user(user)
+                    self.process_user(user)
                 print("%s/%s (%s%%) processed" % (n, nusers, percent))
 
         self.write_month_table()
