@@ -7,6 +7,7 @@
 * Install MySQL
 * Create config file
 
+
     $ export LC_ALL=C.UTF-8
     $ export LANG=C.UTF-8
     $ virtualenv -p /usr/local/bin/python3 venv
@@ -15,6 +16,7 @@
 ### OS X ###
 
 * Install XCode
+
 
     $ brew install homebrew/science/igraph
 
@@ -54,6 +56,10 @@ Add a grid of points:
 #### Fix locations (attaches photos to the closest known location) ####
 
     $ ghostb --db <db_name> fix_locations
+
+#### Compute user activity ####
+
+    $ ghostb --db <db_name> user_activity
 
 #### Crop borders ####
 
