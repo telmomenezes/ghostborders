@@ -18,9 +18,9 @@ def nearest(photo, locs):
 
 def fixed_location(photo, locs):
     new_loc = nearest(photo, locs)
-    if photo['location'] != new_loc['location']:
+    if photo['location'] != new_loc['id']:
         return {
-            'location': new_loc['location'],
+            'location': new_loc['id'],
             'id': photo['id']
         }
     else:
