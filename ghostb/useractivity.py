@@ -29,7 +29,7 @@ class UserActivity:
 
         n = 0
         while True:
-            self.db.cur.execute("SELECT id FROM user LIMIT %s, 10000" % n)
+            self.db.cur.execute("SELECT id FROM user LIMIT %s, 100000" % n)
             users = self.db.cur.fetchall()
             if len(users) == 0:
                 break
