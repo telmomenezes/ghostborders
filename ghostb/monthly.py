@@ -93,7 +93,7 @@ class Monthly:
             photos = q[0][0]
             print("%s %s" % (month, photos))
             self.db.cur.execute("UPDATE month SET photos=%s WHERE id='%s'" % (photos, month))
-
+        self.db.conn.commit()
         print("done.")
 
     def print_months(self):
