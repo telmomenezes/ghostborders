@@ -10,7 +10,7 @@ class CommentLocations:
     def extra_data(self, comment_id, media_id):
         self.db.cur.execute("SELECT location, ts FROM media WHERE id=%s", (media_id,))
         media = self.db.cur.fetchone()
-        return {'id': comment_id, 'location': media[0], 'ts': media[0]}
+        return {'id': comment_id, 'location': media[0], 'ts': media[1]}
 
     def fix(self):
         print("fixing comments")
