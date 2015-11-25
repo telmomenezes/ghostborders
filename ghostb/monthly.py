@@ -92,7 +92,7 @@ class Monthly:
             q = self.db.cur.fetchall()
             photos = q[0][0]
             print("%s %s" % (month, photos))
-            self.db.cur.execute("UPDATE month SET photos=%s WHERE id=%s" % (photos, month))
+            self.db.cur.execute("UPDATE month SET photos=%s WHERE id='%s'" % (photos, month))
 
         print("done.")
 
