@@ -8,11 +8,9 @@ def point2id(point, m):
         lat = m[key]['lat']
         lng = m[key]['lng']
         if (lat == point[0]) and (lng == point[1]):
-            print('FOUND POINT %s' % point)
             return key
 
     return None
-    # raise RuntimeError('Point id not found in call to voronoi.point2id()')
 
 
 def point_map2segments(m):
