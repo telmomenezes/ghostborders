@@ -85,6 +85,16 @@ The <table> parameter specifies the table from which the graph is derived (media
 
     $ ghostb --infile <input_file> --outfile <output_file> --runs <number_of_runs> confmodel
 
+#### Find communities ####
+
+100 is a good value for the number of runs.
+
+    $ ghostb --infile <input_file> --outdir <output_directory> --runs <number_of_runs> communities
+
+#### Compute borders ####
+
+    $
+
 #### Crop borders ####
 
 Takes a .csv borders file and a shapefile and outputs a new .csv borders file with the borders cropped as to not extend beyond the country limits defines in the shapefile.

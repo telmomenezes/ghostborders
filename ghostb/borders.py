@@ -208,7 +208,7 @@ class Borders:
         for (dirpath, dirnames, filenames) in walk(dir_in):
             f_ins.extend(filenames)
 
-        bs = [self.process_file(f) for f in f_ins]
+        bs = [self.process_file('%s/%s' % (dir_in, f)) for f in f_ins]
         all_borders = [item for sublist in bs for item in sublist]
         for segment in all_borders:
             segment['weight'] = weight(segment, bs)

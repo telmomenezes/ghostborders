@@ -15,7 +15,6 @@ def twocomms(memb, n):
 
 class Communities:
     def __init__(self, in_file):
-        print('#1')
         self.vertmap = {}
         edge_tups = []
         with open(in_file, 'r') as csvfile:
@@ -29,23 +28,16 @@ class Communities:
                     targ = self.vert_id(int(row[1]))
                     edge_tups.append((orig, targ, float(row[2])))
 
-        print('#2')
         # revert vertmap
         self.rev_vertmap = {}
         for k in self.vertmap:
             self.rev_vertmap[self.vertmap[k]] = k
 
-        print('#3')
         # create graph
         self.g = igraph.Graph()
         self.g.add_vertices(len(self.vertmap))
-        print('#4 %s' % len(edge_tups))
-        c = 0
         for e in edge_tups:
-            print('> %s' % c)
-            c += 1
             self.g.add_edge(e[0], e[1], weight=e[2])
-        print('#5')
 
     def vert_id(self, name):
         if name not in self.vertmap:
