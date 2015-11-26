@@ -40,6 +40,8 @@ def point_map2segments(m):
                       max_lng + safety_margin).exterior.coords[:-1]
 
     # Make voronoi
+    print('POINTS %s' % points)
+    print('FAKE POINTS %s' % fake_points)
     vor = spa.Voronoi(points + fake_points)
 
     # TODO: remove fake points?
