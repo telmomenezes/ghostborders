@@ -198,6 +198,7 @@ class Borders:
         return m
 
     def process_file(self, f_in):
+        print("processing file %s ..." % f_in)
         m = self.csv2map(f_in)
         vor = map2voronoi(m)
         return borders(vor, m)

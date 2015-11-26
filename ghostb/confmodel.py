@@ -130,7 +130,8 @@ def write_graph(graph, csv_path):
     with open(csv_path, 'w') as f:
         f.write('orig,targ,weight\n')
         for edge in graph:
-            f.write('%s,%s,%s\n' % (edge[0], edge[1], graph[edge]))
+            if graph[edge] > 0.0:
+                f.write('%s,%s,%s\n' % (edge[0], edge[1], graph[edge]))
 
 
 def normalize_with_confmodel(csv_in, csv_out, runs):
