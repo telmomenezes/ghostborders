@@ -34,21 +34,24 @@ class Communities:
         for k in self.vertmap:
             self.rev_vertmap[self.vertmap[k]] = k
 
+        self.verts = list(range(len(self.vertmap)))
+        self.rev_verts = list(range(len(self.vertmap)))
+
     def build_graph(self):
         # always shuffle the edge tuples list to produce diverse results from the non-deterministic
         # community detection algorithm
-        random.shuffle(self.edge_tups)
+        # random.shuffle(self.edge_tups)
+        random.shuffle(self.verts)
+        self.rev_verts = list(range(len(self.vertmap)))
+        for i in range(len(self.vertmap)):
+            self.rev_verts[self.verts[i]] = i
 
-        edges = [(x[0], x[1]) for x in self.edge_tups]
-        weights = [x[2] for x in self.edge_tups]
+        edges = [(self.verts[x[0]], self.verts[x[1]]) for x in self.edge_tups]
+        weights = [self.verts[x[2]] for x in self.edge_tups]
 
         # create graph
         g = igraph.Graph()
-        verts = list(range(len(self.vertmap)))
-        random.shuffle(verts)
-        for v in verts:
-            g.add_vertex(v)
-        # g.add_vertices(len(self.vertmap))
+        g.add_vertices(len(self.vertmap))
         g.add_edges(edges)
         g.es['weight'] = weights
         return g
@@ -84,7 +87,7 @@ class Communities:
         f.write('id,comm\n')
 
         for i in range(len(memb)):
-            f.write('%s,%s\n' % (self.rev_vertmap[i], memb[i]))
+            f.write('%s,%s\n' % (self.rev_vertmap[self.rev_verts[i]], memb[i]))
         f.close()
 
     def compute_n_times(self, out_dir, two, n):
