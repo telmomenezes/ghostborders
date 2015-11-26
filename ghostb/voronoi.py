@@ -61,8 +61,8 @@ def point_map2segments(m):
                'y1': p1[1],
                'x2': p2[0],
                'y2': p2[1],
-               'id1': point2id(rpoints[0], m),
-               'id2': point2id(rpoints[1], m)}
+               'id1': point2id(points[rpoints[0]], m),
+               'id2': point2id(points[rpoints[1]], m)}
         segments.append(seg)
 
     return segments
