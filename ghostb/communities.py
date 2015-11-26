@@ -28,6 +28,9 @@ class Communities:
                     targ = self.vert_id(int(row[1]))
                     edge_tups.append((orig, targ, float(row[2])))
 
+        edges = [(x[0], x[1]) for x in edge_tups]
+        weights = [x[2] for x in edge_tups]
+
         # revert vertmap
         self.rev_vertmap = {}
         for k in self.vertmap:
@@ -36,8 +39,10 @@ class Communities:
         # create graph
         self.g = igraph.Graph()
         self.g.add_vertices(len(self.vertmap))
-        for e in edge_tups:
-            self.g.add_edge(e[0], e[1], weight=e[2])
+        self.g.add_edges(edges)
+        self.g.es['weight'] = weights
+        # for e in edge_tups:
+        #    self.g.add_edge(e[0], e[1], weight=e[2])
 
     def vert_id(self, name):
         if name not in self.vertmap:
