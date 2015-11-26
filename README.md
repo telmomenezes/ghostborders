@@ -77,11 +77,13 @@ Add a grid of points:
 
 The <table> parameter specifies the table from which the graph is derived (media, comment or likes).
 
-    ghostb --db <db_name> --table <table> [--directed] [--bymonth] locsgraph
+    $ ghostb --db <db_name> --table <table> [--directed] [--bymonth] locsgraph
 
 #### Normalize with configuration model ####
 
+10 is a good value for the number of runs.
 
+    $ ghostb --infile <input_file> --outfile <output_file> --runs <number_of_runs> confmodel
 
 #### Crop borders ####
 
