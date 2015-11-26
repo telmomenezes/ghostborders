@@ -47,7 +47,7 @@ def graph2stubs(graph):
         weight = int(graph[key])
         for n in range(weight):
             stubs[n + i] = orig
-            stubs[n + i + targ] = targ
+            stubs[n + i + weight] = targ
         i += 2 * weight
 
     return stubs
