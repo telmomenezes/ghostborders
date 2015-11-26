@@ -60,7 +60,7 @@ country_NUTS_codes = {
 }
 
 
-def draw(infile, country, photo_dens_file=''):
+def draw(infile, outfile, country, photo_dens_file=''):
     parts = ''
     if partitions == 'two':
         parts = '2'
@@ -152,4 +152,6 @@ def draw(infile, country, photo_dens_file=''):
         weight = co[i][4] * phantom_border_width_factor
         m.plot(x, y, phantom_border_color, linewidth=weight)
 
-    plt.show()
+    #plt.show()
+    fig = plt.figure()
+    fig.savefig(outfile)

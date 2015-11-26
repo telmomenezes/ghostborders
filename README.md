@@ -93,7 +93,7 @@ The <table> parameter specifies the table from which the graph is derived (media
 
 #### Compute borders ####
 
-    $
+    $ ghostb --db <db_name> --indir <input_directory> --outfile <output_file> borders
 
 #### Crop borders ####
 
@@ -103,6 +103,10 @@ Takes a .csv borders file and a shapefile and outputs a new .csv borders file wi
 
 The shapefile should be specified without the extension. Shapefiles can be obtained here:
 http://www.gadm.org/country
+
+#### Draw map ####
+
+    $ 
 
 ## Contacts ##
 

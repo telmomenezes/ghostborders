@@ -16,11 +16,13 @@ from ghostb.confmodel import normalize_with_confmodel
 from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
+from ghostb.map import draw
 
 
 @click.group()
 @click.option('--db', help='Database name.')
 @click.option('--locs_file', help='Path to locations file.')
+@click.option('--country', help='Country name.')
 @click.option('--country_code', help='Country code.')
 @click.option('--min_lat', help='Minimum latitude.')
 @click.option('--max_lat', help='Maximum latitude.')
@@ -39,12 +41,13 @@ from ghostb.borders import Borders
 @click.option('--runs', help='Number of runs.')
 @click.option('--two/--many', default=False)
 @click.pass_context
-def cli(ctx, db, locs_file, country_code, min_lat, max_lat, min_lng, max_lng, rows, cols, infile, outfile, indir,
-        outdir, shapefile, directed, bymonth, table, runs, two):
+def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng, max_lng, rows, cols, infile, outfile,
+        indir, outdir, shapefile, directed, bymonth, table, runs, two):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
         'locs_file': locs_file,
+        'country': country,
         'country_code': country_code,
         'min_lat': min_lat,
         'max_lat': max_lat,
@@ -308,6 +311,15 @@ def mborders(ctx):
     outfile = ctx.obj['outfile']
     bs = Borders(db)
     bs.process_multiple(indir, outfile)
+
+
+@cli.command()
+@click.pass_context
+def draw_map(ctx):
+    infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
+    country = ctx.obj['country']
+    draw(infile, outfile, country)
 
 
 if __name__ == '__main__':
