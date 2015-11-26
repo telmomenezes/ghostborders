@@ -53,7 +53,7 @@ def point_map2segments(m):
     verts = vor.vertices
     segments = []
     for i in range(len(vor.ridge_vertices)):
-        rverts = vor.rige_vertices[i]
+        rverts = vor.ridge_vertices[i]
         rpoints = vor.ridge_points[i]
         p1 = verts[rverts[0]]
         p2 = verts[rverts[1]]
