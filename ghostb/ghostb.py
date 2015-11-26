@@ -260,6 +260,7 @@ def confmodel(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
     runs = int(ctx.obj['runs'])
+    print('RUNS %s' % runs)
     confmodel(infile, outfile, runs)
 
 

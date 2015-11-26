@@ -73,6 +73,16 @@ Add a grid of points:
 
     $ ghostb --db <db_name> comment_locations
 
+#### Generate locations graph ####
+
+The <table> parameter specifies the table from which the graph is derived (media, comment or likes).
+
+    ghostb --db <db_name> --table <table> [--directed] [--bymonth] locsgraph
+
+#### Normalize with configuration model ####
+
+
+
 #### Crop borders ####
 
 Takes a .csv borders file and a shapefile and outputs a new .csv borders file with the borders cropped as to not extend beyond the country limits defines in the shapefile.
