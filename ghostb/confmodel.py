@@ -87,10 +87,12 @@ def read_graph(csv_path):
 
     g = {}
     for line in lines[1:]:
-        print('LINE: %s' % line)
-        tokens = [int(round(float(x))) for x in line.split(',')]
-        print('TOKENS: %s' % tokens)
-        add_edge(g, [tokens[0], tokens[1]], tokens[2])
+        try:
+            tokens = [int(round(float(x))) for x in line.split(',')]
+            add_edge(g, [tokens[0], tokens[1]], tokens[2])
+        except ValueError:
+            # ignore invalid lines (e.g. empty)
+            pass
 
     return g
 
