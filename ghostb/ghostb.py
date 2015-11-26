@@ -12,7 +12,7 @@ from ghostb.photodensity import PhotoDensity
 from ghostb.cropdata import CropData
 from ghostb.comment_locations import CommentLocations
 from ghostb.locsgraph import LocsGraph
-from ghostb.confmodel import confmodel
+from ghostb.confmodel import normalize_with_confmodel
 from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
@@ -260,7 +260,7 @@ def confmodel(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
     runs = int(ctx.obj['runs'])
-    confmodel.confmodel(infile, outfile, runs)
+    normalize_with_confmodel(infile, outfile, runs)
 
 
 @cli.command()

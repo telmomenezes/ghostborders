@@ -129,7 +129,7 @@ def write_graph(graph, csv_path):
             f.write('%s,%s,%s\n' % (edge[0][0], edge[0][1], edge[1]))
 
 
-def confmodel(csv_in, csv_out, runs):
+def normalize_with_confmodel(csv_in, csv_out, runs):
     graph = read_graph(csv_in)
     ref_graph = conf_model_n_times(graph, runs)
     normalize(graph, ref_graph)
