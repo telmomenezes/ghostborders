@@ -4,10 +4,11 @@ import numpy as np
 
 
 def point2id(point, m):
-    print('POINT %s' % point)
     for key in m:
         lat = m[key]['lat']
         lng = m[key]['lng']
+        print('POINT %s' % point)
+        print('KEY %s %s' % (lat, lng))
         if (lat == point[0]) and (lng == point[1]):
             return key
 
