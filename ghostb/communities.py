@@ -44,7 +44,11 @@ class Communities:
 
         # create graph
         g = igraph.Graph()
-        g.add_vertices(len(self.vertmap))
+        verts = list(range(len(self.vertmap)))
+        random.shuffle(verts)
+        for v in verts:
+            g.add_vertex(v)
+        # g.add_vertices(len(self.vertmap))
         g.add_edges(edges)
         g.es['weight'] = weights
         return g
