@@ -9,7 +9,7 @@ def comp_points(p1, p2):
 
 def line2row(line):
     cols = line.split(',')
-    return int(cols[1]), int(cols[2])
+    return int(cols[0]), int(cols[1])
 
 
 def normalize_segment(segment):
