@@ -29,7 +29,6 @@ def point_map2segments(m):
     min_lat = min(lats)
     max_lng = max(lngs)
     min_lng = min(lngs)
-    points = np.array(point_list)
 
     min_distance = max(max_lat - min_lat, max_lng - min_lng)
     safety_margin = min_distance * 2
@@ -39,10 +38,14 @@ def point_map2segments(m):
                       max_lat + safety_margin,
                       max_lng + safety_margin).exterior.coords[:-1]
 
+    for fp in fake_points:
+        point_list.append([fp[0], fp[1]])
+
+    points = np.array(point_list)
+
     # Make voronoi
-    print('POINTS %s' % points)
-    print('FAKE POINTS %s' % fake_points)
-    vor = spa.Voronoi(points + fake_points)
+    # print('POINTS %s' % points)
+    vor = spa.Voronoi(points)
 
     # TODO: remove fake points?
 
