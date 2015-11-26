@@ -4,6 +4,7 @@ import numpy as np
 
 
 def point2id(point, m):
+    print('POINT %s' % point)
     for key in m:
         lat = m[key]['lat']
         lng = m[key]['lng']
