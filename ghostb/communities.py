@@ -39,9 +39,11 @@ class Communities:
         # create graph
         self.g = igraph.Graph()
         self.g.add_vertices(len(self.vertmap))
-        for e in edge_tups:
-            self.g.add_edge(e[0], e[1], weight=e[2])
         print('#4')
+        for e in edge_tups:
+            print('%s,%s: %s' % e)
+            self.g.add_edge(e[0], e[1], weight=e[2])
+        print('#5')
 
     def vert_id(self, name):
         if name not in self.vertmap:
