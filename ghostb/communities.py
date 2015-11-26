@@ -47,7 +47,7 @@ class Communities:
             self.rev_verts[self.verts[i]] = i
 
         edges = [(self.verts[x[0]], self.verts[x[1]]) for x in self.edge_tups]
-        weights = [self.verts[x[2]] for x in self.edge_tups]
+        weights = [x[2] for x in self.edge_tups]
 
         # create graph
         g = igraph.Graph()
