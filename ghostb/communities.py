@@ -1,5 +1,6 @@
 import igraph
 import csv
+import random
 
 
 def bincomm(x, n):
@@ -16,7 +17,7 @@ def twocomms(memb, n):
 class Communities:
     def __init__(self, in_file):
         self.vertmap = {}
-        edge_tups = []
+        self.edge_tups = []
         with open(in_file, 'r') as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',')
             header = True
@@ -26,23 +27,27 @@ class Communities:
                 else:
                     orig = self.vert_id(int(row[0]))
                     targ = self.vert_id(int(row[1]))
-                    edge_tups.append((orig, targ, float(row[2])))
-
-        edges = [(x[0], x[1]) for x in edge_tups]
-        weights = [x[2] for x in edge_tups]
+                    self.edge_tups.append((orig, targ, float(row[2])))
 
         # revert vertmap
         self.rev_vertmap = {}
         for k in self.vertmap:
             self.rev_vertmap[self.vertmap[k]] = k
 
+    def build_graph(self):
+        # always shuffle the edge tuples list to produce diverse results from the non-deterministic
+        # community detection algorithm
+        random.shuffle(self.edge_tups)
+
+        edges = [(x[0], x[1]) for x in self.edge_tups]
+        weights = [x[2] for x in self.edge_tups]
+
         # create graph
-        self.g = igraph.Graph()
-        self.g.add_vertices(len(self.vertmap))
-        self.g.add_edges(edges)
-        self.g.es['weight'] = weights
-        # for e in edge_tups:
-        #    self.g.add_edge(e[0], e[1], weight=e[2])
+        g = igraph.Graph()
+        g.add_vertices(len(self.vertmap))
+        g.add_edges(edges)
+        g.es['weight'] = weights
+        return g
 
     def vert_id(self, name):
         if name not in self.vertmap:
@@ -50,7 +55,9 @@ class Communities:
         return self.vertmap[name]
 
     def compute(self, out_file, two):
-        comms = igraph.Graph.community_multilevel(self.g, weights="weight", return_levels=False)
+        g = self.build_graph()
+
+        comms = igraph.Graph.community_multilevel(g, weights="weight", return_levels=False)
         memb = comms.membership
 
         # force dichotomy (horrible exponential time algo)
@@ -60,7 +67,7 @@ class Communities:
 
             for i in range(2 ** len(comms)):
                 memb2 = twocomms(memb, i)
-                vc = igraph.VertexClustering(self.g, membership=memb2)
+                vc = igraph.VertexClustering(g, membership=memb2)
                 vc.recalculate_modularity()
                 m = vc.modularity
                 if m >= bestmod:
