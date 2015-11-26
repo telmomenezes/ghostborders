@@ -83,7 +83,7 @@ def edge_count(graph):
 
 def read_graph(csv_path):
     with open(csv_path, 'r') as csvfile:
-        lines = csvfile.read().replace('\n', '')
+        lines = csvfile.read().split('\n')
 
     g = {}
     for line in lines[1:]:
