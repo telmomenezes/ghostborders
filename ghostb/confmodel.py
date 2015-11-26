@@ -86,7 +86,7 @@ def read_graph(csv_path):
         lines = csvfile.read().replace('\n', '')
 
     g = {}
-    for line in lines:
+    for line in lines[1:]:
         tokens = [int(round(float(x))) for x in line.split(',')]
         add_edge(g, [tokens[0], tokens[1]], tokens[2])
 
