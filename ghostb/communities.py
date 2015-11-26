@@ -40,7 +40,10 @@ class Communities:
         self.g = igraph.Graph()
         self.g.add_vertices(len(self.vertmap))
         print('#4 %s' % len(edge_tups))
+        c = 0
         for e in edge_tups:
+            print('> %s' % c)
+            c += 1
             self.g.add_edge(e[0], e[1], weight=e[2])
         print('#5')
 
