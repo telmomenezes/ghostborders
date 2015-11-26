@@ -50,7 +50,7 @@ def point_map2segments(m):
     # TODO: remove fake points?
 
     # Build segments
-    verts = vor.verts
+    verts = vor.vertices
     segments = []
     for i in range(len(vor.ridge_vertices)):
         rverts = vor.rige_vertices[i]
