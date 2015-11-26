@@ -38,9 +38,8 @@ class Communities:
         self.rev_verts = list(range(len(self.vertmap)))
 
     def build_graph(self):
-        # always shuffle the edge tuples list to produce diverse results from the non-deterministic
+        # always shuffle the vertex index mapping to produce diverse results from the non-deterministic
         # community detection algorithm
-        # random.shuffle(self.edge_tups)
         random.shuffle(self.verts)
         self.rev_verts = list(range(len(self.vertmap)))
         for i in range(len(self.vertmap)):
