@@ -12,6 +12,7 @@ from ghostb.photodensity import PhotoDensity
 from ghostb.cropdata import CropData
 from ghostb.comment_locations import CommentLocations
 from ghostb.locsgraph import LocsGraph
+from ghostb.locsgraph2 import LocsGraph2
 from ghostb.confmodel import normalize_with_confmodel
 from ghostb.communities import Communities
 from ghostb.distances import Distances
@@ -254,6 +255,18 @@ def locsgraph(ctx):
     db.open()
     lg = LocsGraph(db, dbname, directed)
     lg.generate(table, bymonth)
+    db.close()
+
+    
+@cli.command()
+@click.pass_context
+def locsgraph2(ctx):
+    dbname = ctx.obj['dbname']
+    table = ctx.obj['table']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    lg = LocsGraph2(db, dbname)
+    lg.generate(table)
     db.close()
 
 
