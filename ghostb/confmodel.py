@@ -1,4 +1,4 @@
-import graph
+import ghostb.graph as graph
 
 
 def normalize_with_confmodel(csv_in, csv_out, runs):

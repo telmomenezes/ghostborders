@@ -1,6 +1,6 @@
 from ghostb.locmap import LocMap
 import ghostb.geo as geo
-import graph
+import ghostb.graph as graph
 
 
 class Distances:
