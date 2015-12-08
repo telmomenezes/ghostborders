@@ -293,12 +293,11 @@ def communities(ctx):
 @cli.command()
 @click.pass_context
 def distances(ctx):
-    dbname = ctx.obj['dbname']
-    table = ctx.obj['table']
+    infile = ctx.obj['infile']
     db = DB(dbname, ctx.obj['config'])
     db.open()
     dist = Distances(db)
-    dist.compute(table)
+    dist.compute(infile)
     db.close()
 
 
