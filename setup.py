@@ -12,7 +12,9 @@ setup(
         'python-instagram',
         'shapely',
         'matplotlib',
-        'python-igraph'
+        'python-igraph',
+        'mercantile',
+        'pillow'
     ],
     entry_points='''
         [console_scripts]
