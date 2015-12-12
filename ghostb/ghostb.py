@@ -17,7 +17,7 @@ from ghostb.confmodel import normalize_with_confmodel
 from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
-# from ghostb.map import draw
+from ghostb.draw_map import draw_map
 
 
 @click.group()
@@ -326,13 +326,13 @@ def mborders(ctx):
     bs.process_multiple(indir, outfile)
 
 
-# @cli.command()
-# @click.pass_context
-# def draw_map(ctx):
-#     infile = ctx.obj['infile']
-#     outfile = ctx.obj['outfile']
-#     country = ctx.obj['country']
-#     draw(infile, outfile, country)
+@cli.command()
+@click.pass_context
+def draw(ctx):
+    infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
+    country = ctx.obj['country']
+    draw_map(infile, outfile, country)
 
 
 if __name__ == '__main__':
