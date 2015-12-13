@@ -3,6 +3,7 @@ import urllib.request as urllib2
 from PIL import Image
 import io
 import sys
+import os
 
 
 MAX_TILES = 25
@@ -23,7 +24,7 @@ def tile_image(zoom, x, y):
     return tile
 
 
-def coords2png(lat0, lng0, lat1, lng1):
+def coords2png(lat0, lng0, lat1, lng1, out_file):
     # find desirable zoom level
     zoom = 0
     while True:
@@ -42,7 +43,6 @@ def coords2png(lat0, lng0, lat1, lng1):
     ys = [tile.y for tile in tiles_list]
     y0 = min(ys)
     y1 = max(ys)
-    print('%s, %s, %s, %s' % (x0, y0, x1, y1))
     x_tiles = x1 - x0 + 1
     y_tiles = y1 - y0 + 1
     x_width = x_tiles * TILE_SIDE
@@ -64,7 +64,6 @@ def coords2png(lat0, lng0, lat1, lng1):
     img_lng0 = top_left.west
     img_lat0 = bottom_right.south
     img_lng1 = bottom_right.east
-    print('%s, %s, %s, %s' % (img_lat0, img_lng0, img_lat1, img_lng1))
     img_lat_delta = img_lat1 - img_lat0
     img_lng_delta = img_lng1 - img_lng0
     pixel_lat_ratio = float(x_width) / img_lat_delta
@@ -73,10 +72,23 @@ def coords2png(lat0, lng0, lat1, lng1):
     right = x_width - int(abs(lng1 - img_lng1) * pixel_lng_ratio)
     top = int(abs(lat1 - img_lat1) * pixel_lat_ratio)
     bottom = y_width - int(abs(lat0 - img_lat0) * pixel_lat_ratio)
-    print('%s, %s, %s, %s' % (left, top, right, bottom))
     img = img.crop((left, top, right, bottom))
             
-    img.save('test.png', 'PNG')
+    img.save(out_file, 'PNG')
 
 
-coords2png(52.31, 13.05, 52.69, 13.77)
+def coords2path(lat0, lng0, lat1, lng1):
+    filename = '%s_%s_%s_%s.png' % (lat0, lng0, lat1, lng1)
+    directory = 'osm_imgs'
+
+    # create osm images directory if it doesn't exist
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    filepath = '%s/%s' % (directory, filename)
+    # create png for these coordinates if it doesn't exist
+    if not os.path.exists(filepath):
+        print('Generating png...')
+        coords2png(lat0, lng0, lat1, lng1, filepath)
+
+    return filepath

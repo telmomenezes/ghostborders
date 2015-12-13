@@ -6,6 +6,7 @@ import math
 from mpl_toolkits.basemap import Basemap
 from numpy import genfromtxt
 from ghostb.region_defs import *
+import ghostb.maps as maps
 
 
 # Some constants
@@ -49,8 +50,10 @@ def draw_map(borders_file, output_file, region, photo_dens_file=None,
     plt.figure(figsize=(width, height))
     m = Basemap(projection='merc', resolution=resolution, llcrnrlat=y0, llcrnrlon=x0, urcrnrlat=y1, urcrnrlon=x1)
 
-    im = plt.imread('/Users/telmo/projects/ghostborders/test.png')
-    m.imshow(im, interpolation='lanczos', origin='upper')
+    if osm:
+        osm_img_path = maps.coords2path(y0, x0, y1, x1)
+        im = plt.imread(osm_img_path)
+        m.imshow(im, interpolation='lanczos', origin='upper')
 
     xorig, yorig = m(x0, y0)
 
