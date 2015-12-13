@@ -41,9 +41,16 @@ from ghostb.draw_map import draw_map
 @click.option('--table', help='media, comment or links.')
 @click.option('--runs', help='Number of runs.')
 @click.option('--two/--many', default=False)
+@click.option('--photo_dens_file', help='Photo densities file.', default=None)
+@click.option('--pop_dens_file', help='Population densities file.', default=None)
+@click.option('--osm/--noosm', default=False)
+@click.option('--resolution', help='Map resolution.', default='i')
+@click.option('--width', help='Map width.', default=50.)
 @click.pass_context
-def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng, max_lng, rows, cols, infile, outfile,
-        indir, outdir, shapefile, directed, bymonth, table, runs, two):
+def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
+        max_lng,rows, cols, infile, outfile, indir, outdir, shapefile, directed,
+        bymonth, table, runs, two, photo_dens_file, pop_dens_file, osm, resolution,
+        width):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -65,7 +72,12 @@ def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng, ma
         'bymonth': bymonth,
         'table': table,
         'runs': runs,
-        'two': two
+        'two': two,
+        'photo_dens_file': photo_dens_file,
+        'pop_dens_file': pop_dens_file,
+        'osm': osm,
+        'resolution': resolution,
+        'width': width
     }
 
 
@@ -332,7 +344,19 @@ def draw(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
     country = ctx.obj['country']
-    draw_map(infile, outfile, country)
+    photo_dens_file = ctx.obj['photo_dens_file']
+    pop_dens_file = ctx.obj['pop_dens_file']
+    osm = ctx.obj['osm']
+    resolution = ctx.obj['resolution']
+    width = ctx.obj['width']
+    draw_map(borders_file=infile,
+             output_file=outfile,
+             region=country,
+             photo_dens_file=photo_dens_file,
+             pop_dens_file=pop_dens_file,
+             osm=osm,
+             resolution=resolution,
+             width=width)
 
 
 if __name__ == '__main__':

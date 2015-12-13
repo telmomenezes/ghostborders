@@ -106,7 +106,14 @@ http://www.gadm.org/country
 
 #### Draw map ####
 
-    $ 
+    $ ghostb --infile <borders_file> --outfile <output_file> --country <region> draw
+
+Optional parameters:
+* photo_dens_file: photo densities file
+* pop_dens_file: population densities file
+* osm: draw open street maps background (default: no)
+* resolution: map resolution (default: i)
+* width: map width
 
 ## Contacts ##
 
