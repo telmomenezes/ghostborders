@@ -89,7 +89,9 @@ The <table> parameter specifies the table from which the graph is derived (media
 
 100 is a good value for the number of runs.
 
-    $ ghostb --infile <input_file> --outdir <output_directory> --runs <number_of_runs> communities
+    $ ghostb --infile <input_file> --outdir <output_directory> --runs <number_of_runs> [--best] communities
+
+If the optional --best switch is specified, only the partition with the highest modularity is written. 
 
 #### Compute borders ####
 
