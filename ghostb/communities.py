@@ -38,8 +38,8 @@ class Communities:
         self.rev_verts = list(range(len(self.vertmap)))
 
     def build_graph(self):
-        # always shuffle the vertex index mapping to produce diverse results from the non-deterministic
-        # community detection algorithm
+        # always shuffle the vertex index mapping to produce diverse results
+        # from the non-deterministic community detection algorithm
         random.shuffle(self.verts)
         self.rev_verts = list(range(len(self.vertmap)))
         for i in range(len(self.vertmap)):
@@ -60,7 +60,7 @@ class Communities:
             self.vertmap[name] = len(self.vertmap)
         return self.vertmap[name]
 
-    def compute(self, out_file, two):
+    def compute(self, two):
         g = self.build_graph()
 
         comms = igraph.Graph.community_multilevel(g, weights="weight", return_levels=False)
@@ -82,6 +82,10 @@ class Communities:
 
             memb = best
 
+        mod = g.modularity(memb, weights="weight")
+        return (memb, mod)
+
+    def write(self, memb, out_file):
         f = open(out_file, 'w')
         f.write('id,comm\n')
 
@@ -89,9 +93,21 @@ class Communities:
             f.write('%s,%s\n' % (self.rev_vertmap[self.rev_verts[i]], memb[i]))
         f.close()
 
-    def compute_n_times(self, out_dir, two, n):
+    def compute_n_times(self, out_dir, two, n, best):
+        best_mod = -1.
+        best_memb = None
         for i in range(n):
             print('iteration #%s' % i)
-            self.compute("%s/%s.csv" % (out_dir, i), two)
+            memb, mod = self.compute(two)
+            print('modularity: %s' % mod)
+            if mod > best_mod:
+                best_mod = mod
+                best_memb = memb
+            if not best:
+                self.write(memb, "%s/%s.csv" % (out_dir, i))
+
+        print('best modularity: %s' % best_mod)
+        if best:
+            self.write(best_memb, "%s/best.csv" % out_dir)
 
         print('done.')

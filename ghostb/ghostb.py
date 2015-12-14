@@ -46,11 +46,12 @@ from ghostb.draw_map import draw_map
 @click.option('--osm/--noosm', default=False)
 @click.option('--resolution', help='Map resolution.', default='i')
 @click.option('--width', help='Map width.', default=50.)
+@click.option('--best/--all', default=False)
 @click.pass_context
 def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, indir, outdir, shapefile, directed,
         bymonth, table, runs, two, photo_dens_file, pop_dens_file, osm, resolution,
-        width):
+        width, best):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -77,7 +78,8 @@ def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         'pop_dens_file': pop_dens_file,
         'osm': osm,
         'resolution': resolution,
-        'width': width
+        'width': width,
+        'best': best
     }
 
 
@@ -298,8 +300,9 @@ def communities(ctx):
     outdir = ctx.obj['outdir']
     two = ctx.obj['two']
     runs = int(ctx.obj['runs'])
+    best = ctx.obj['best']
     comms = Communities(infile)
-    comms.compute_n_times(outdir, two, runs)
+    comms.compute_n_times(outdir, two, runs, best)
 
 
 @cli.command()
