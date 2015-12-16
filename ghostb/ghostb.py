@@ -324,9 +324,10 @@ def borders(ctx):
     db = DB(dbname, ctx.obj['config'])
     db.open()
     indir = ctx.obj['indir']
+    infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
     bs = Borders(db)
-    bs.process(indir, outfile)
+    bs.process(indir, inflie, outfile)
 
 
 @cli.command()

@@ -29,6 +29,8 @@ http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error
 
     $ sudo apt-get install gfortran libopenblas-dev liblapack-dev
     $ sudo apt-get install -y libigraph0-dev
+    $ sudo apt-get build-dep python-imaging
+    $ sudo apt-get install libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev
 
 ### All -- next steps ###
 
@@ -95,7 +97,11 @@ If the optional --best switch is specified, only the partition with the highest 
 
 #### Compute borders ####
 
+To use a directory as input:
     $ ghostb --db <db_name> --indir <input_directory> --outfile <output_file> borders
+
+To use a file as input:
+    $ ghostb --db <db_name> --infile <input_file> --outfile <output_file> borders
 
 #### Crop borders ####
 
