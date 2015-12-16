@@ -203,8 +203,12 @@ class Borders:
         vor = map2voronoi(m)
         return borders(vor, m)
 
-    def file_list2borders(self, f_ins):
-        bs = [self.process_file('%s/%s' % (dir_in, f)) for f in f_ins]
+    def file_list2borders(self, f_ins, dir_in=''):
+        if len(dir_in) > 0:
+            path = '%s/' % dir_in
+        else:
+            path = ''
+        bs = [self.process_file('%s%s' % (path, f)) for f in f_ins]
         all_borders = [item for sublist in bs for item in sublist]
         for segment in all_borders:
             segment['weight'] = weight(segment, bs)
@@ -215,7 +219,7 @@ class Borders:
         f_ins = []
         for (dirpath, dirnames, filenames) in walk(dir_in):
             f_ins.extend(filenames)
-        return self.file_list2borders(f_ins)
+        return self.file_list2borders(f_ins, dir_in)
 
     def file2borders(self, file_in):
         print("processing %s ..." % file_in)
