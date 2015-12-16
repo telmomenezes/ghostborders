@@ -95,19 +95,17 @@ class Communities:
 
     def compute_n_times(self, out_dir, two, n, best):
         best_mod = -1.
-        best_memb = None
         for i in range(n):
             print('iteration #%s' % i)
             memb, mod = self.compute(two)
             print('modularity: %s' % mod)
             if mod > best_mod:
                 best_mod = mod
-                best_memb = memb
+                if best:
+                    self.write(memb, "%s/best.csv" % out_dir)
             if not best:
                 self.write(memb, "%s/%s.csv" % (out_dir, i))
 
         print('best modularity: %s' % best_mod)
-        if best:
-            self.write(best_memb, "%s/best.csv" % out_dir)
 
         print('done.')
