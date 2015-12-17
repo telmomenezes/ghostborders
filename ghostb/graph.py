@@ -123,7 +123,7 @@ def normalize(graph, ref_graph):
         weight = float(graph[edge])
         if edge in ref_graph:
             ref_weight = float(ref_graph[edge])
-            if ref_weight < 0.01:
+            if ref_weight < 0.5:
                 weight = 0.
             else:
                 weight /= ref_weight
