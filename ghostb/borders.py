@@ -106,11 +106,13 @@ def smooth(m, neighbors):
     return updates
 
 
-# run smoothing algortihm n times
-def smooth_n(m, neighbors, n):
-    for i in range(n):
+# run smoothing algortihm until stable
+def smooth_until_stable(m, neighbors):
+    while True:
         updates = smooth(m, neighbors)
         print('smoothing pass %s, %s updates.' % (i, updates))
+        if updates == 0:
+            return
 
 
 def check_border(m, segment):
@@ -129,8 +131,7 @@ def check_border(m, segment):
 
 def borders(vor, m):
     neighbors = voronoi2neighbors(vor)
-    smooth_passes = 100 #10
-    smooth_n(m, neighbors, smooth_passes)
+    smooth_until_stable(m, neighbors)
     return [segment for segment in vor if check_border(m, segment)]
 
 
