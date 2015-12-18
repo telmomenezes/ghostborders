@@ -65,6 +65,8 @@ def modes(comms):
     return [comm for comm in distrib if distrib[comm] == maxfq]
 
 
+# find the mode community for a given location and its neighbors
+# in case of a tie, uses the largest community
 def mode_community(loc, m, neighbors, comm_sizes):
     ids = neighbors[loc] + [loc]
     comms = [m[x]['community'] for x in ids]
@@ -79,6 +81,7 @@ def mode_community(loc, m, neighbors, comm_sizes):
     return best_mode
 
 
+# compute map of size by community
 def map2community_sizes(m):
     comm_sizes = {}
     for key in m:
@@ -90,16 +93,24 @@ def map2community_sizes(m):
     return comm_sizes
 
 
+# set community to the most frequent value in its neighbors (including itself)
+# in case of a tie, choose the largest community
 def smooth(m, neighbors):
     comm_sizes = map2community_sizes(m)
+    updates = 0
     for loc in m:
         comm = mode_community(loc, m, neighbors, comm_sizes)
-        m[loc]['community'] = comm
+        if m[loc]['community'] != comm:
+            m[loc]['community'] = comm
+            updates += 1
+    return updates
 
 
+# run smoothing algortihm n times
 def smooth_n(m, neighbors, n):
     for i in range(n):
-        smooth(m, neighbors)
+        updates = smooth(m, neighbors)
+        print('smoothing pass %s, %s updates.' % updates)
 
 
 def check_border(m, segment):
