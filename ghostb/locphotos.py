@@ -25,6 +25,7 @@ class LocPhotos:
             for loc in photo_locs:
                 self.update_densities(loc)
 
+        self.db.open()
         print('resetting #photos per location')
         self.db.cur.execute('UPDATE location SET photos=0')
         print('updating #photos per location')
