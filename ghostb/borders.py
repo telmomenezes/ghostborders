@@ -188,7 +188,14 @@ class Borders:
         lines = [line.rstrip('\n') for line in open(path)]
         del lines[0]
 
+        # initialize with no communities
         m = {}
+        for loc in self.locmap.coords:
+            m[loc] = {'community': -1,
+                      'lat': coord['lat'],
+                      'lng': coord['lng']}
+
+        # read communities from csv
         for line in lines:
             row = line2row(line)
             coord = self.locmap.coords[row[0]]
