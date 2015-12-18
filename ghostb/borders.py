@@ -107,10 +107,10 @@ def check_border(m, segment):
     id2 = segment['id2']
 
     # no borders with regions with unknown communities
-    if m[id1]['community'] < 0:
-        return False
-    if m[id2]['community'] < 0:
-        return False
+    #if m[id1]['community'] < 0:
+    #    return False
+    #if m[id2]['community'] < 0:
+    #    return False
 
     # border if community
     return m[id1]['community'] != m[id2]['community']
