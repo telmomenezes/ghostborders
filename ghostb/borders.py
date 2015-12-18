@@ -198,11 +198,11 @@ class Borders:
 
         # initialize with no communities
         m = {}
-        for loc in self.locmap.coords:
-            coord = self.locmap.coords[loc]
-            m[loc] = {'community': -1,
-                      'lat': coord['lat'],
-                      'lng': coord['lng']}
+        #for loc in self.locmap.coords:
+        #    coord = self.locmap.coords[loc]
+        #    m[loc] = {'community': -1,
+        #              'lat': coord['lat'],
+        #              'lng': coord['lng']}
 
         # read communities from csv
         for line in lines:
