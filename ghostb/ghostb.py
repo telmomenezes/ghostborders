@@ -18,6 +18,7 @@ from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
 from ghostb.draw_map import draw_map
+from ghostb.locphotos import LocPhotos
 
 
 @click.group()
@@ -361,6 +362,16 @@ def draw(ctx):
              osm=osm,
              resolution=resolution,
              width=width)
+
+    
+@cli.command()
+@click.pass_context
+def locphotos(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    lp = LocPhotos(db)
+    lp.update()
 
 
 if __name__ == '__main__':

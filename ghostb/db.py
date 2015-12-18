@@ -90,6 +90,7 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE location ADD COLUMN lng DOUBLE")
         self.__exec_or_ignore("ALTER TABLE location ADD COLUMN min_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE location ADD COLUMN done BIGINT")
+        self.__exec_or_ignore("ALTER TABLE location ADD COLUMN photos INT")
         
         # create likes table
         self.__exec_or_ignore("CREATE TABLE likes (id BIGINT PRIMARY KEY)")
