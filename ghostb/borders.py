@@ -108,7 +108,9 @@ def smooth(m, neighbors):
 
 # run smoothing algortihm until stable
 def smooth_until_stable(m, neighbors):
+    i = 0
     while True:
+        i += 1
         updates = smooth(m, neighbors)
         print('smoothing pass %s, %s updates.' % (i, updates))
         if updates == 0:
