@@ -118,7 +118,7 @@ def check_border(m, segment):
 
 def borders(vor, m):
     neighbors = voronoi2neighbors(vor)
-    smooth_passes = 1 #10
+    smooth_passes = 100 #10
     smooth_n(m, neighbors, smooth_passes)
     return [segment for segment in vor if check_border(m, segment)]
 
