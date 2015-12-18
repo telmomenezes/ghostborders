@@ -105,6 +105,14 @@ def smooth_n(m, neighbors, n):
 def check_border(m, segment):
     id1 = segment['id1']
     id2 = segment['id2']
+
+    # no borders with regions with unknown communities
+    if m[id1]['community'] < 0:
+        return False
+    if m[id2]['community'] < 0:
+        return False
+
+    # border if community
     return m[id1]['community'] != m[id2]['community']
 
 
@@ -191,6 +199,7 @@ class Borders:
         # initialize with no communities
         m = {}
         for loc in self.locmap.coords:
+            coord = self.locmap.coords[loc]
             m[loc] = {'community': -1,
                       'lat': coord['lat'],
                       'lng': coord['lng']}
