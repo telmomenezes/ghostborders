@@ -110,7 +110,7 @@ def smooth(m, neighbors):
 def smooth_n(m, neighbors, n):
     for i in range(n):
         updates = smooth(m, neighbors)
-        print('smoothing pass %s, %s updates.' % updates)
+        print('smoothing pass %s, %s updates.' % (i, updates))
 
 
 def check_border(m, segment):
