@@ -121,7 +121,7 @@ def conf_model_n_times(graph, n):
 def normalize(graph, ref_graph):
     zeroes = 0
     below = 0
-    THRESHOLD = .5 #.5
+    THRESHOLD = 1. #.5
     for edge in graph:
         weight = float(graph[edge])
         if edge in ref_graph:
