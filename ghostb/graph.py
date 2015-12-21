@@ -119,17 +119,22 @@ def conf_model_n_times(graph, n):
 
 
 def normalize(graph, ref_graph):
-    THRESHOLD = .1 #.5
+    zeroes = 0
+    below = 0
+    THRESHOLD = .2 #.5
     for edge in graph:
         weight = float(graph[edge])
         if edge in ref_graph:
             ref_weight = float(ref_graph[edge])
             if ref_weight < THRESHOLD:
                 ref_weight = THRESHOLD
+                below += 1
         else:
             ref_weight = THRESHOLD
+            zeroes += 1
         weight /= ref_weight
         graph[edge] = weight
+    print('zeroes: %s; below: %s' % (zeroes, below))
 
 
 def write_graph(graph, csv_path):
