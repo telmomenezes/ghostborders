@@ -1,4 +1,5 @@
 import random
+import math
 
 
 def add_edge(graph, edge, weight=1.0):
@@ -121,11 +122,11 @@ def conf_model_n_times(graph, n):
 def normalize(graph, ref_graph):
     zeroes = 0
     below = 0
-    THRESHOLD = 1. #.5
+    THRESHOLD = .000001 #1.
     for edge in graph:
         weight = float(graph[edge])
         if edge in ref_graph:
-            ref_weight = float(ref_graph[edge])
+            ref_weight = math.ceil(float(ref_graph[edge]))
             if ref_weight < THRESHOLD:
                 ref_weight = THRESHOLD
                 below += 1
@@ -133,6 +134,7 @@ def normalize(graph, ref_graph):
             ref_weight = THRESHOLD
             zeroes += 1
         weight /= ref_weight
+        weight - math.ceil(weight)
         graph[edge] = weight
     print('zeroes: %s; below: %s; total: %s' % (zeroes, below, len(graph)))
 
