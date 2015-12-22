@@ -133,7 +133,7 @@ def normalize(graph, ref_graph):
         else:
             ref_weight = THRESHOLD
             zeroes += 1
-            weight = 1.0
+            weight = 0.0
         weight /= ref_weight
         weight = math.ceil(weight)
         graph[edge] = weight
