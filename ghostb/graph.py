@@ -131,7 +131,7 @@ def normalize(graph, ref_graph):
                 ref_weight = THRESHOLD
                 below += 1
         else:
-            ref_weight = THRESHOLD
+            ref_weight = 1. #THRESHOLD
             zeroes += 1
             #weight = 1.0
         weight /= ref_weight
