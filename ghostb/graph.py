@@ -126,14 +126,14 @@ def normalize(graph, ref_graph):
     for edge in graph:
         weight = float(graph[edge])
         if edge in ref_graph:
-            ref_weight = math.ceil(float(ref_graph[edge])) + 1
+            ref_weight = math.ceil(float(ref_graph[edge]))
             if ref_weight < THRESHOLD:
                 ref_weight = THRESHOLD
                 below += 1
         else:
-            ref_weight = 1. #THRESHOLD
+            ref_weight = THRESHOLD
             zeroes += 1
-            #weight = 1.0
+            weight = 1.0
         weight /= ref_weight
         weight = math.ceil(weight)
         graph[edge] = weight
