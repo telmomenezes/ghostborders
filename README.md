@@ -47,6 +47,10 @@ Creates the database to be used by further operations.
 
 #### Create locations ####
 
+Add locations from file:
+
+ghostb --db <db_name> --locs_file <locations_file> --country_code <country_code> add_locations
+
 Add a grid of points:
 
     $ ghostb --db <db_name> --min_lat <min_lat> --min_lng <min_lng> --max_lat <max_lat> --max_lng <max_lng> --rows <rows> --cols <cols> add_grid
