@@ -19,6 +19,7 @@ from ghostb.distances import Distances
 from ghostb.borders import Borders
 from ghostb.draw_map import draw_map
 from ghostb.locphotos import LocPhotos
+from ghostb.graphinfo import graphinfo
 
 
 @click.group()
@@ -372,6 +373,13 @@ def locphotos(ctx):
     db.open()
     lp = LocPhotos(db)
     lp.update()
+
+
+@cli.command()
+@click.pass_context
+def graph_info(ctx):
+    infile = ctx.obj['infile']
+    graphinfo(infile)
 
 
 if __name__ == '__main__':

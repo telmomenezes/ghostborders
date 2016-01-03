@@ -39,7 +39,17 @@ class LocsGraph:
             self.db.cur.execute("SELECT location FROM %s WHERE user=%s" % (table, user_id))
     
         locations = self.db.cur.fetchall()
-        locations = set([x[0] for x in locations])
+        locations = [x[0] for x in locations]
+
+        freqs = {}
+        for l in locations:
+            if l in freqs:
+                freqs[l] += 1
+            else:
+                freqs[l] = 1
+
+        # make locations unique
+        locations = set(locations)
 
         if self.directed:
             links = itertools.product([home], locations)
@@ -48,6 +58,11 @@ class LocsGraph:
 
         for link in links:
             self.process_link(link)
+
+        # create self-loops for locations where a single user has more than one event
+        for l in freqs:
+            if freqs[l] > 1:
+                self.process_link([l , l])
 
     def generate_graph(self, table, month=None):
         self.db.cur.execute("SELECT count(id) FROM user")

@@ -119,7 +119,7 @@ def conf_model_n_times(graph, n):
     return g
 
 
-def normalize(graph, ref_graph):
+def normalize(graph):
     zeroes = 0
     for edge in graph:
         weight = math.ceil(float(graph[edge]))
@@ -133,6 +133,23 @@ def normalize(graph, ref_graph):
         
         graph[edge] = weight
     print('zeroes: %s; total: %s' % (zeroes, len(graph)))
+
+
+def degrees(graph):
+    degs = {}
+    for edge in graph:
+        orig = edge[0]
+        targ = edge[1]
+        weight = graph[edge]
+        if orig in degs:
+            degs[orig] += weight
+        else:
+            degs[orig] = weight
+        if targ in degs:
+            degs[targ] += weight
+        else:
+            degs[targ] = weight
+    return degs
 
 
 def write_graph(graph, csv_path):
