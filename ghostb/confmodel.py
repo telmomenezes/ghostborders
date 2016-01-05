@@ -13,7 +13,7 @@ def normalize(g):
         g[edge] = weight
 
 
-def normalize_with_confmodel(csv_in, csv_out, runs):
+def normalize_with_confmodel(csv_in, csv_out):
     g = graph.read_graph(csv_in)
     normalize(g)
     graph.write_graph(g, csv_out)

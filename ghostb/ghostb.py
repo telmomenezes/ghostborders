@@ -291,8 +291,7 @@ def locsgraph2(ctx):
 def confmodel(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
-    runs = int(ctx.obj['runs'])
-    normalize_with_confmodel(infile, outfile, runs)
+    normalize_with_confmodel(infile, outfile)
 
 
 @cli.command()
