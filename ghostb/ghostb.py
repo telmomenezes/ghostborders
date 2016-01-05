@@ -311,10 +311,11 @@ def communities(ctx):
 def distances(ctx):
     dbname = ctx.obj['dbname']
     infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
     db = DB(dbname, ctx.obj['config'])
     db.open()
     dist = Distances(db)
-    dist.compute(infile)
+    dist.compute(infile, outfile)
     db.close()
 
 
