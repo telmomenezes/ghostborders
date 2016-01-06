@@ -125,7 +125,7 @@ class GenGraph:
         where_clause = ''
         if self.flagged:
             print('processing only flagged users')
-            where_clause = 'WHERE flagged > 0'
+            where_clause = 'WHERE flag > 0'
         else:
             print('processing all users')
         
@@ -136,7 +136,7 @@ class GenGraph:
         done = False
         n = 0
         while not done:
-            self.db.cur.execute("SELECT id, home FROM user %s LIMIT %s,1000" % (where_claue, n))
+            self.db.cur.execute("SELECT id, home FROM user %s LIMIT %s,1000" % (where_clause, n))
             users = self.db.cur.fetchall()
             if len(users) == 0:
                 done = True
@@ -150,4 +150,4 @@ class GenGraph:
 
         self.write_ll(self.outfile)
     
-        print("done (%s)." % suffix)
+        print("done.")
