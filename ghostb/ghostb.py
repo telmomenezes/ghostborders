@@ -6,6 +6,7 @@ from ghostb.retriever import Retriever
 from ghostb.fixlocations import FixLocations
 from ghostb.cropborders import CropBorders
 from ghostb.useractivity import UserActivity
+from ghostb.userlocation import UserLocation
 from ghostb.monthly import Monthly
 from ghostb.userhome import UserHome
 from ghostb.photodensity import PhotoDensity
@@ -195,6 +196,18 @@ def user_activity(ctx):
     db.open()
     activity = UserActivity(db)
     activity.update()
+    db.close()
+
+
+@cli.command()
+@click.pass_context
+def user_locations(ctx):
+    click.echo('Computing userlocations')
+    config = ctx.obj['config']
+    db = DB(ctx.obj['dbname'], config)
+    db.open()
+    ul = UserLocation(db)
+    ul.generate()
     db.close()
 
 
