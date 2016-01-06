@@ -14,7 +14,7 @@ class UserLocation:
                 freqs[l] = 1
         total = float(len(locations))
         for l in freqs:
-            self.db.cur.execute("INSERT INTO userlocation (location, weight, w) VALUES (%s, %s, %s)" % (l, freqs[l], freqs[l] / total))
+            self.db.cur.execute("INSERT INTO userlocation (user, location, weight, w) VALUES (%s, %s, %s, %s)" % (user_id, l, freqs[l], freqs[l] / total))
         self.db.conn.commit()
 
     def generate(self):
