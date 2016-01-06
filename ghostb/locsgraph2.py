@@ -72,5 +72,3 @@ class LocsGraph2:
         self.write_ll("%s-%s.csv" % (self.dbname, suffix))
     
         print("done (%s)." % suffix)
-
-

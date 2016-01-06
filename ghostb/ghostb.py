@@ -13,6 +13,7 @@ from ghostb.cropdata import CropData
 from ghostb.comment_locations import CommentLocations
 from ghostb.locsgraph import LocsGraph
 from ghostb.locsgraph2 import LocsGraph2
+from ghostb.filter_dists import FilterDists
 from ghostb.confmodel import normalize_with_confmodel
 from ghostb.communities import Communities
 from ghostb.distances import Distances
@@ -20,6 +21,7 @@ from ghostb.borders import Borders
 from ghostb.draw_map import draw_map
 from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
+from ghostb.flag import Flag
 
 
 @click.group()
@@ -288,6 +290,19 @@ def locsgraph2(ctx):
 
 @cli.command()
 @click.pass_context
+def filter_dists(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
+    fd = FilterDists(db)
+    fd.filter(infile, outfile)
+    db.close()
+
+
+@cli.command()
+@click.pass_context
 def confmodel(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
@@ -380,6 +395,26 @@ def locphotos(ctx):
 def graph_info(ctx):
     infile = ctx.obj['infile']
     graphinfo(infile)
+
+
+@cli.command()
+@click.pass_context
+def flag(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    fl = Flag(db)
+    fl.flag()
+
+    
+@cli.command()
+@click.pass_context
+def unflag(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    fl = Flag(db)
+    fl.unflag()
 
 
 if __name__ == '__main__':

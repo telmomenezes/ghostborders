@@ -1,7 +1,6 @@
 import ghostb.graph as graph
 import math
 
-
 def normalize(g):
     degs = graph.degrees(g)
     m = len(g) * 2.

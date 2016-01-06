@@ -77,8 +77,10 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN first_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN last_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN photos BIGINT DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN flag INT DEFAULT 0")
 
         self.__exec_or_ignore("CREATE INDEX user_username ON user (username)")
+        self.__exec_or_ignore("CREATE INDEX user_flag ON user (flag)")
 
         # create locations table
         self.__exec_or_ignore("CREATE TABLE location (id BIGINT PRIMARY KEY)")
