@@ -11,8 +11,7 @@ from ghostb.userhome import UserHome
 from ghostb.photodensity import PhotoDensity
 from ghostb.cropdata import CropData
 from ghostb.comment_locations import CommentLocations
-from ghostb.locsgraph import LocsGraph
-from ghostb.locsgraph2 import LocsGraph2
+from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
 from ghostb.confmodel import normalize_with_confmodel
 from ghostb.communities import Communities
@@ -40,9 +39,8 @@ from ghostb.flag import Flag
 @click.option('--indir', help='Input directory.')
 @click.option('--outdir', help='Output directory.')
 @click.option('--shapefile', help='Shape file.', multiple=True)
-@click.option('--directed/--undirected', default=False)
-@click.option('--bymonth/--full', default=False)
-@click.option('--table', help='media, comment or links.')
+@click.option('--flagged/--ignoreflags', default=False)
+@click.option('--graph_type', help='loc2loc, home2loc or home2home.')
 @click.option('--runs', help='Number of runs.')
 @click.option('--two/--many', default=False)
 @click.option('--photo_dens_file', help='Photo densities file.', default=None)
@@ -53,8 +51,8 @@ from ghostb.flag import Flag
 @click.option('--best/--all', default=False)
 @click.pass_context
 def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
-        max_lng,rows, cols, infile, outfile, indir, outdir, shapefile, directed,
-        bymonth, table, runs, two, photo_dens_file, pop_dens_file, osm, resolution,
+        max_lng,rows, cols, infile, outfile, indir, outdir, shapefile, flagged,
+        graph_type, runs, two, photo_dens_file, pop_dens_file, osm, resolution,
         width, best):
     ctx.obj = {
         'config': Config('ghostb.conf'),
@@ -73,9 +71,8 @@ def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         'indir': indir,
         'outdir': outdir,
         'shapefile': shapefile,
-        'directed': directed,
-        'bymonth': bymonth,
-        'table': table,
+        'flagged': flagged,
+        'graph_type': graph_type,
         'runs': runs,
         'two': two,
         'photo_dens_file': photo_dens_file,
@@ -264,30 +261,18 @@ def crop_data(ctx):
 
 @cli.command()
 @click.pass_context
-def locsgraph(ctx):
+def gen_graph(ctx):
     dbname = ctx.obj['dbname']
-    directed = ctx.obj['directed']
-    bymonth = ctx.obj['bymonth']
-    table = ctx.obj['table']
+    outfile = ctx.obj['outfile']
+    graph_type = ctx.obj['graph_type']
+    flagged = ctx.obj['flagged']
     db = DB(dbname, ctx.obj['config'])
     db.open()
-    lg = LocsGraph(db, dbname, directed)
-    lg.generate(table, bymonth)
+    gg = GenGraph(db, outfile, graph_type, flagged)
+    gg.generate()
     db.close()
 
     
-@cli.command()
-@click.pass_context
-def locsgraph2(ctx):
-    dbname = ctx.obj['dbname']
-    table = ctx.obj['table']
-    db = DB(dbname, ctx.obj['config'])
-    db.open()
-    lg = LocsGraph2(db, dbname)
-    lg.generate(table)
-    db.close()
-
-
 @cli.command()
 @click.pass_context
 def filter_dists(ctx):
