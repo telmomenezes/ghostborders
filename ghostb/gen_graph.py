@@ -9,10 +9,13 @@ class GenGraph:
     def __init__(self, db, outfile, graph_type, flagged):
         if graph_type == 'loc2loc':
             self.table = 'media'
+            self.home_only = False
         elif graph_type == 'home2loc':
             self.table = 'media'
+            self.home_only = True
         elif graph_type == 'home2home':
             self.table = 'comment'
+            self.home_only = True
         else:
             print('unknown graph type: %s' % self.graph_type)
             sys.exit(-1)
@@ -74,14 +77,6 @@ class GenGraph:
     
         locations = self.db.cur.fetchall()
         locations = [x[0] for x in locations]
-
-        freqs = {}
-        for l in locations:
-            if l in freqs:
-                freqs[l] += 1
-            else:
-                freqs[l] = 1
-
         # make locations unique
         locations = set(locations)
 
@@ -89,11 +84,6 @@ class GenGraph:
 
         for link in links:
             self.process_link(link)
-
-        # create self-loops for locations where a single user has more than one event
-        for l in freqs:
-            if freqs[l] > 1:
-                self.process_link([l , l])
 
     def target_home(self, media_id):
         self.db.cur.execute("SELECT user FROM media WHERE id=%s" % (media_id,))
@@ -116,6 +106,8 @@ class GenGraph:
     def process_user(self, user_id, home):
         if self.graph_type == 'loc2loc':
             self.process_user_loc2loc(user_id, home)
+        elif self.graph_type == 'home2loc':
+            self.process_user_home2loc(user_id, home)
         elif self.graph_type == 'home2home':
             self.process_user_home2home(user_id, home)
                 
@@ -123,9 +115,15 @@ class GenGraph:
         print('generating graph with type: %s' % self.graph_type)
 
         where_clause = ''
-        if self.flagged:
+        if self.flagged and not self.home_only:
             print('processing only flagged users')
             where_clause = 'WHERE flag > 0'
+        elif not self.flagged and self.home_only:
+            print('processing only users with homebases')
+            where_clause = 'WHERE home IS NOT NULL'
+        elif self.flagged and self.home_only:
+            print('processing only flagged users with homebases')
+            where_clause = 'WHERE flag > 0 AND home IS NOT NULL'
         else:
             print('processing all users')
         
