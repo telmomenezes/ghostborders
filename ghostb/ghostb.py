@@ -50,11 +50,12 @@ from ghostb.flag import Flag
 @click.option('--resolution', help='Map resolution.', default='i')
 @click.option('--width', help='Map width.', default=50.)
 @click.option('--best/--all', default=False)
+@click.option('--max_dist', help='Maximum distance.')
 @click.pass_context
 def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, indir, outdir, shapefile, flagged,
         graph_type, runs, two, photo_dens_file, pop_dens_file, osm, resolution,
-        width, best):
+        width, best, max_dist):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -81,7 +82,8 @@ def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         'osm': osm,
         'resolution': resolution,
         'width': width,
-        'best': best
+        'best': best,
+        'max_dist': max_dist
     }
 
 
@@ -294,8 +296,9 @@ def filter_dists(ctx):
     db.open()
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
+    max_dist = float(ctx.obj['max_dist'])
     fd = FilterDists(db)
-    fd.filter(infile, outfile)
+    fd.filter(infile, outfile, max_dist)
     db.close()
 
 
