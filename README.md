@@ -81,9 +81,13 @@ Add a grid of points:
 
 #### Generate graphs ####
 
-Graph types include: loc2loc, home2loc and home2home
+graph_file specifies the file path to write the graph to. If none is specified, the graph file is not generated.
 
-    $ ghostb --db <db_name> --graph_type <type> --outfile <out_file> gen_graph
+dist_file specifies the file path to write the distance and time link distribution to. If none is specified, the distribution file is not generated.
+
+max_time specifies a time thershold for links to be included in the graph. It does not affect the distribution.
+
+    $ ghostb --db <db_name> [--graph_file <graph_output>] [--dist_file <dist_output>] [--max_time] <max_time> gen_graph
 
 #### Filter distances ####
 

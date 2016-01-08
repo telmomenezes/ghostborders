@@ -1,39 +1,45 @@
-# graph types:
-# loc2loc, home2loc, home2home
-
 import sys
 import itertools
+from ghostb.locmap import LocMap
+import ghostb.geo as geo
+
+
+def time_delta(link, loc_ts):
+    min_delta = -1
+    for ts1 in loc_ts[link[0]]:
+        for ts2 in loc_ts[link[1]]:
+            if ts1 != ts2:
+                delta = abs(ts1 - ts2)
+                if (min_delta < 0) or (delta < min_delta):
+                    min_delta = delta
+        return min_delta
 
 
 class GenGraph:
-    def __init__(self, db, outfile, graph_type, flagged):
-        if graph_type == 'loc2loc':
-            self.table = 'media'
-            self.home_only = False
-        elif graph_type == 'home2loc':
-            self.table = 'media'
-            self.home_only = True
-        elif graph_type == 'home2home':
-            self.table = 'comment'
-            self.home_only = True
-        else:
-            print('unknown graph type: %s' % self.graph_type)
-            sys.exit(-1)
-
+    def __init__(self, db, graph_file, dist_file, max_time):
         self.db = db
-        self.outfile = outfile
-        self.graph_type = graph_type
-        self.flagged = flagged
-        self.ll = {}
+        self.max_time = max_time
+        self.write_graph = False
+        self.write_dist = False
+        if graph_file != '':
+            self.graph_file = graph_file
+            self.write_graph = True
+            self.ll = {}
+        if dist_file != '':
+            self.f_dist = open(dist_file, 'w')
+            self.f_dist.write('distance,time\n')
+            self.write_dist = True
+            self.locmap = LocMap(db)
+        
 
-    def write_ll(self, csvpath):
-        f = open(csvpath, 'w')
+    def write_ll(self):
+        f = open(self.graph_file, 'w')
         f.write('orig,targ,weight\n')
         for k in self.ll:
-            f.write('%s,%s,%s\n' % (k[0], k[1], self.ll[k]))        
+            f.write('%s,%s,%s\n' % (k[0], k[1], self.ll[k]))
         f.close()
 
-    def process_link(self, link):
+    def process_link(self, link, time):
         v1 = link[0]
         v2 = link[1]
         if v1 > v2:
@@ -41,23 +47,39 @@ class GenGraph:
             v2 = link[0]
         l = (v1, v2)
 
-        if l in self.ll:
-            self.ll[l] += 1
-        else:
-            self.ll[l] = 1
+        if self.write_graph:
+            if (self.max_time < 0) or (time <= self.max_time):
+                if l in self.ll:
+                    self.ll[l] += 1
+                else:
+                    self.ll[l] = 1
 
-    def process_user_loc2loc(self, user_id, home):
-        self.db.cur.execute("SELECT location FROM %s WHERE user=%s" % (self.table, user_id))
-    
-        locations = self.db.cur.fetchall()
-        locations = [x[0] for x in locations]
+        if self.write_dist:
+            loc1 = self.locmap.coords[l[0]]
+            loc2 = self.locmap.coords[l[1]]
+            dist = geo.distance(loc1, loc2)
+            self.f_dist.write('%s,%s\n' % (dist, time))
+        
+    def process_user(self, user_id):
+        self.db.cur.execute("SELECT location, ts FROM media WHERE user=%s" % user_id)
+        data = self.db.cur.fetchall()
+        locations = [x[0] for x in data]
 
-        freqs = {}
-        for l in locations:
-            if l in freqs:
-                freqs[l] += 1
+        loc_ts = {}
+        for x in data:
+            loc = x[0]
+            ts = x[1]
+            if loc in loc_ts:
+                loc_ts[loc].append(ts)
             else:
-                freqs[l] = 1
+                loc_ts[loc] = [ts,]
+        
+        #freqs = {}
+        #for l in locations:
+        #    if l in freqs:
+        #        freqs[l] += 1
+        #    else:
+        #        freqs[l] = 1
 
         # make locations unique
         locations = set(locations)
@@ -65,87 +87,42 @@ class GenGraph:
         links = itertools.combinations(locations, 2)
 
         for link in links:
-            self.process_link(link)
+            time = time_delta(link, loc_ts)
+            self.process_link(link, time)
 
         # create self-loops for locations where a single user has more than one event
-        for l in freqs:
-            if freqs[l] > 1:
-                self.process_link([l , l])
+        #for l in freqs:
+        #    if freqs[l] > 1:
+        #        self.process_link([l , l], loc_ts)
 
-    def process_user_home2loc(self, user_id, home):
-        self.db.cur.execute("SELECT location FROM %s WHERE user=%s" % (self.table, user_id))
-    
-        locations = self.db.cur.fetchall()
-        locations = [x[0] for x in locations]
-        # make locations unique
-        locations = set(locations)
-
-        links = itertools.product([home], locations)
-
-        for link in links:
-            self.process_link(link)
-
-    def target_home(self, media_id):
-        self.db.cur.execute("SELECT user FROM media WHERE id=%s" % (media_id,))
-        user_id = self.db.cur.fetchone()[0]
-        self.db.cur.execute("SELECT home FROM user WHERE id=%s" % (user_id,))
-        return self.db.cur.fetchone()[0]
-            
-    def process_user_home2home(self, user_id, home):
-        self.db.cur.execute("SELECT media FROM %s WHERE user=%s" % (self.table, user_id))
-        medias = self.db.cur.fetchall()
-        medias = set([x[0] for x in medias])
-        homes = [self.target_home(x) for x in medias]
-        homes = [x for x in homes if x is not None]
-
-        links = itertools.product([home], homes)
-
-        for link in links:
-            self.process_link(link)
-
-    def process_user(self, user_id, home):
-        if self.graph_type == 'loc2loc':
-            self.process_user_loc2loc(user_id, home)
-        elif self.graph_type == 'home2loc':
-            self.process_user_home2loc(user_id, home)
-        elif self.graph_type == 'home2home':
-            self.process_user_home2home(user_id, home)
-                
     def generate(self):
-        print('generating graph with type: %s' % self.graph_type)
+        if self.write_graph:
+            print('generating graph.')
+        if self.write_dist:
+            print('generating distance/time link distribution.')
 
-        where_clause = ''
-        if self.flagged and not self.home_only:
-            print('processing only flagged users')
-            where_clause = 'WHERE flag > 0'
-        elif not self.flagged and self.home_only:
-            print('processing only users with homebases')
-            where_clause = 'WHERE home IS NOT NULL'
-        elif self.flagged and self.home_only:
-            print('processing only flagged users with homebases')
-            where_clause = 'WHERE flag > 0 AND home IS NOT NULL'
-        else:
-            print('processing all users')
-        
-        self.db.cur.execute("SELECT count(id) FROM user %s" % where_clause)
+        self.db.cur.execute("SELECT count(id) FROM user")
         nusers = self.db.cur.fetchone()[0]
         print("%s users to process" % nusers)
     
         done = False
         n = 0
         while not done:
-            self.db.cur.execute("SELECT id, home FROM user %s LIMIT %s,1000" % (where_clause, n))
+            self.db.cur.execute("SELECT id FROM user LIMIT %s,1000" % n)
             users = self.db.cur.fetchall()
             if len(users) == 0:
                 done = True
             else:
                 percent = (float(n) / float(nusers)) * 100.0
                 for user in users:
-                    self.process_user(user[0], user[1])
+                    self.process_user(user[0])
 
                 print("%s/%s (%s%%) processed" % (n, nusers, percent))
                 n += len(users)
 
-        self.write_ll(self.outfile)
+        if self.write_graph:
+            self.write_ll()
+        if self.write_dist:
+            self.f_dist.close()
     
         print("done.")

@@ -40,8 +40,6 @@ from ghostb.flag import Flag
 @click.option('--indir', help='Input directory.')
 @click.option('--outdir', help='Output directory.')
 @click.option('--shapefile', help='Shape file.', multiple=True)
-@click.option('--flagged/--ignoreflags', default=False)
-@click.option('--graph_type', help='loc2loc, home2loc or home2home.')
 @click.option('--runs', help='Number of runs.')
 @click.option('--two/--many', default=False)
 @click.option('--photo_dens_file', help='Photo densities file.', default=None)
@@ -51,11 +49,14 @@ from ghostb.flag import Flag
 @click.option('--width', help='Map width.', default=50.)
 @click.option('--best/--all', default=False)
 @click.option('--max_dist', help='Maximum distance.')
+@click.option('--graph_file', help='Output graph file.', default='')
+@click.option('--dist_file', help='Output distribution file.', default='')
+@click.option('--max_time', help='Maximum time.', default=-1)
 @click.pass_context
 def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
-        max_lng,rows, cols, infile, outfile, indir, outdir, shapefile, flagged,
-        graph_type, runs, two, photo_dens_file, pop_dens_file, osm, resolution,
-        width, best, max_dist):
+        max_lng,rows, cols, infile, outfile, indir, outdir, shapefile, runs, two,
+        photo_dens_file, pop_dens_file, osm, resolution, width, best, max_dist,
+        graph_file, dist_file, max_time):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -73,8 +74,6 @@ def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         'indir': indir,
         'outdir': outdir,
         'shapefile': shapefile,
-        'flagged': flagged,
-        'graph_type': graph_type,
         'runs': runs,
         'two': two,
         'photo_dens_file': photo_dens_file,
@@ -83,7 +82,10 @@ def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         'resolution': resolution,
         'width': width,
         'best': best,
-        'max_dist': max_dist
+        'max_dist': max_dist,
+        'graph_file': graph_file,
+        'dist_file': dist_file,
+        'max_time': max_time
     }
 
 
@@ -278,12 +280,12 @@ def crop_data(ctx):
 @click.pass_context
 def gen_graph(ctx):
     dbname = ctx.obj['dbname']
-    outfile = ctx.obj['outfile']
-    graph_type = ctx.obj['graph_type']
-    flagged = ctx.obj['flagged']
+    graph_file = ctx.obj['graph_file']
+    dist_file = ctx.obj['dist_file']
+    max_time = ctx.obj['max_time']
     db = DB(dbname, ctx.obj['config'])
     db.open()
-    gg = GenGraph(db, outfile, graph_type, flagged)
+    gg = GenGraph(db, graph_file, dist_file, max_time)
     gg.generate()
     db.close()
 
