@@ -79,11 +79,15 @@ Add a grid of points:
 
     $ ghostb --db <db_name> comment_locations
 
-#### Generate locations graph ####
+#### Generate graphs ####
 
-The <table> parameter specifies the table from which the graph is derived (media, comment or likes).
+Graph types include: loc2loc, home2loc and home2home
 
-    $ ghostb --db <db_name> --table <table> [--directed] [--bymonth] locsgraph
+    $ ghostb --db <db_name> --graph_type <type> --outfile <out_file> gen_graph
+
+#### Filter distances ####
+
+    $ ghostb --db <db_name> --infile <input_file> --outfile <output_file> --max_dist <max_distance> filter_dists
 
 #### Normalize with configuration model ####
 
