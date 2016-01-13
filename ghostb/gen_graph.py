@@ -12,7 +12,7 @@ def time_delta(link, loc_ts):
                 delta = abs(ts1 - ts2)
                 if (min_delta < 0) or (delta < min_delta):
                     min_delta = delta
-        return min_delta
+    return min_delta
 
 
 class GenGraph:
@@ -58,7 +58,10 @@ class GenGraph:
             loc1 = self.locmap.coords[l[0]]
             loc2 = self.locmap.coords[l[1]]
             dist = geo.distance(loc1, loc2)
-            self.f_dist.write('%s,%s\n' % (dist, time))
+            if (time > 0) and (dist > 0):
+                self.f_dist.write('%s,%s\n' % (dist, time))
+            else:
+                print('%s,%s\n' % (dist, time))
         
     def process_user(self, user_id):
         self.db.cur.execute("SELECT location, ts FROM media WHERE user=%s" % user_id)

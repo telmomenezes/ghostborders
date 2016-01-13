@@ -22,6 +22,7 @@ from ghostb.draw_map import draw_map
 from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
 from ghostb.flag import Flag
+from ghostb.percentiles import Percentiles
 
 
 @click.group()
@@ -418,6 +419,18 @@ def unflag(ctx):
     db.open()
     fl = Flag(db)
     fl.unflag()
+
+
+@cli.command()
+@click.pass_context
+def percentiles(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    infile = ctx.obj['infile']
+    outdir = ctx.obj['outdir']
+    per = Percentiles(db)
+    per.generate(infile, outdir)
 
 
 if __name__ == '__main__':
