@@ -93,7 +93,7 @@ class Communities:
             f.write('%s,%s\n' % (self.rev_vertmap[self.rev_verts[i]], memb[i]))
         f.close()
 
-    def compute_n_times(self, out_dir, two, n, best):
+    def compute_n_times(self, out_dir, out_file, two, n, best):
         best_mod = -1.
         for i in range(n):
             print('iteration #%s' % i)
@@ -102,10 +102,14 @@ class Communities:
             if mod > best_mod:
                 best_mod = mod
                 if best:
-                    self.write(memb, "%s/best.csv" % out_dir)
+                    if out_file is None:
+                        out_path = "%s/best.csv" % out_dir
+                    else:
+                        out_path = out_file
+                    self.write(memb, out_path)
             if not best:
                 self.write(memb, "%s/%s.csv" % (out_dir, i))
 
         print('best modularity: %s' % best_mod)
-
         print('done.')
+        return best_mod

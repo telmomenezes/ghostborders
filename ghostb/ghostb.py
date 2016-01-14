@@ -37,9 +37,9 @@ from ghostb.percentiles import Percentiles
 @click.option('--rows', help='Number of rows.')
 @click.option('--cols', help='Number of columns.')
 @click.option('--infile', help='Input file.')
-@click.option('--outfile', help='Output file.')
+@click.option('--outfile', help='Output file.', default=None)
 @click.option('--indir', help='Input directory.')
-@click.option('--outdir', help='Output directory.')
+@click.option('--outdir', help='Output directory.', default=None)
 @click.option('--shapefile', help='Shape file.', multiple=True)
 @click.option('--runs', help='Number of runs.')
 @click.option('--two/--many', default=False)
@@ -318,11 +318,12 @@ def confmodel(ctx):
 def communities(ctx):
     infile = ctx.obj['infile']
     outdir = ctx.obj['outdir']
+    outdir = ctx.obj['outfile']
     two = ctx.obj['two']
     runs = int(ctx.obj['runs'])
     best = ctx.obj['best']
     comms = Communities(infile)
-    comms.compute_n_times(outdir, two, runs, best)
+    comms.compute_n_times(outdir, outfile, two, runs, best)
 
 
 @cli.command()
@@ -423,14 +424,42 @@ def unflag(ctx):
 
 @cli.command()
 @click.pass_context
-def percentiles(ctx):
+def percentile_graphs(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
     infile = ctx.obj['infile']
     outdir = ctx.obj['outdir']
-    per = Percentiles(db)
-    per.generate(infile, outdir)
+    per = Percentiles(outdir)
+    per.generate_graphs(db, infile)
+
+
+@cli.command()
+@click.pass_context
+def percentile_communities(ctx):
+    outdir = ctx.obj['outdir']
+    per = Percentiles(outdir)
+    per.generate_communities()
+
+
+@cli.command()
+@click.pass_context
+def percentile_borders(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outdir = ctx.obj['outdir']
+    per = Percentiles(outdir)
+    per.generate_borders(db)
+
+
+@cli.command()
+@click.pass_context
+def percentile_maps(ctx):
+    outdir = ctx.obj['outdir']
+    region = ctx.obj['region']
+    per = Percentiles(outdir)
+    per.generate_maps(region)
 
 
 if __name__ == '__main__':
