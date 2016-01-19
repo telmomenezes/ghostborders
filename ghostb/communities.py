@@ -95,12 +95,14 @@ class Communities:
 
     def compute_n_times(self, out_dir, out_file, two, n, best):
         best_mod = -1.
+        best_ncomms = 0
         for i in range(n):
             print('iteration #%s' % i)
             memb, mod = self.compute(two)
             print('modularity: %s' % mod)
             if mod > best_mod:
                 best_mod = mod
+                best_ncomms = len(set(memb))
                 if best:
                     if out_file is None:
                         out_path = "%s/best.csv" % out_dir
@@ -112,4 +114,5 @@ class Communities:
 
         print('best modularity: %s' % best_mod)
         print('done.')
-        return best_mod
+        return (best_mod, best_ncomms)
+    

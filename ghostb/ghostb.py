@@ -23,6 +23,7 @@ from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
 from ghostb.flag import Flag
 from ghostb.percentiles import Percentiles
+from ghostb.locs_metrics import LocsMetrics
 
 
 @click.group()
@@ -457,9 +458,20 @@ def percentile_borders(ctx):
 @click.pass_context
 def percentile_maps(ctx):
     outdir = ctx.obj['outdir']
-    region = ctx.obj['region']
+    region = ctx.obj['country']
     per = Percentiles(outdir)
     per.generate_maps(region)
+
+
+@cli.command()
+@click.pass_context
+def locs_metrics(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outfile = ctx.obj['outfile']
+    lm = LocsMetrics(db)
+    lm.generate(outfile)
 
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ class Percentiles:
     def bord_path(self, per_dist, per_time):
         return self.file_path('bord', per_dist, per_time)
 
-    def map_path(self, name, per_dist, per_time):
+    def map_path(self, per_dist, per_time):
         return '%s/map-d%s-t%s.pdf' % (self.outdir, per_dist, per_time)
     
     def write_percentiles(self, per_table):
@@ -74,12 +74,17 @@ class Percentiles:
         print('done.')
 
     def generate_communities(self):
+        fname = '%s/metrics.csv' % self.outdir
+        f = open(fname, 'w')
+        f.write('per_distance,per_time,modularity,ncomms\n')
         for per_dist in percent_range():
             for per_time in percent_range():
                 graph_file = self.graph_path(per_dist, per_time)
                 comm_file = self.comm_path(per_dist, per_time)
                 comm = Communities(graph_file)
-                comm.compute_n_times(None, comm_file, False, 100, True)
+                modul, ncomms = comm.compute_n_times(None, comm_file, False, 100, True)
+                f.write('%s,%s,%s,%s\n' % (per_dist, per_time, modul, ncomms))
+        f.close()
 
     def generate_borders(self, db):
         for per_dist in percent_range():
@@ -94,4 +99,5 @@ class Percentiles:
             for per_time in percent_range():
                 bord_file = self.bord_path(per_dist, per_time)
                 map_file = self.map_path(per_dist, per_time)
-                draw_map(bord_file, map_file, region)
+                print('drawing map: %s' % map_file)
+                draw_map(bord_file, map_file, region, osm=True)

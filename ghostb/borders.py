@@ -133,7 +133,7 @@ def check_border(m, segment):
 
 def borders(vor, m):
     neighbors = voronoi2neighbors(vor)
-    smooth_until_stable(m, neighbors)
+    #smooth_until_stable(m, neighbors)
     return [segment for segment in vor if check_border(m, segment)]
 
 
