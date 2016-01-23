@@ -66,7 +66,7 @@ class DB:
         self.__exec_or_ignore("CREATE INDEX media_user ON media (user)")
         self.__exec_or_ignore("CREATE INDEX media_ts ON media (ts)")
 
-        # create user table
+        # create user tablep
         self.__exec_or_ignore("CREATE TABLE user (id BIGINT PRIMARY KEY)")
         # self.__exec_or_ignore("ALTER TABLE user MODIFY id BIGINT AUTO_INCREMENT")
         # self.__exec_or_ignore("ALTER TABLE user AUTO_INCREMENT = 1000000")
