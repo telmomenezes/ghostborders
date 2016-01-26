@@ -60,7 +60,7 @@ class LocsMetrics:
             angle = 0.
         div = (math.pi * 2) / DIRECTIONS
         i = int(angle / div)
-        self.locmap[orig]['angle_entropy'][i] += 1.
+        self.locmap[orig]['angle_entropy'][i] += weight
 
     def compute_angle_entropy(self, loc):
         degree = float(self.locmap[loc]['degree'])
