@@ -441,6 +441,14 @@ def percentile_graphs(ctx):
 
 @cli.command()
 @click.pass_context
+def percentile_normalize(ctx):
+    outdir = ctx.obj['outdir']
+    per = Percentiles(outdir)
+    per.normalize()
+
+
+@cli.command()
+@click.pass_context
 def percentile_communities(ctx):
     outdir = ctx.obj['outdir']
     per = Percentiles(outdir)

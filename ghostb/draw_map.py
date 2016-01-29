@@ -30,7 +30,7 @@ draw_rivers = True
 
 # resolutions:
 # c (crude), l (low), i (intermediate), h (high), f (full)
-def draw_map(db, borders_file, output_file, region, photo_dens_file=None,
+def draw_map(borders_file, output_file, region, photo_dens_file=None,
              pop_dens_file=None, osm=False, resolution='i', width=50.):
 
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
@@ -129,17 +129,17 @@ def draw_map(db, borders_file, output_file, region, photo_dens_file=None,
         m.plot(x, y, phantom_border_color, linewidth=weight)
 
     # draw scatter plot
-    data = np.genfromtxt('/Users/telmo/projects/ghostborders/berlin-locs-metrics.csv', names=['loc','lat','lng','photos','users','dist','time','degree','neighbors','self','entropy','dist_var','angle_var','angle_entropy'], skip_header=1, delimiter=',')
+    #data = np.genfromtxt('/Users/telmo/projects/ghostborders/berlin-locs-metrics.csv', names=['loc','lat','lng','photos','users','dist','time','degree','neighbors','self','entropy','dist_var','angle_var','angle_entropy'], skip_header=1, delimiter=',')
     #locmap = LocMap(db).coords
-    max_dist = max(data['dist'])
-    for i in range(len(data['loc'])):
-        if data['degree'][i] > 0.:
-            x, y = m(data['lng'][i], data['lat'][i])
-            x -= xorig
-            y -= yorig
-            weight = data['angle_entropy'][i] * 25.
-            dist = data['dist'][i] / max_dist
-            color = (dist, 0, 1.0 - dist)
-            m.plot(x, y, 'b.', markersize=weight, color=color)
+    #max_dist = max(data['dist'])
+    #for i in range(len(data['loc'])):
+    #    if data['degree'][i] > 0.:
+    #        x, y = m(data['lng'][i], data['lat'][i])
+    #        x -= xorig
+    #        y -= yorig
+    #        weight = data['angle_entropy'][i] * 25.
+    #        dist = data['dist'][i] / max_dist
+    #        color = (dist, 0, 1.0 - dist)
+    #        m.plot(x, y, 'b.', markersize=weight, color=color)
         
     plt.savefig(output_file)

@@ -4,6 +4,7 @@ from ghostb.filter_dists import FilterDists
 from ghostb.communities import Communities
 from ghostb.borders import Borders
 from ghostb.draw_map import draw_map
+from ghostb.confmodel import normalize_with_confmodel
 
 
 def percent_range():
@@ -73,6 +74,12 @@ class Percentiles:
 
         print('done.')
 
+    def normalize(self):
+        for per_dist in percent_range():
+            for per_time in percent_range():
+                graph_file = self.graph_path(per_dist, per_time)
+                normalize_with_confmodel(graph_file, graph_file)
+        
     def generate_communities(self):
         fname = '%s/metrics.csv' % self.outdir
         f = open(fname, 'w')
