@@ -42,7 +42,7 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--indir', help='Input directory.')
 @click.option('--outdir', help='Output directory.', default=None)
 @click.option('--shapefile', help='Shape file.', multiple=True)
-@click.option('--runs', help='Number of runs.')
+@click.option('--runs', help='Number of runs.', default=100)
 @click.option('--two/--many', default=False)
 @click.option('--photo_dens_file', help='Photo densities file.', default=None)
 @click.option('--pop_dens_file', help='Population densities file.', default=None)
@@ -319,7 +319,7 @@ def confmodel(ctx):
 def communities(ctx):
     infile = ctx.obj['infile']
     outdir = ctx.obj['outdir']
-    outdir = ctx.obj['outfile']
+    outfile = ctx.obj['outfile']
     two = ctx.obj['two']
     runs = int(ctx.obj['runs'])
     best = ctx.obj['best']
@@ -451,8 +451,12 @@ def percentile_normalize(ctx):
 @click.pass_context
 def percentile_communities(ctx):
     outdir = ctx.obj['outdir']
+    two = ctx.obj['two']
+    runs = int(ctx.obj['runs'])
+    best = ctx.obj['best']
+
     per = Percentiles(outdir)
-    per.generate_communities()
+    per.generate_communities(two, runs, best)
 
 
 @cli.command()

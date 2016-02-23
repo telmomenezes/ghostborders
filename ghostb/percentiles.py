@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
@@ -15,17 +16,23 @@ class Percentiles:
     def __init__(self, outdir):
         self.outdir = outdir
 
-    def file_path(self, name, per_dist, per_time):
-        return '%s/%s-d%s-t%s.csv' % (self.outdir, name, per_dist, per_time)
+    def make_path(self, name, per_dist, per_time, directory=False):
+        path = '%s/%s-d%s-t%s' % (self.outdir, name, per_dist, per_time)
+        if directory:
+            if not os.path.exists(path):
+                os.makedirs(path)
+            return path
+        else:
+            return '%s.csv' % (path,)
 
     def graph_path(self, per_dist, per_time):
-        return self.file_path('graph', per_dist, per_time)
+        return self.make_path('graph', per_dist, per_time)
 
-    def comm_path(self, per_dist, per_time):
-        return self.file_path('comm', per_dist, per_time)
+    def comm_path(self, per_dist, per_time, directory):
+        return self.make_path('comm', per_dist, per_time, directory)
 
     def bord_path(self, per_dist, per_time):
-        return self.file_path('bord', per_dist, per_time)
+        return self.make_path('bord', per_dist, per_time)
 
     def map_path(self, per_dist, per_time):
         return '%s/map-d%s-t%s.pdf' % (self.outdir, per_dist, per_time)
@@ -80,16 +87,18 @@ class Percentiles:
                 graph_file = self.graph_path(per_dist, per_time)
                 normalize_with_confmodel(graph_file, graph_file)
         
-    def generate_communities(self):
+    def generate_communities(self, two, runs, best):
         fname = '%s/metrics.csv' % self.outdir
         f = open(fname, 'w')
         f.write('per_distance,per_time,modularity,ncomms\n')
         for per_dist in percent_range():
             for per_time in percent_range():
                 graph_file = self.graph_path(per_dist, per_time)
-                comm_file = self.comm_path(per_dist, per_time)
                 comm = Communities(graph_file)
-                modul, ncomms = comm.compute_n_times(None, comm_file, False, 100, True)
+                comm_file = self.comm_path(per_dist, per_time, False)
+                comm_dir = self.comm_path(per_dist, per_time, True)
+                modul, ncomms = comm.compute_n_times(
+                    comm_dir, comm_file, two, runs, best)
                 f.write('%s,%s,%s,%s\n' % (per_dist, per_time, modul, ncomms))
         f.close()
 
