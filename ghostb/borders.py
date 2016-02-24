@@ -33,85 +33,6 @@ def normalize_segment(segment):
             'id2': id2}
 
 
-def voronoi2neighbors(vor):
-    neighbors = {}
-    for segment in vor:
-        id1 = segment['id1']
-        id2 = segment['id2']
-        if id1 in neighbors:
-            neighbors[id1].append(id2)
-        else:
-            neighbors[id1] = [id2]
-        if id2 in neighbors:
-            neighbors[id2].append(id1)
-        else:
-            neighbors[id2] = [id1]
-    return neighbors
-
-
-def modes(comms):
-    distrib = {}
-    for comm in comms:
-        if comm in distrib:
-            distrib[comm] += 1
-        else:
-            distrib[comm] = 1
-    maxfq = max(distrib.values())
-    return [comm for comm in distrib if distrib[comm] == maxfq]
-
-
-# find the mode community for a given location and its neighbors
-# in case of a tie, uses the largest community
-def mode_community(loc, m, neighbors, comm_sizes):
-    ids = neighbors[loc] + [loc]
-    comms = [m[x]['community'] for x in ids]
-    cmodes = modes(comms)
-    best_mode = None
-    best_size = 0
-    for mode in cmodes:
-        size = comm_sizes[mode]
-        if size > best_size:
-            best_size = size
-            best_mode = mode
-    return best_mode
-
-
-# compute map of size by community
-def map2community_sizes(m):
-    comm_sizes = {}
-    for key in m:
-        comm = m[key]['community']
-        if comm in comm_sizes:
-            comm_sizes[comm] += 1
-        else:
-            comm_sizes[comm] = 1
-    return comm_sizes
-
-
-# set community to the most frequent value in its neighbors (including itself)
-# in case of a tie, choose the largest community
-def smooth(m, neighbors):
-    comm_sizes = map2community_sizes(m)
-    updates = 0
-    for loc in m:
-        comm = mode_community(loc, m, neighbors, comm_sizes)
-        if m[loc]['community'] != comm:
-            m[loc]['community'] = comm
-            updates += 1
-    return updates
-
-
-# run smoothing algortihm until stable
-def smooth_until_stable(m, neighbors):
-    i = 0
-    while True:
-        i += 1
-        updates = smooth(m, neighbors)
-        print('smoothing pass %s, %s updates.' % (i, updates))
-        if updates == 0:
-            return
-
-
 def seg2list(segment):
     return (segment['x1'], segment['y1'], segment['x2'], segment['y2'])
 
@@ -125,6 +46,33 @@ def voronoi2file(vor, path):
 
     f.close()
 
+    
+def voronoi2neighbors(vor):
+    neighbors = {}
+    for segment in vor:
+        id1 = segment['id1']
+        id2 = segment['id2']
+        if id1 in neighbors:
+            neighbors[id1].append(id2)
+        else:
+            neighbors[id1] = [id2]
+            if id2 in neighbors:
+                neighbors[id2].append(id1)
+            else:
+                neighbors[id2] = [id1]
+    return neighbors
+
+    
+def modes(comms):
+    distrib = {}
+    for comm in comms:
+        if comm in distrib:
+            distrib[comm] += 1
+        else:
+            distrib[comm] = 1
+    maxfq = max(distrib.values())
+    return [comm for comm in distrib if distrib[comm] == maxfq]
+
 
 class Borders:
     def __init__(self, db):
@@ -137,7 +85,8 @@ class Borders:
             self.comm_map[loc_id] = {'community': -1,
                                      'lat': coord['lat'],
                                      'lng': coord['lng']}
-
+        self.neighbors = voronoi2neighbors(self.vor)
+        
     def read_communities(self, path):
         lines = [line.rstrip('\n') for line in open(path)]
         del lines[0]
@@ -159,14 +108,65 @@ class Borders:
         comm2 = self.comm_map[id2]['community']
 
         # no borders with empty regions
-        if (comm1 < 0) or (comm2 < 0):
-            return False
+        #if (comm1 < 0) or (comm2 < 0):
+        #    return False
         
         return comm1 != comm2
+
+    # find the mode community for a given location and its neighbors
+    # in case of a tie, uses the largest community
+    def mode_community(self, loc, comm_sizes):
+        ids = self.neighbors[loc] + [loc]
+        comms = [self.comm_map[x]['community'] for x in ids]
+        cmodes = modes(comms)
+        best_mode = None
+        best_size = 0
+        for mode in cmodes:
+            size = comm_sizes[mode]
+            if size > best_size:
+                best_size = size
+                best_mode = mode
+        return best_mode
+
+
+    # compute map of size by community
+    def map2community_sizes(self):
+        comm_sizes = {}
+        for key in self.comm_map:
+            comm = self.comm_map[key]['community']
+            if comm in comm_sizes:
+                comm_sizes[comm] += 1
+            else:
+                comm_sizes[comm] = 1
+        return comm_sizes
+
+
+    # set community to the most frequent value in its neighbors (including itself)
+    # in case of a tie, choose the largest community
+    def smooth(self):
+        comm_sizes = self.map2community_sizes()
+        updates = 0
+        for loc in self.comm_map:
+            comm = self.mode_community(loc, comm_sizes)
+            if self.comm_map[loc]['community'] != comm:
+                self.comm_map[loc]['community'] = comm
+                updates += 1
+        return updates
+
+
+    # run smoothing algortihm until stable
+    def smooth_until_stable(self):
+        i = 0
+        while True:
+            i += 1
+            updates = self.smooth()
+            #print('smoothing pass %s, %s updates.' % (i, updates))
+            if updates == 0:
+                return
+
     
     def borders(self):
-        #neighbors = voronoi2neighbors(self.vor)
-        #smooth_until_stable(self.comm_map, neighbors)
+        self.smooth_until_stable()
         return [segment for segment in self.vor if self.check_border(segment)]
     
     def process_file(self, f_in):

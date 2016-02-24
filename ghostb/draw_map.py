@@ -21,7 +21,7 @@ phantom_border_color = 'red'
 # widths
 border_width = 2.
 coastline_width = 3.
-phantom_border_width_factor = 3.
+phantom_border_width_factor = 10.
 river_width = 1.5
 point_size_factor = 10.
 # options

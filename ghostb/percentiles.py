@@ -105,20 +105,21 @@ class Percentiles:
     def generate_borders(self, db, best):
         bord = Borders(db)
         for per_dist in percent_range():
-            for per_time in percent_range():
-                #per_time = 100
-                bord_file = self.bord_path(per_dist, per_time)
-                if best:
-                    comm_file = self.comm_path(per_dist, per_time, False)
-                    bord.process(None, comm_file, bord_file)
-                else:
-                    comm_dir = self.comm_path(per_dist, per_time, True)
-                    bord.process(comm_dir, None, bord_file)
+            #for per_time in percent_range():
+            per_time = 100
+            bord_file = self.bord_path(per_dist, per_time)
+            if best:
+                comm_file = self.comm_path(per_dist, per_time, False)
+                bord.process(None, comm_file, bord_file)
+            else:
+                comm_dir = self.comm_path(per_dist, per_time, True)
+                bord.process(comm_dir, None, bord_file)
 
     def generate_maps(self, region):
         for per_dist in percent_range():
-            for per_time in percent_range():
-                bord_file = self.bord_path(per_dist, per_time)
-                map_file = self.map_path(per_dist, per_time)
-                print('drawing map: %s' % map_file)
-                draw_map(bord_file, map_file, region, osm=True)
+            #for per_time in percent_range():
+            per_time = 100
+            bord_file = self.bord_path(per_dist, per_time)
+            map_file = self.map_path(per_dist, per_time)
+            print('drawing map: %s' % map_file)
+            draw_map(bord_file, map_file, region, osm=True)
