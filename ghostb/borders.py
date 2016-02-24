@@ -33,11 +33,6 @@ def normalize_segment(segment):
             'id2': id2}
 
 
-def map2voronoi(m):
-    segments = voronoi.point_map2segments(m)
-    return [normalize_segment(x) for x in segments]
-
-
 def voronoi2neighbors(vor):
     neighbors = {}
     for segment in vor:
@@ -117,41 +112,8 @@ def smooth_until_stable(m, neighbors):
             return
 
 
-def check_border(m, segment):
-    id1 = segment['id1']
-    id2 = segment['id2']
-
-    # no borders with regions with unknown communities
-    #if m[id1]['community'] < 0:
-    #    return False
-    #if m[id2]['community'] < 0:
-    #    return False
-
-    # border if community
-    return m[id1]['community'] != m[id2]['community']
-
-
-def borders(vor, m):
-    neighbors = voronoi2neighbors(vor)
-    #smooth_until_stable(m, neighbors)
-    return [segment for segment in vor if check_border(m, segment)]
-
-
-def equal_segments(seg1, seg2):
-    return (seg1['x1'] == seg2['x1'])\
-            and (seg1['y1'] == seg2['y1'])\
-            and (seg1['x2'] == seg2['x2'])\
-            and (seg1['y2'] == seg2['y2'])
-
-
-def weight(segment, bs):
-    total = float(len(bs))
-    count = 0.0
-    for b in bs:
-        for seg in b:
-            if equal_segments(segment, seg):
-                count += 1.0
-    return count / total
+def seg2list(segment):
+    return (segment['x1'], segment['y1'], segment['x2'], segment['y2'])
 
 
 def voronoi2file(vor, path):
@@ -159,90 +121,75 @@ def voronoi2file(vor, path):
     f.write('x1,y1,x2,y2,weight\n')
 
     for seg in vor:
-        f.write('%s,%s,%s,%s,%s\n' % (seg['x1'], seg['y1'], seg['x2'], seg['y2'], seg['weight']))
+        f.write('%s,%s,%s,%s,%s\n' % seg)
 
     f.close()
-
-
-def dir_list(dir_path):
-    return next(walk(dir_path))[1]
-
-
-def border_weight(bs, border):
-    if border in bs:
-        return bs[border]
-    else:
-        return 0.
-
-
-def weights(border, mborders):
-    return [border_weight(bs, border) for bs in mborders]
-
-
-def wtable2file(wtable, path):
-    wc = len(wtable[list(wtable.keys())[0]])
-
-    f = open(path, 'w')
-
-    f.write('x1,y1,x2,y2,')
-    wcolnames = list(range(wc))
-    wcolnames = ['w%s' % x for x in wcolnames]
-    f.write(','.join(wcolnames))
-    f.write('\n')
-
-    for key in wtable:
-        f.write('%s,%s\n' % (','.join(key), ','.join(wtable[key])))
-
-    f.close()
-
-
-def borders2map(bs):
-    m = {}
-    for border in bs:
-        key = (border['x1'], border['y1'], border['x2'], border['y2'])
-        m[key] = border['weight']
 
 
 class Borders:
     def __init__(self, db):
         self.locmap = LocMap(db)
+        segments = voronoi.point_map2segments(self.locmap.coords)
+        self.vor = [normalize_segment(x) for x in segments]
+        self.comm_map = {}
+        for loc_id in self.locmap.coords:
+            coord = self.locmap.coords[loc_id]
+            self.comm_map[loc_id] = {'community': -1,
+                                     'lat': coord['lat'],
+                                     'lng': coord['lng']}
 
-    def csv2map(self, path):
+    def read_communities(self, path):
         lines = [line.rstrip('\n') for line in open(path)]
         del lines[0]
 
         # initialize with no communities
-        m = {}
-        #for loc in self.locmap.coords:
-        #    coord = self.locmap.coords[loc]
-        #    m[loc] = {'community': -1,
-        #              'lat': coord['lat'],
-        #              'lng': coord['lng']}
+        for loc_id in self.locmap.coords:
+            self.comm_map[loc_id]['community'] = -1
 
         # read communities from csv
         for line in lines:
             row = line2row(line)
             coord = self.locmap.coords[row[0]]
-            m[row[0]] = {'community': row[1],
-                         'lat': coord['lat'],
-                         'lng': coord['lng']}
-        return m
+            self.comm_map[row[0]]['community'] = row[1]
 
+    def check_border(self, segment):
+        id1 = segment['id1']
+        id2 = segment['id2']
+        comm1 = self.comm_map[id1]['community']
+        comm2 = self.comm_map[id2]['community']
+
+        # no borders with empty regions
+        if (comm1 < 0) or (comm2 < 0):
+            return False
+        
+        return comm1 != comm2
+    
+    def borders(self):
+        #neighbors = voronoi2neighbors(self.vor)
+        #smooth_until_stable(self.comm_map, neighbors)
+        return [segment for segment in self.vor if self.check_border(segment)]
+    
     def process_file(self, f_in):
         print("processing file %s ..." % f_in)
-        m = self.csv2map(f_in)
-        vor = map2voronoi(m)
-        return borders(vor, m)
+        self.read_communities(f_in)
+        return self.borders()
 
     def file_list2borders(self, f_ins, dir_in=''):
         if len(dir_in) > 0:
             path = '%s/' % dir_in
         else:
             path = ''
-        bs = [self.process_file('%s%s' % (path, f)) for f in f_ins]
-        all_borders = [item for sublist in bs for item in sublist]
-        for segment in all_borders:
-            segment['weight'] = weight(segment, bs)
+        border_sets = [self.process_file('%s%s' % (path, f)) for f in f_ins]
+        total = float(len(border_sets))
+        segments = {}
+        for border_set in border_sets:
+            for segment in border_set:
+                segkey = seg2list(segment)
+                if segkey in segments:
+                    segments[segkey] += 1.0
+                else:
+                    segments[segkey] = 1.0
+        all_borders = [segkey + ((segments[segkey] / total),) for segkey in segments]
         return all_borders
     
     def dir2borders(self, dir_in):
@@ -263,14 +210,3 @@ class Borders:
         else:
             bs = self.file2borders(file_in)
         voronoi2file(bs, f_out)
-
-    def process_multiple(self, dir_in, f_out):
-        d_ins = dir_list(dir_in)[-12:]  # take last 12 directories
-        mborders = [borders2map(self.dir2borders(d)) for d in d_ins]
-        all_borders = [list(bs.keys) for bs in mborders]
-        all_borders = [item for sublist in all_borders for item in sublist]
-        all_borders = set(all_borders)
-        wtable = {}
-        for border in all_borders:
-            wtable[border] = weights(border, mborders)
-        wtable2file(wtable, f_out)

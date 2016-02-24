@@ -466,8 +466,10 @@ def percentile_borders(ctx):
     db = DB(dbname, ctx.obj['config'])
     db.open()
     outdir = ctx.obj['outdir']
+    best = ctx.obj['best']
+    
     per = Percentiles(outdir)
-    per.generate_borders(db)
+    per.generate_borders(db, best)
 
 
 @cli.command()
