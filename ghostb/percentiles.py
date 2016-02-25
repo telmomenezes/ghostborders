@@ -4,6 +4,7 @@ from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
 from ghostb.communities import Communities
 from ghostb.borders import Borders
+from ghostb.combine_borders import CombineBorders
 from ghostb.draw_map import draw_map
 from ghostb.confmodel import normalize_with_confmodel
 
@@ -105,21 +106,31 @@ class Percentiles:
     def generate_borders(self, db, best):
         bord = Borders(db)
         for per_dist in percent_range():
-            #for per_time in percent_range():
-            per_time = 100
-            bord_file = self.bord_path(per_dist, per_time)
-            if best:
-                comm_file = self.comm_path(per_dist, per_time, False)
-                bord.process(None, comm_file, bord_file)
-            else:
-                comm_dir = self.comm_path(per_dist, per_time, True)
-                bord.process(comm_dir, None, bord_file)
+            for per_time in percent_range():
+                #per_time = 100
+                bord_file = self.bord_path(per_dist, per_time)
+                if best:
+                    comm_file = self.comm_path(per_dist, per_time, False)
+                    bord.process(None, comm_file, bord_file)
+                else:
+                    comm_dir = self.comm_path(per_dist, per_time, True)
+                    bord.process(comm_dir, None, bord_file)
 
-    def generate_maps(self, region):
+    def combine_borders(self, out_file):
+        cb = CombineBorders()
         for per_dist in percent_range():
             #for per_time in percent_range():
             per_time = 100
             bord_file = self.bord_path(per_dist, per_time)
-            map_file = self.map_path(per_dist, per_time)
-            print('drawing map: %s' % map_file)
-            draw_map(bord_file, map_file, region, osm=True)
+            cb.add_file(bord_file, per_dist)
+        cb.write(out_file)
+                
+                    
+    def generate_maps(self, region):
+        for per_dist in percent_range():
+            for per_time in percent_range():
+                #per_time = 100
+                bord_file = self.bord_path(per_dist, per_time)
+                map_file = self.map_path(per_dist, per_time)
+                print('drawing map: %s' % map_file)
+                draw_map(bord_file, map_file, region, osm=True)
