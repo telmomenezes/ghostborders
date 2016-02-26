@@ -22,7 +22,6 @@ from ghostb.draw_map import draw_map
 from ghostb.draw_map2 import draw_map2
 from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
-from ghostb.flag import Flag
 from ghostb.percentiles import Percentiles
 from ghostb.locs_metrics import LocsMetrics
 
@@ -423,26 +422,6 @@ def locphotos(ctx):
 def graph_info(ctx):
     infile = ctx.obj['infile']
     graphinfo(infile)
-
-
-@cli.command()
-@click.pass_context
-def flag(ctx):
-    dbname = ctx.obj['dbname']
-    db = DB(dbname, ctx.obj['config'])
-    db.open()
-    fl = Flag(db)
-    fl.flag()
-
-    
-@cli.command()
-@click.pass_context
-def unflag(ctx):
-    dbname = ctx.obj['dbname']
-    db = DB(dbname, ctx.obj['config'])
-    db.open()
-    fl = Flag(db)
-    fl.unflag()
 
 
 @cli.command()
