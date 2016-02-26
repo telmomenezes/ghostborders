@@ -7,6 +7,7 @@ from ghostb.borders import Borders
 from ghostb.combine_borders import CombineBorders
 from ghostb.draw_map import draw_map
 from ghostb.confmodel import normalize_with_confmodel
+from ghostb.cropborders import CropBorders
 
 
 def percent_range():
@@ -106,16 +107,27 @@ class Percentiles:
     def generate_borders(self, db, best):
         bord = Borders(db)
         for per_dist in percent_range():
-            for per_time in percent_range():
-                #per_time = 100
-                bord_file = self.bord_path(per_dist, per_time)
-                if best:
-                    comm_file = self.comm_path(per_dist, per_time, False)
-                    bord.process(None, comm_file, bord_file)
-                else:
-                    comm_dir = self.comm_path(per_dist, per_time, True)
-                    bord.process(comm_dir, None, bord_file)
+        #for per_time in percent_range():
+            per_time = 100
+            bord_file = self.bord_path(per_dist, per_time)
+            if best:
+                comm_file = self.comm_path(per_dist, per_time, False)
+                bord.process(None, comm_file, bord_file)
+            else:
+                comm_dir = self.comm_path(per_dist, per_time, True)
+                bord.process(comm_dir, None, bord_file)
 
+    def crop_borders(self, shapefile):
+        for per_dist in percent_range():
+            #for per_time in percent_range():
+            per_time = 100
+            bord_file = self.bord_path(per_dist, per_time)
+            print('Cropping: %s' % bord_file)
+            cropper = CropBorders(bord_file, shapefile)
+            cropper.crop()
+            cropper.write(bord_file)
+                
+                    
     def combine_borders(self, out_file):
         cb = CombineBorders()
         for per_dist in percent_range():

@@ -468,6 +468,17 @@ def percentile_borders(ctx):
     per = Percentiles(outdir)
     per.generate_borders(db, best)
 
+    
+@cli.command()
+@click.pass_context
+def percentile_crop_borders(ctx):
+    outdir = ctx.obj['outdir']
+    infile = ctx.obj['infile']
+    shapefile = ctx.obj['shapefile']
+
+    per = Percentiles(outdir)
+    per.crop_borders(shapefile)
+
 
 @cli.command()
 @click.pass_context

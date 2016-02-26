@@ -78,7 +78,14 @@ class CropBorders:
         # flatten
         self.segments = [item for sublist in self.segments for item in sublist]
 
-    def write(self):
-        print('x1,y1,x2,y2,weight')
-        for segment in self.segments:
-            print("%s,%s,%s,%s,%s" % (segment[0].x, segment[0].y, segment[1].x, segment[1].y, segment[2]))
+    def write(self, path=None):
+        if path is None:
+            print('x1,y1,x2,y2,weight')
+            for segment in self.segments:
+                print('%s,%s,%s,%s,%s' % (segment[0].x, segment[0].y, segment[1].x, segment[1].y, segment[2]))
+        else:
+            f = open(path, 'w')
+            f.write('x1,y1,x2,y2,weight\n')
+            for segment in self.segments:
+                f.write('%s,%s,%s,%s,%s\n' % (segment[0].x, segment[0].y, segment[1].x, segment[1].y, segment[2]))
+            f.close()
