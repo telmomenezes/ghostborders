@@ -19,6 +19,7 @@ from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
 from ghostb.draw_map import draw_map
+from ghostb.draw_map2 import draw_map2
 from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
 from ghostb.flag import Flag
@@ -384,6 +385,27 @@ def draw(ctx):
              osm=osm,
              resolution=resolution,
              width=width)
+
+
+@cli.command()
+@click.pass_context
+def draw2(ctx):
+    infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
+    country = ctx.obj['country']
+    photo_dens_file = ctx.obj['photo_dens_file']
+    pop_dens_file = ctx.obj['pop_dens_file']
+    osm = ctx.obj['osm']
+    resolution = ctx.obj['resolution']
+    width = ctx.obj['width']
+    draw_map2(borders_file=infile,
+              output_file=outfile,
+              region=country,
+              photo_dens_file=photo_dens_file,
+              pop_dens_file=pop_dens_file,
+              osm=osm,
+              resolution=resolution,
+              width=width)
 
     
 @cli.command()
