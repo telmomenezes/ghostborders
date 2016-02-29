@@ -103,14 +103,12 @@ class Percentiles:
     def generate_borders(self, db, best):
         bord = Borders(db)
         for per_dist in percent_range():
-        #for per_time in percent_range():
-            per_time = 100
-            bord_file = self.bord_path(per_dist, per_time)
+            bord_file = self.bord_path(per_dist)
             if best:
-                comm_file = self.comm_path(per_dist, per_time, False)
+                comm_file = self.comm_path(per_dist, False)
                 bord.process(None, comm_file, bord_file)
             else:
-                comm_dir = self.comm_path(per_dist, per_time, True)
+                comm_dir = self.comm_path(per_dist, True)
                 bord.process(comm_dir, None, bord_file)
 
     def crop_borders(self, shapefile):
