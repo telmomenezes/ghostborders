@@ -48,7 +48,7 @@ class CombineBorders:
 
     def write(self, path):
         f = open(path, 'w')
-        f.write('x1,y1,x2,y2,weight,mean_dist,std_dist\n')
+        f.write('x1,y1,x2,y2,weight,mean_dist,std_dist,max_weight\n')
         
         for segment in self.segments:
             dists_weights = self.segments[segment]
