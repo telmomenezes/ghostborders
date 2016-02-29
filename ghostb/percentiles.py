@@ -66,13 +66,18 @@ class Percentiles:
         per_table = self.compute_percentiles(infile)
         
         fd = FilterDists(db)
-        gg = GenGraph(db)
+        
+        graph_file = self.graph_path(100)
+        print('generating: %s' % graph_file)
+        gg = GenGraph(db, graph_file)
         gg.generate()
+
         for per_dist in percent_range():
-            filtered_file = self.graph_path(per_dist)
-            print('generating: %s' % filtered_file)
-            max_dist = per_table[per_dist]
-            fd.filter(graph_file, filtered_file, max_dist)
+            if per_dist < 100:
+                filtered_file = self.graph_path(per_dist)
+                print('generating: %s' % filtered_file)
+                max_dist = per_table[per_dist]
+                fd.filter(graph_file, filtered_file, max_dist)
 
         print('done.')
 
