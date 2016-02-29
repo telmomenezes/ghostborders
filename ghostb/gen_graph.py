@@ -16,7 +16,7 @@ def time_delta(link, loc_ts):
 
 
 class GenGraph:
-    def __init__(self, db, graph_file, dist_file, max_time=-1):
+    def __init__(self, db, graph_file='', dist_file='', max_time=-1):
         self.db = db
         self.max_time = max_time
         self.write_graph = False

@@ -66,7 +66,7 @@ class Percentiles:
         per_table = self.compute_percentiles(infile)
         
         fd = FilterDists(db)
-        gg = GenGraph(db, graph_file, '')
+        gg = GenGraph(db)
         gg.generate()
         for per_dist in percent_range():
             filtered_file = self.graph_path(per_dist)
