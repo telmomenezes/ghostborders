@@ -75,8 +75,9 @@ def modes(comms):
 
 
 class Borders:
-    def __init__(self, db):
+    def __init__(self, db, smooth):
         self.locmap = LocMap(db)
+        self.smooth = smooth
         segments = voronoi.point_map2segments(self.locmap.coords)
         self.vor = [normalize_segment(x) for x in segments]
         self.comm_map = {}
@@ -166,7 +167,8 @@ class Borders:
 
     
     def borders(self):
-        self.smooth_until_stable()
+        if self.smooth:
+            self.smooth_until_stable()
         return [segment for segment in self.vor if self.check_border(segment)]
     
     def process_file(self, f_in):

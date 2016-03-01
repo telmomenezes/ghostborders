@@ -41,6 +41,7 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--outfile', help='Output file.', default=None)
 @click.option('--indir', help='Input directory.')
 @click.option('--outdir', help='Output directory.', default=None)
+@click.option('--smooth/--nosmooth', default=False)
 @click.option('--shapefile', help='Shape file.', multiple=True)
 @click.option('--runs', help='Number of runs.', default=100)
 @click.option('--two/--many', default=False)
@@ -56,9 +57,9 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--max_time', help='Maximum time.', default=-1)
 @click.pass_context
 def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
-        max_lng,rows, cols, infile, outfile, indir, outdir, shapefile, runs, two,
-        photo_dens_file, pop_dens_file, osm, resolution, width, best, max_dist,
-        graph_file, dist_file, max_time):
+        max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
+        runs, two, photo_dens_file, pop_dens_file, osm, resolution, width, best,
+        max_dist, graph_file, dist_file, max_time):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -75,6 +76,7 @@ def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         'outfile': outfile,
         'indir': indir,
         'outdir': outdir,
+        'smooth': smooth,
         'shapefile': shapefile,
         'runs': runs,
         'two': two,
@@ -349,7 +351,8 @@ def borders(ctx):
     indir = ctx.obj['indir']
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
-    bs = Borders(db)
+    smooth = ctx.obj['smooth']
+    bs = Borders(db, smooth)
     bs.process(indir, infile, outfile)
 
 
@@ -464,9 +467,10 @@ def percentile_borders(ctx):
     db.open()
     outdir = ctx.obj['outdir']
     best = ctx.obj['best']
+    smooth = ctx.obj['smooth']
     
     per = Percentiles(outdir)
-    per.generate_borders(db, best)
+    per.generate_borders(db, best, smooth)
 
     
 @cli.command()
