@@ -118,7 +118,6 @@ class Percentiles:
             cropper = CropBorders(bord_file, shapefile)
             cropper.crop()
             cropper.write(bord_file)
-                
                     
     def combine_borders(self, out_file):
         cb = CombineBorders()

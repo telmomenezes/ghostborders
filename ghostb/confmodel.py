@@ -8,7 +8,8 @@ def normalize(g):
     for edge in g:
         weight = float(g[edge])
         expected = (float(degs[edge[0]]) * float(degs[edge[1]])) / m
-        weight /= expected
+        if expected > 0.:
+            weight /= expected
         g[edge] = weight
 
 
