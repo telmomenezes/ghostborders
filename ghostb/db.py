@@ -66,7 +66,7 @@ class DB:
         self.__exec_or_ignore("CREATE INDEX media_user ON media (user)")
         self.__exec_or_ignore("CREATE INDEX media_ts ON media (ts)")
 
-        # create user tablep
+        # create user table
         self.__exec_or_ignore("CREATE TABLE user (id BIGINT PRIMARY KEY)")
         # self.__exec_or_ignore("ALTER TABLE user MODIFY id BIGINT AUTO_INCREMENT")
         # self.__exec_or_ignore("ALTER TABLE user AUTO_INCREMENT = 1000000")
@@ -77,10 +77,8 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN first_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN last_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN photos BIGINT DEFAULT 0")
-        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN flag INT DEFAULT 0")
 
         self.__exec_or_ignore("CREATE INDEX user_username ON user (username)")
-        self.__exec_or_ignore("CREATE INDEX user_flag ON user (flag)")
 
         # create locations table
         self.__exec_or_ignore("CREATE TABLE location (id BIGINT PRIMARY KEY)")
@@ -134,11 +132,5 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE locationlocation ADD COLUMN loc2 BIGINT")
         self.__exec_or_ignore("ALTER TABLE locationlocation ADD COLUMN weight BIGINT")
         self.__exec_or_ignore("ALTER TABLE locationlocation ADD COLUMN month CHAR(7) DEFAULT NULL")
-
-        # create table month
-        self.__exec_or_ignore("CREATE TABLE month (id CHAR(7))")
-        self.__exec_or_ignore("ALTER TABLE month ADD COLUMN first_seen_users BIGINT")
-        self.__exec_or_ignore("ALTER TABLE month ADD COLUMN last_seen_users BIGINT")
-        self.__exec_or_ignore("ALTER TABLE month ADD COLUMN photos BIGINT")
 
         self.conn.commit()

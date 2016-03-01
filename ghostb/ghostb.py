@@ -7,7 +7,6 @@ from ghostb.fixlocations import FixLocations
 from ghostb.cropborders import CropBorders
 from ghostb.useractivity import UserActivity
 from ghostb.userlocation import UserLocation
-from ghostb.monthly import Monthly
 from ghostb.userhome import UserHome
 from ghostb.photodensity import PhotoDensity
 from ghostb.cropdata import CropData
@@ -221,19 +220,6 @@ def user_locations(ctx):
 
 @cli.command()
 @click.pass_context
-def monthly(ctx):
-    click.echo('Computing months')
-    config = ctx.obj['config']
-    db = DB(ctx.obj['dbname'], config)
-    db.open()
-    m = Monthly(db)
-    m.generate()
-    m.update_photos_month()
-    db.close()
-
-
-@cli.command()
-@click.pass_context
 def userhome(ctx):
     click.echo('Computing user homes')
     config = ctx.obj['config']
@@ -354,18 +340,6 @@ def borders(ctx):
     smooth = ctx.obj['smooth']
     bs = Borders(db, smooth)
     bs.process(indir, infile, outfile)
-
-
-@cli.command()
-@click.pass_context
-def mborders(ctx):
-    dbname = ctx.obj['dbname']
-    db = DB(dbname, ctx.obj['config'])
-    db.open()
-    indir = ctx.obj['indir']
-    outfile = ctx.obj['outfile']
-    bs = Borders(db)
-    bs.process_multiple(indir, outfile)
 
 
 @cli.command()
