@@ -122,20 +122,22 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
 
     # draw phantom borders
     for i in range(cols):
+        weight = co[i][4]
         max_weight = co[i][7]
-        if max_weight > 0.5:
+        if max_weight > 0:
             x, y = m((co[i][1], co[i][3]), (co[i][0], co[i][2]))
             x = (x[0] - xorig, x[1] - xorig)
             y = (y[0] - yorig, y[1] - yorig)
-            weight = co[i][4] * phantom_border_width_factor
             mean_dst = co[i][5]
             std_dst = co[i][6]
+            h = co[i][8]
             color = 'black'
-            if std_dst < 25.0:
+            if h < .85:
                 if mean_dst > 50.0:
                     color = 'red'
                 else:
                     color = 'blue'
-            m.plot(x, y, color, linewidth=weight)
+            lw = (h + 0.1) * phantom_border_width_factor
+            m.plot(x, y, color, linewidth=lw, alpha=max_weight)
 
     plt.savefig(output_file)

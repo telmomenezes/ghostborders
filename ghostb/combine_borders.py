@@ -2,19 +2,20 @@ import math
 from numpy import genfromtxt
 
 
-def mean_std_max(dists_weights):
+def metrics(dists_weights):
     total = 0.
-    count = 0.
+    count = 10.
     summ = 0.
     max_weight = 0.
+    h = 0.
     for dw in dists_weights:
         dist = dw[0]
         weight = dw[1]
         if weight > max_weight:
             max_weight = weight
         total += weight
-        count += 1.
         summ += weight * dist
+        h += math.pow(weight, 2)
 
     mean_weight = total / count
     mean_dist = summ / total
@@ -27,7 +28,10 @@ def mean_std_max(dists_weights):
 
     std = math.sqrt(summ / total)
 
-    return mean_weight, mean_dist, std, max_weight
+    h /= pow(total, 2)
+    h = 1. - h
+    
+    return mean_weight, mean_dist, std, max_weight, h
 
 
 class CombineBorders:
@@ -48,11 +52,11 @@ class CombineBorders:
 
     def write(self, path):
         f = open(path, 'w')
-        f.write('x1,y1,x2,y2,weight,mean_dist,std_dist,max_weight\n')
+        f.write('x1,y1,x2,y2,weight,mean_dist,std_dist,max_weight,h\n')
         
         for segment in self.segments:
             dists_weights = self.segments[segment]
             #print(segment + (mean_std_dist(dists_weights)))
-            f.write('%s,%s,%s,%s,%s,%s,%s,%s\n' % (segment + (mean_std_max(dists_weights))))
+            f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % (segment + (metrics(dists_weights))))
 
         f.close()
