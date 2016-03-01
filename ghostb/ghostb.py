@@ -41,7 +41,7 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--outfile', help='Output file.', default=None)
 @click.option('--indir', help='Input directory.')
 @click.option('--outdir', help='Output directory.', default=None)
-@click.option('--smooth/--nosmooth', default=False)
+@click.option('--smooth/--nosmooth', help='Smooth communities.', default=False)
 @click.option('--shapefile', help='Shape file.', multiple=True)
 @click.option('--runs', help='Number of runs.', default=100)
 @click.option('--two/--many', default=False)
