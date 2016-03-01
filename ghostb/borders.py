@@ -166,7 +166,7 @@ class Borders:
 
     
     def borders(self):
-        #self.smooth_until_stable()
+        self.smooth_until_stable()
         return [segment for segment in self.vor if self.check_border(segment)]
     
     def process_file(self, f_in):
