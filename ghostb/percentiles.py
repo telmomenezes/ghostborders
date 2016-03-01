@@ -101,7 +101,7 @@ class Percentiles:
         f.close()
 
     def generate_borders(self, db, best, smooth):
-        bord = Borders(db)
+        bord = Borders(db, smooth)
         for per_dist in percent_range():
             bord_file = self.bord_path(per_dist)
             if best:

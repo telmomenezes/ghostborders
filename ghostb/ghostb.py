@@ -472,7 +472,7 @@ def percentile_borders(ctx):
     per = Percentiles(outdir)
     per.generate_borders(db, best, smooth)
 
-    
+
 @cli.command()
 @click.pass_context
 def percentile_crop_borders(ctx):
