@@ -1,4 +1,5 @@
 import csv
+import ghostb.region_defs
 
 
 def safe_unicode(obj, *args):
@@ -77,6 +78,10 @@ class Locations:
 
         self.db.conn.commit()
 
+    def add_region_grid(self, region, rows, cols):
+        coords = ghostb.region_defs.region_coords[region]
+        self.add_grid(coords[0], coords[1], coords[2], coords[3], rows, cols)
+        
     def clean(self):
         self.db.cur.execute("DELETE FROM location")
         self.db.conn.commit()

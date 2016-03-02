@@ -28,7 +28,7 @@ from ghostb.locs_metrics import LocsMetrics
 @click.group()
 @click.option('--db', help='Database name.')
 @click.option('--locs_file', help='Path to locations file.')
-@click.option('--country', help='Country name.')
+@click.option('--region', help='Region name.')
 @click.option('--country_code', help='Country code.')
 @click.option('--min_lat', help='Minimum latitude.')
 @click.option('--max_lat', help='Maximum latitude.')
@@ -55,7 +55,7 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--dist_file', help='Output distribution file.', default='')
 @click.option('--max_time', help='Maximum time.', default=-1)
 @click.pass_context
-def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
+def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
         runs, two, photo_dens_file, pop_dens_file, osm, resolution, width, best,
         max_dist, graph_file, dist_file, max_time):
@@ -63,7 +63,7 @@ def cli(ctx, db, locs_file, country, country_code, min_lat, max_lat, min_lng,
         'config': Config('ghostb.conf'),
         'dbname': db,
         'locs_file': locs_file,
-        'country': country,
+        'region': region,
         'country_code': country_code,
         'min_lat': min_lat,
         'max_lat': max_lat,
@@ -147,6 +147,18 @@ def add_grid(ctx):
     locs.add_grid(min_lat, min_lng, max_lat, max_lng, rows, cols)
     db.close()
 
+@cli.command()
+@click.pass_context
+def add_region_grid(ctx):
+    region = ctx.obj['region']
+    rows = int(ctx.obj['rows'])
+    cols = int(ctx.obj['cols'])
+    click.echo('Adding grid of locations for region: %s' % region)
+    db = DB(ctx.obj['dbname'], ctx.obj['config'])
+    db.open()
+    locs = Locations(db)
+    locs.add_region_grid(region, rows, cols)
+    db.close()
 
 @cli.command()
 @click.pass_context
@@ -347,7 +359,7 @@ def borders(ctx):
 def draw(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
-    country = ctx.obj['country']
+    region = ctx.obj['region']
     photo_dens_file = ctx.obj['photo_dens_file']
     pop_dens_file = ctx.obj['pop_dens_file']
     osm = ctx.obj['osm']
@@ -355,7 +367,7 @@ def draw(ctx):
     width = ctx.obj['width']
     draw_map(borders_file=infile,
              output_file=outfile,
-             region=country,
+             region=region,
              photo_dens_file=photo_dens_file,
              pop_dens_file=pop_dens_file,
              osm=osm,
@@ -368,7 +380,7 @@ def draw(ctx):
 def draw2(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
-    country = ctx.obj['country']
+    region = ctx.obj['region']
     photo_dens_file = ctx.obj['photo_dens_file']
     pop_dens_file = ctx.obj['pop_dens_file']
     osm = ctx.obj['osm']
@@ -376,7 +388,7 @@ def draw2(ctx):
     width = ctx.obj['width']
     draw_map2(borders_file=infile,
               output_file=outfile,
-              region=country,
+              region=region,
               photo_dens_file=photo_dens_file,
               pop_dens_file=pop_dens_file,
               osm=osm,
@@ -470,7 +482,7 @@ def percentile_combine_borders(ctx):
 @click.pass_context
 def percentile_maps(ctx):
     outdir = ctx.obj['outdir']
-    region = ctx.obj['country']
+    region = ctx.obj['region']
     per = Percentiles(outdir)
     per.generate_maps(region)
 

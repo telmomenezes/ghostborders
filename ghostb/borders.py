@@ -161,7 +161,7 @@ class Borders:
         while True:
             i += 1
             updates = self.smooth()
-            #print('smoothing pass %s, %s updates.' % (i, updates))
+            print('smoothing pass %s, %s updates.' % (i, updates))
             if updates == 0:
                 return
 

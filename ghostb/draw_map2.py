@@ -124,7 +124,7 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
     for i in range(cols):
         weight = co[i][4]
         max_weight = co[i][7]
-        if max_weight > 0:
+        if (weight > 0.) and (max_weight > 0.):
             x, y = m((co[i][1], co[i][3]), (co[i][0], co[i][2]))
             x = (x[0] - xorig, x[1] - xorig)
             y = (y[0] - yorig, y[1] - yorig)
