@@ -117,7 +117,9 @@ class Borders:
     # find the mode community for a given location and its neighbors
     # in case of a tie, uses the largest community
     def mode_community(self, loc, comm_sizes):
-        ids = self.neighbors[loc] + [loc]
+        ids = [loc]
+        if loc in self.neighbors:
+            ids += self.neighbors[loc]
         comms = [self.comm_map[x]['community'] for x in ids]
         cmodes = modes(comms)
         best_mode = None
