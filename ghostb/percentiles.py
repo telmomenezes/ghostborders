@@ -9,15 +9,16 @@ from ghostb.draw_map import draw_map
 from ghostb.confmodel import normalize_with_confmodel
 from ghostb.cropborders import CropBorders
 
-
-def percent_range():
-    return range(10, 101, 10)
-
     
 class Percentiles:
-    def __init__(self, outdir):
+    def __init__(self, outdir, intervals):
         self.outdir = outdir
+        self.intervals = intervals
 
+    def percent_range(self):
+        step = 100.0 / self.intervals
+        return [int(i * step) for i in range (1, self.intervals + 1)]
+        
     def make_path(self, name, per_dist, directory=False):
         path = '%s/%s-d%s' % (self.outdir, name, per_dist)
         if directory:
@@ -53,7 +54,7 @@ class Percentiles:
         print('loading file: %s' % infile)
         data = np.genfromtxt(infile, names=['dist', 'time'], skip_header=1, delimiter=',')
         print('computing percentiles...')
-        for per in percent_range():
+        for per in self.percent_range():
             dist_per = np.percentile(data['dist'], per)
             per_table[per] = dist_per
             print('[percentile %s] dist: %s' % (per, dist_per))
@@ -72,7 +73,7 @@ class Percentiles:
         gg = GenGraph(db, graph_file)
         gg.generate()
 
-        for per_dist in percent_range():
+        for per_dist in self.percent_range():
             if per_dist < 100:
                 filtered_file = self.graph_path(per_dist)
                 print('generating: %s' % filtered_file)
@@ -82,7 +83,7 @@ class Percentiles:
         print('done.')
 
     def normalize(self):
-        for per_dist in percent_range():
+        for per_dist in self.percent_range():
             graph_file = self.graph_path(per_dist)
             normalize_with_confmodel(graph_file, graph_file)
         
@@ -90,7 +91,7 @@ class Percentiles:
         fname = '%s/metrics.csv' % self.outdir
         f = open(fname, 'w')
         f.write('per_distance,modularity,ncomms\n')
-        for per_dist in percent_range():
+        for per_dist in self.percent_range():
             graph_file = self.graph_path(per_dist)
             comm = Communities(graph_file)
             comm_file = self.comm_path(per_dist, False)
@@ -102,7 +103,7 @@ class Percentiles:
 
     def generate_borders(self, db, best, smooth):
         bord = Borders(db, smooth)
-        for per_dist in percent_range():
+        for per_dist in self.percent_range():
             bord_file = self.bord_path(per_dist)
             if best:
                 comm_file = self.comm_path(per_dist, False)
@@ -112,7 +113,7 @@ class Percentiles:
                 bord.process(comm_dir, None, bord_file)
 
     def crop_borders(self, shapefile):
-        for per_dist in percent_range():
+        for per_dist in self.percent_range():
             bord_file = self.bord_path(per_dist)
             print('Cropping: %s' % bord_file)
             cropper = CropBorders(bord_file, shapefile)
@@ -121,14 +122,14 @@ class Percentiles:
                     
     def combine_borders(self, out_file):
         cb = CombineBorders()
-        for per_dist in percent_range():
+        for per_dist in self.percent_range():
             bord_file = self.bord_path(per_dist)
             cb.add_file(bord_file, per_dist)
         cb.write(out_file)
                 
                     
     def generate_maps(self, region):
-        for per_dist in percent_range():
+        for per_dist in self.percent_range():
             bord_file = self.bord_path(per_dist)
             map_file = self.map_path(per_dist)
             print('drawing map: %s' % map_file)

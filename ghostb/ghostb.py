@@ -54,11 +54,12 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--graph_file', help='Output graph file.', default='')
 @click.option('--dist_file', help='Output distribution file.', default='')
 @click.option('--max_time', help='Maximum time.', default=-1)
+@click.option('--intervals', help='Number of intervals.', default=10)
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
         runs, two, photo_dens_file, pop_dens_file, osm, resolution, width, best,
-        max_dist, graph_file, dist_file, max_time):
+        max_dist, graph_file, dist_file, max_time, intervals):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -88,7 +89,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'max_dist': max_dist,
         'graph_file': graph_file,
         'dist_file': dist_file,
-        'max_time': max_time
+        'max_time': max_time,
+        'intervals': intervals
     }
 
 
@@ -421,7 +423,9 @@ def percentile_graphs(ctx):
     db.open()
     infile = ctx.obj['infile']
     outdir = ctx.obj['outdir']
-    per = Percentiles(outdir)
+    intervals = int(ctx.obj['intervals'])
+    
+    per = Percentiles(outdir, intervals)
     per.generate_graphs(db, infile)
 
 
@@ -429,7 +433,9 @@ def percentile_graphs(ctx):
 @click.pass_context
 def percentile_normalize(ctx):
     outdir = ctx.obj['outdir']
-    per = Percentiles(outdir)
+    intervals = int(ctx.obj['intervals'])
+    
+    per = Percentiles(outdir, intervals)
     per.normalize()
 
 
@@ -440,8 +446,9 @@ def percentile_communities(ctx):
     two = ctx.obj['two']
     runs = int(ctx.obj['runs'])
     best = ctx.obj['best']
+    intervals = int(ctx.obj['intervals'])
 
-    per = Percentiles(outdir)
+    per = Percentiles(outdir, intervals)
     per.generate_communities(two, runs, best)
 
 
@@ -454,8 +461,9 @@ def percentile_borders(ctx):
     outdir = ctx.obj['outdir']
     best = ctx.obj['best']
     smooth = ctx.obj['smooth']
+    intervals = int(ctx.obj['intervals'])
     
-    per = Percentiles(outdir)
+    per = Percentiles(outdir, intervals)
     per.generate_borders(db, best, smooth)
 
 
@@ -464,8 +472,9 @@ def percentile_borders(ctx):
 def percentile_crop_borders(ctx):
     outdir = ctx.obj['outdir']
     shapefile = ctx.obj['shapefile']
+    intervals = int(ctx.obj['intervals'])
 
-    per = Percentiles(outdir)
+    per = Percentiles(outdir, intervals)
     per.crop_borders(shapefile)
 
 
@@ -474,7 +483,9 @@ def percentile_crop_borders(ctx):
 def percentile_combine_borders(ctx):
     outdir = ctx.obj['outdir']
     outfile = ctx.obj['outfile']
-    per = Percentiles(outdir)
+    intervals = int(ctx.obj['intervals'])
+    
+    per = Percentiles(outdir, intervals)
     per.combine_borders(outfile)
 
 
@@ -483,7 +494,9 @@ def percentile_combine_borders(ctx):
 def percentile_maps(ctx):
     outdir = ctx.obj['outdir']
     region = ctx.obj['region']
-    per = Percentiles(outdir)
+    intervals = int(ctx.obj['intervals'])
+    
+    per = Percentiles(outdir, intervals)
     per.generate_maps(region)
 
 

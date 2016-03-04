@@ -133,10 +133,8 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
             h = co[i][8]
             color = 'black'
             if h < .85:
-                if mean_dst > 66.0:
+                if mean_dst > 50.0:
                     color = 'red'
-                elif mean_dst > 33.0:
-                    color = 'green'
                 else:
                     color = 'blue'
             lw = (h + 0.1) * phantom_border_width_factor
