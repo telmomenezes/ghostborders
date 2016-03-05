@@ -91,7 +91,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'graph_file': graph_file,
         'dist_file': dist_file,
         'max_time': max_time,
-        'intervals': intervals
+        'intervals': intervals,
+        'thick': thick
     }
 
 
