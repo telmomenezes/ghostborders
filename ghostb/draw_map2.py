@@ -21,7 +21,7 @@ phantom_border_color = 'red'
 # widths
 border_width = 2.
 coastline_width = 3.
-phantom_border_width_factor = 10.
+phantom_border_width_factor = 2.
 river_width = 1.5
 point_size_factor = 10.
 # options
@@ -132,12 +132,12 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
             std_dst = co[i][6]
             h = co[i][8]
             color = 'black'
-            if h < .85:
+            if h < 3.:
                 if mean_dst > 50.0:
                     color = 'red'
                 else:
                     color = 'blue'
-            lw = (h + 0.1) * phantom_border_width_factor
+            lw = h * phantom_border_width_factor
             m.plot(x, y, color, linewidth=lw, alpha=max_weight)
 
     plt.savefig(output_file)

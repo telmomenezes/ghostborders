@@ -2,9 +2,8 @@ import math
 from numpy import genfromtxt
 
 
-def metrics(dists_weights):
+def metrics(dists_weights, count):
     total = 0.
-    count = 10.
     summ = 0.
     max_weight = 0.
     h = 0.
@@ -29,7 +28,7 @@ def metrics(dists_weights):
     std = math.sqrt(summ / total)
 
     h /= pow(total, 2)
-    h = 1. - h
+    h = 1. / h
     
     return mean_weight, mean_dist, std, max_weight, h
 
@@ -37,8 +36,10 @@ def metrics(dists_weights):
 class CombineBorders:
     def __init__(self):
         self.segments = {}
+        self.count = 0
 
     def add_file(self, borders_file, distance_threshold):
+        self.count += 1
         co = genfromtxt(borders_file, delimiter=',', skip_header=1)
         cols = co.shape[0]
 
@@ -57,6 +58,6 @@ class CombineBorders:
         for segment in self.segments:
             dists_weights = self.segments[segment]
             #print(segment + (mean_std_dist(dists_weights)))
-            f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % (segment + (metrics(dists_weights))))
+            f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % (segment + (metrics(dists_weights, float(self.count)))))
 
         f.close()

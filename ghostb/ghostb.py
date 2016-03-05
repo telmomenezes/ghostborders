@@ -54,7 +54,7 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--graph_file', help='Output graph file.', default='')
 @click.option('--dist_file', help='Output distribution file.', default='')
 @click.option('--max_time', help='Maximum time.', default=-1)
-@click.option('--intervals', help='Number of intervals.', default=10)
+@click.option('--intervals', help='Number of intervals.', default=4)
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
