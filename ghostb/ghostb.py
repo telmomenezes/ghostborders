@@ -55,11 +55,12 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--dist_file', help='Output distribution file.', default='')
 @click.option('--max_time', help='Maximum time.', default=-1)
 @click.option('--intervals', help='Number of intervals.', default=4)
+@click.option('--thick', help='Line thickness factor.', default=1.)
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
         runs, two, photo_dens_file, pop_dens_file, osm, resolution, width, best,
-        max_dist, graph_file, dist_file, max_time, intervals):
+        max_dist, graph_file, dist_file, max_time, intervals, thick):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -388,6 +389,7 @@ def draw2(ctx):
     osm = ctx.obj['osm']
     resolution = ctx.obj['resolution']
     width = ctx.obj['width']
+    thick = float(ctx.obj['thick'])
     draw_map2(borders_file=infile,
               output_file=outfile,
               region=region,
@@ -395,7 +397,8 @@ def draw2(ctx):
               pop_dens_file=pop_dens_file,
               osm=osm,
               resolution=resolution,
-              width=width)
+              width=width,
+              thick=thick)
 
     
 @cli.command()

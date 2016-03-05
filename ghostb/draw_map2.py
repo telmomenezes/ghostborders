@@ -31,7 +31,7 @@ draw_rivers = True
 # resolutions:
 # c (crude), l (low), i (intermediate), h (high), f (full)
 def draw_map2(borders_file, output_file, region, photo_dens_file=None,
-              pop_dens_file=None, osm=False, resolution='i', width=50.):
+              pop_dens_file=None, osm=False, resolution='i', width=50., thickness=1.):
 
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
     cols = co.shape[0]
@@ -137,7 +137,7 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
                     color = 'red'
                 else:
                     color = 'blue'
-            lw = h * phantom_border_width_factor
+            lw = h * phantom_border_width_factor * thickness
             m.plot(x, y, color, linewidth=lw, alpha=max_weight)
 
     plt.savefig(output_file)
