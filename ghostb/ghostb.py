@@ -399,7 +399,7 @@ def draw2(ctx):
               osm=osm,
               resolution=resolution,
               width=width,
-              thick=thick)
+              thickness=thick)
 
     
 @cli.command()
