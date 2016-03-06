@@ -1,4 +1,5 @@
 import click
+import ghostb.cropdata
 from ghostb.db import DB
 from ghostb.locations import Locations
 from ghostb.config import Config
@@ -9,7 +10,6 @@ from ghostb.useractivity import UserActivity
 from ghostb.userlocation import UserLocation
 from ghostb.userhome import UserHome
 from ghostb.photodensity import PhotoDensity
-from ghostb.cropdata import CropData
 from ghostb.comment_locations import CommentLocations
 from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
@@ -270,15 +270,24 @@ def comment_locations(ctx):
 
 @cli.command()
 @click.pass_context
-def crop_data(ctx):
+def crop_rectangle(ctx):
     min_lat = float(ctx.obj['min_lat'])
     min_lng = float(ctx.obj['min_lng'])
     max_lat = float(ctx.obj['max_lat'])
     max_lng = float(ctx.obj['max_lng'])
     db = DB(ctx.obj['dbname'], ctx.obj['config'])
     db.open()
-    cd = CropData(db, min_lat, min_lng, max_lat, max_lng)
-    cd.crop()
+    ghostb.cropdata.crop_rectangle(db, min_lat, min_lng, max_lat, max_lng)
+    db.close()
+
+
+@cli.command()
+@click.pass_context
+def crop_region(ctx):
+    region = ctx.obj['region']
+    db = DB(ctx.obj['dbname'], ctx.obj['config'])
+    db.open()
+    ghostb.cropdata.crop_region(db, region)
     db.close()
 
 
