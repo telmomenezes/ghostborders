@@ -5,12 +5,12 @@ def crop_rectangle(db, min_lat, min_lng, max_lat, max_lng):
     print("removing photos ouside of crop region...")
     db.cur.execute("DELETE FROM media WHERE lat<%s OR lat>%s OR lng<%s OR lng>%s",
         (min_lat, max_lat, min_lng, max_lng))
-    self.db.conn.commit()
+    db.conn.commit()
 
     print("removing locations ouside of crop region...")
     db.cur.execute("DELETE FROM location WHERE lat<%s OR lat>%s OR lng<%s OR lng>%s",
         (min_lat, max_lat, min_lng, max_lng))
-    self.db.conn.commit()
+    db.conn.commit()
 
     print("done.")
 
