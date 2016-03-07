@@ -15,12 +15,19 @@ def line_string2segment(line_string, segment):
     return Point(coords[0]), Point(coords[1]), segment[2]
 
 
+def seg2str(seg):
+    head = '%s,%s,%s,%s' % (seg[0].x, seg[0].y, seg[1].x, seg[1].y)
+    tail = ','.join(['%s' % x for x in seg[2][4:]])
+    return ','.join((head, tail))
+
+
 class CropBorders:
     def __init__(self, in_file, shapefile_paths):
         self.in_file = in_file
         self.shapefile_paths = shapefile_paths
         self.polys = []
         self.segments = []
+        self.header = ''
 
     def within(self, point):
         for poly in self.polys:
@@ -67,25 +74,25 @@ class CropBorders:
             header = True
             for row in csvreader:
                 if header:
+                    self.header = ','.join(row)
                     header = False
                 else:
                     p1 = Point(float(row[0]), float(row[1]))
                     p2 = Point(float(row[2]), float(row[3]))
-                    w = float(row[4])
-                    self.segments.append((p1, p2, w))
+                    self.segments.append((p1, p2, row))
 
         self.segments = [self.fix(segment) for segment in self.segments]
         # flatten
-        self.segments = [item for sublist in self.segments for item in sublist]
-
+        self.segments = [item for sublist in self.segments for item in sublist]    
+        
     def write(self, path=None):
         if path is None:
-            print('x1,y1,x2,y2,weight')
+            print(self.header)
             for segment in self.segments:
-                print('%s,%s,%s,%s,%s' % (segment[0].x, segment[0].y, segment[1].x, segment[1].y, segment[2]))
+                print(seg2str(segment))
         else:
             f = open(path, 'w')
-            f.write('x1,y1,x2,y2,weight\n')
+            f.write('%s\n' % self.header)
             for segment in self.segments:
-                f.write('%s,%s,%s,%s,%s\n' % (segment[0].x, segment[0].y, segment[1].x, segment[1].y, segment[2]))
+                f.write('%s\n' % seg2str(segment))
             f.close()
