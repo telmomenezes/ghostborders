@@ -482,6 +482,21 @@ def percentile_borders(ctx):
 
 @cli.command()
 @click.pass_context
+def percentile_multi_borders(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outdir = ctx.obj['outdir']
+    outfile = ctx.obj['outfile']
+    smooth = ctx.obj['smooth']
+    intervals = int(ctx.obj['intervals'])
+    
+    per = Percentiles(outdir, intervals)
+    per.generate_multi_borders(db, outfile, smooth)
+
+
+@cli.command()
+@click.pass_context
 def percentile_crop_borders(ctx):
     outdir = ctx.obj['outdir']
     shapefile = ctx.obj['shapefile']

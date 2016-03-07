@@ -4,6 +4,7 @@ from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
 from ghostb.communities import Communities
 from ghostb.borders import Borders
+from ghostb.multi_borders import MultiBorders
 from ghostb.combine_borders import CombineBorders
 from ghostb.draw_map import draw_map
 from ghostb.confmodel import normalize_with_confmodel
@@ -112,6 +113,11 @@ class Percentiles:
                 comm_dir = self.comm_path(per_dist, True)
                 bord.process(comm_dir, None, bord_file)
 
+    def generate_multi_borders(self, db, out_file, smooth):
+        files = [self.comm_path(i, False) for i in self.percent_range()]
+        mb = MultiBorders(db, files, self.percent_range(), smooth)
+        mb.process(out_file)
+                
     def crop_borders(self, shapefile):
         for per_dist in self.percent_range():
             bord_file = self.bord_path(per_dist)
