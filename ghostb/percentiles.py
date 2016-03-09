@@ -9,6 +9,7 @@ from ghostb.combine_borders import CombineBorders
 from ghostb.draw_map import draw_map
 from ghostb.confmodel import normalize_with_confmodel
 from ghostb.cropborders import CropBorders
+from ghostb.partition import Partition
 
     
 class Percentiles:
@@ -113,6 +114,30 @@ class Percentiles:
                 comm_dir = self.comm_path(per_dist, True)
                 bord.process(comm_dir, None, bord_file)
 
+    def rand_index_seq(self):
+        window = 1
+        percentiles = self.percent_range()
+
+        # read all partitions
+        pars = {}
+        for per in percentiles:
+            comm_file = self.comm_path(per, False)
+            par = Partition(comm_file)
+            pars[per] = par
+
+        steps = len(percentiles)
+        for i in range(window, steps):
+            dist = 0.
+            per1 = percentiles[i]
+            par1 = pars[per]
+            for j in range(0, window):
+                per2 = percentiles[i - j - 1]
+                par2 = pars[per2]
+                dist += par1.distance(par2)
+            dist /= window
+
+            print("%s,%s" % (per1, dist))
+                
     def generate_multi_borders(self, db, out_file, smooth):
         files = [self.comm_path(i, False) for i in self.percent_range()]
         mb = MultiBorders(db, files, self.percent_range(), smooth)

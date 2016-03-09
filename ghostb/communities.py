@@ -110,7 +110,7 @@ class Communities:
                         out_path = out_file
                     self.write(memb, out_path)
             if not best:
-                self.write(memb, "%s/%s.csv" % (out_dir, i))
+                self.write(memb, "%s/%s-%s.csv" % (out_dir, mod, i))
 
         print('best modularity: %s' % best_mod)
         print('done.')

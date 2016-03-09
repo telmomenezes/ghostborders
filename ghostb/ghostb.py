@@ -464,6 +464,16 @@ def percentile_communities(ctx):
     per = Percentiles(outdir, intervals)
     per.generate_communities(two, runs, best)
 
+    
+@cli.command()
+@click.pass_context
+def percentile_rand_index_seq(ctx):
+    outdir = ctx.obj['outdir']
+    intervals = int(ctx.obj['intervals'])
+
+    per = Percentiles(outdir, intervals)
+    per.rand_index_seq()
+
 
 @cli.command()
 @click.pass_context
