@@ -157,7 +157,7 @@ class Percentiles:
             entropy = 0.
             for f in f_ins:
                 par = Partition(vor, "%s/%s" % (dir_in, f))
-                #par.smooth_until_stable()
+                par.smooth_until_stable()
                 entropy += par.entropy()
             entropy /= float(len(f_ins))
             print("%s,%s" % (per, entropy))
