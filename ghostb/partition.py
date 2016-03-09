@@ -117,7 +117,7 @@ class Partition:
             total += 1.
 
         h = 0.
-        for comm in comms:
+        for comm in freqs:
             p = freqs[comm] / total
             h -= p * math.log(p)
 
