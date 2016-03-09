@@ -150,10 +150,17 @@ class Percentiles:
         vor = Voronoi(db)
         
         for per in percentiles:
-            comm_file = self.comm_path(per, False)
-            par = Partition(vor, comm_file)
-            par.smooth_until_stable()
-            print("%s,%s" % (per, par.entropy()))
+            dir_in = self.comm_path(per, True)
+            f_ins = []
+            for (dirpath, dirnames, filenames) in walk(dir_in):
+                f_ins.extend(filenames)
+            entropy = 0.
+            for f in f_ins:
+                par = Partition(vor, comm_file)
+                par.smooth_until_stable()
+                entropy += par.entropy()
+            entropy /= float(len(f_ins))
+            print("%s,%s" % (per, entropy))
 
     def generate_multi_borders(self, db, out_file, smooth):
         files = [self.comm_path(i, False) for i in self.percent_range()]
