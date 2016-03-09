@@ -152,7 +152,7 @@ class Percentiles:
         for per in percentiles:
             dir_in = self.comm_path(per, True)
             f_ins = []
-            for (dirpath, dirnames, filenames) in walk(dir_in):
+            for (dirpath, dirnames, filenames) in os.walk(dir_in):
                 f_ins.extend(filenames)
             entropy = 0.
             for f in f_ins:
