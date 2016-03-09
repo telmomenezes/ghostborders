@@ -142,7 +142,19 @@ class Percentiles:
             dist /= window
 
             print("%s,%s" % (per1, dist))
-                
+
+    def entropy(self, db):
+        percentiles = self.percent_range()
+
+        # voronoi
+        vor = Voronoi(db)
+        
+        for per in percentiles:
+            comm_file = self.comm_path(per, False)
+            par = Partition(vor, comm_file)
+            par.smooth_until_stable()
+            print("%s,%s" % (per, par.entropy()))
+
     def generate_multi_borders(self, db, out_file, smooth):
         files = [self.comm_path(i, False) for i in self.percent_range()]
         mb = MultiBorders(db, files, self.percent_range(), smooth)

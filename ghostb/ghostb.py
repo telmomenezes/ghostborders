@@ -480,6 +480,19 @@ def percentile_rand_index_seq(ctx):
 
 @cli.command()
 @click.pass_context
+def percentile_entropy(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outdir = ctx.obj['outdir']
+    intervals = int(ctx.obj['intervals'])
+
+    per = Percentiles(outdir, intervals)
+    per.entropy(db)
+
+
+@cli.command()
+@click.pass_context
 def percentile_borders(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])

@@ -103,3 +103,22 @@ class Partition:
                     count += 1.
                     dist += self.loc_dist(part, loc1, loc2)
         return dist / count
+
+    # compute information entropy
+    def entropy(self):
+        freqs = {}
+        total = 0.
+        for loc in self.comms:
+            comm = self.comms[loc]
+            if comm in freqs:
+                freqs[comm] += 1.
+            else:
+                freqs[comm] = 1.
+            total += 1.
+
+        h = 0.
+        for comm in comms:
+            p = freqs[comm] / total
+            h -= p * math.log(p)
+
+        return h
