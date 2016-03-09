@@ -468,11 +468,14 @@ def percentile_communities(ctx):
 @cli.command()
 @click.pass_context
 def percentile_rand_index_seq(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
 
     per = Percentiles(outdir, intervals)
-    per.rand_index_seq()
+    per.rand_index_seq(db)
 
 
 @cli.command()

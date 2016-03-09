@@ -1,11 +1,26 @@
+def modes(comms):
+    distrib = {}
+    for comm in comms:
+        if comm in distrib:
+            distrib[comm] += 1
+        else:
+            distrib[comm] = 1
+    maxfq = max(distrib.values())
+    return [comm for comm in distrib if distrib[comm] == maxfq]
+
+
 class Partition:
-    def __init__(self, path):
+    def __init__(self, vor, path):
+        self.vor = vor
+
+        # init comms
         self.comms = {}
-        
-        lines = [line.rstrip('\n') for line in open(path)]
-        del lines[0]
+        for loc in self.vor.locmap.coords:
+            self.comms[loc] = -1
 
         # read communities from csv
+        lines = [line.rstrip('\n') for line in open(path)]
+        del lines[0]
         for line in lines:
             cols = line.split(',')
             self.comms[int(cols[0])] = int(cols[1])
@@ -15,7 +30,57 @@ class Partition:
             return self.comms[loc]
         else:
             return -1
-            
+
+    # find the mode community for a given location and its neighbors
+    # in case of a tie, uses the largest community
+    def mode_community(self, loc, comm_sizes):
+        ids = [loc]
+        if loc in self.vor.neighbors:
+            ids += self.vor.neighbors[loc]
+        comms = [self.comms[x] for x in ids]
+        cmodes = modes(comms)
+        best_mode = None
+        best_size = 0
+        for mode in cmodes:
+            size = comm_sizes[mode]
+            if size > best_size:
+                best_size = size
+                best_mode = mode
+        return best_mode
+
+    # compute map of size by community
+    def map2community_sizes(self):
+        comm_sizes = {}
+        for key in self.comms:
+            comm = self.comms[key]
+            if comm in comm_sizes:
+                comm_sizes[comm] += 1
+            else:
+                comm_sizes[comm] = 1
+        return comm_sizes
+
+    # set community to the most frequent value in its neighbors (including itself)
+    # in case of a tie, choose the largest community
+    def smooth(self):
+        comm_sizes = self.map2community_sizes()
+        updates = 0
+        for loc in self.comms:
+            comm = self.mode_community(loc, comm_sizes)
+            if self.comms[loc] != comm:
+                self.comms[loc] = comm
+                updates += 1
+        return updates
+
+    # run smoothing algortihm until stable
+    def smooth_until_stable(self):
+        i = 0
+        while True:
+            i += 1
+            updates = self.smooth()
+            print('smoothing pass %s, %s updates.' % (i, updates))
+            if updates == 0:
+                return
+        
     def loc_dist(self, part, loc1, loc2):
         comm1a = self.comm(loc1)
         comm2a = self.comm(loc2)

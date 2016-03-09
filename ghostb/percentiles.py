@@ -9,6 +9,7 @@ from ghostb.combine_borders import CombineBorders
 from ghostb.draw_map import draw_map
 from ghostb.confmodel import normalize_with_confmodel
 from ghostb.cropborders import CropBorders
+from ghostb.voronoi import Voronoi
 from ghostb.partition import Partition
 
     
@@ -114,15 +115,19 @@ class Percentiles:
                 comm_dir = self.comm_path(per_dist, True)
                 bord.process(comm_dir, None, bord_file)
 
-    def rand_index_seq(self):
+    def rand_index_seq(self, db):
         window = 1
         percentiles = self.percent_range()
 
+        # voronoi
+        vor = Voronoi(db)
+        
         # read all partitions
         pars = {}
         for per in percentiles:
             comm_file = self.comm_path(per, False)
-            par = Partition(comm_file)
+            par = Partition(vor, comm_file)
+            par.smooth_until_stable()
             pars[per] = par
 
         steps = len(percentiles)

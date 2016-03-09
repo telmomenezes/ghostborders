@@ -1,6 +1,11 @@
 from shapely.geometry import box
 import scipy.spatial as spa
 import numpy as np
+from ghostb.locmap import LocMap
+
+
+def comp_points(p1, p2):
+    return (p2[0] > p1[0]) or ((p2[0] == p1[0]) and (p2[1] >= p1[1]))
 
 
 def point2id(point, m):
@@ -67,3 +72,48 @@ def point_map2segments(m):
             segments.append(seg)
 
     return segments
+
+
+def normalize_segment(segment):
+    if segment['id2'] > segment['id1']:
+        id1 = segment['id1']
+        id2 = segment['id2']
+    else:
+        id1 = segment['id2']
+        id2 = segment['id1']
+    p1 = (segment['x1'], segment['y1'])
+    p2 = (segment['x2'], segment['y2'])
+    if not comp_points(p1, p2):
+        ptemp = p1
+        p1 = p2
+        p2 = ptemp
+    return {'x1': p1[0],
+            'y1': p1[1],
+            'x2': p2[0],
+            'y2': p2[1],
+            'id1': id1,
+            'id2': id2}
+
+
+def voronoi2neighbors(vor):
+    neighbors = {}
+    for segment in vor:
+        id1 = segment['id1']
+        id2 = segment['id2']
+        if id1 in neighbors:
+            neighbors[id1].append(id2)
+        else:
+            neighbors[id1] = [id2]
+            if id2 in neighbors:
+                neighbors[id2].append(id1)
+            else:
+                neighbors[id2] = [id1]
+    return neighbors
+
+
+class Voronoi:
+    def __init__(self, db):
+        self.locmap = LocMap(db)
+        segments = point_map2segments(self.locmap.coords)
+        self.vor = [normalize_segment(x) for x in segments]
+        self.neighbors = voronoi2neighbors(self.vor)
