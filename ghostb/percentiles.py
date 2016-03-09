@@ -156,7 +156,7 @@ class Percentiles:
                 f_ins.extend(filenames)
             entropy = 0.
             for f in f_ins:
-                par = Partition(vor, f)
+                par = Partition(vor, "%s/%s" % (dir_in, f))
                 par.smooth_until_stable()
                 entropy += par.entropy()
             entropy /= float(len(f_ins))
