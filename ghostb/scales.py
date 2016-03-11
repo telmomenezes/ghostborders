@@ -19,6 +19,7 @@ class Scales:
     def __init__(self, outdir, intervals):
         self.outdir = outdir
         self.intervals = intervals
+        self.per_table = None
 
     def percent_range(self):
         step = 100.0 / self.intervals
@@ -58,24 +59,35 @@ class Scales:
         
         print('loading file: %s' % infile)
         data = np.genfromtxt(infile, names=['dist', 'time'], skip_header=1, delimiter=',')
-        print('computing percentiles...')
+        # print('computing percentiles...')
         for per in self.percent_range():
             dist_per = np.percentile(data['dist'], per)
             per_table[per] = dist_per
-            print('[percentile %s] dist: %s' % (per, dist_per))
+            # print('[percentile %s] dist: %s' % (per, dist_per))
 
-        print('writing percentiles...')
+        # print('writing percentiles...')
         self.write_percentiles(per_table)
         return per_table
 
+    def percentile2dist(self, infile, per):
+        if self.per_table is None:
+            self.per_table = self.compute_percentiles(infile)
+        return self.per_table[per]
+    
     def abs_log_scale(self, per):
         max_dist = 100.
         return math.pow(float(per) / 100., 2) * max_dist
     
-    def generate_graphs(self, db, infile, scale):
+    def dist(self, per, scale, infile):
         if scale == 'percentiles':
-            per_table = self.compute_percentiles(infile)
-        
+            return self.percentile2dist(infile, per)
+        elif scale == 'log':
+            return self.abs_log_scale(per)
+        else:
+            print('Unknown scale type: %s' % scale)
+            sys.exit()
+    
+    def generate_graphs(self, db, infile, scale):
         fd = FilterDists(db)
         
         graph_file = self.graph_path(100)
@@ -87,10 +99,7 @@ class Scales:
             if per < 100:
                 filtered_file = self.graph_path(per)
                 print('generating: %s' % filtered_file)
-                if scale == 'percentiles':
-                    max_dist = per_table[per]
-                else:
-                    max_dist = self.abs_log_scale(per)
+                max_dist = self.dist(per, scale, infile)
                 fd.filter(graph_file, filtered_file, max_dist)
 
         print('done.')
@@ -153,43 +162,22 @@ class Scales:
 
             print("%s,%s" % (per1, dist))
 
-    def entropy(self, db):
-        percentiles = self.percent_range()
-
-        # voronoi
+    def metric(self, metric, db, smooth, scale, infile):
         vor = Voronoi(db)
         
-        for per in percentiles:
+        for per in self.percent_range():
             dir_in = self.comm_path(per, True)
             f_ins = []
             for (dirpath, dirnames, filenames) in os.walk(dir_in):
                 f_ins.extend(filenames)
-            entropy = 0.
+            m = 0.
             for f in f_ins:
                 par = Partition(vor, "%s/%s" % (dir_in, f))
-                #par.smooth_until_stable()
-                entropy += par.entropy()
-            entropy /= float(len(f_ins))
-            print("%s,%s" % (per, entropy))
-
-    def herfindahl(self, db):
-        percentiles = self.percent_range()
-
-        # voronoi
-        vor = Voronoi(db)
-        
-        for per in percentiles:
-            dir_in = self.comm_path(per, True)
-            f_ins = []
-            for (dirpath, dirnames, filenames) in os.walk(dir_in):
-                f_ins.extend(filenames)
-            h = 0.
-            for f in f_ins:
-                par = Partition(vor, "%s/%s" % (dir_in, f))
-                #par.smooth_until_stable()
-                h += par.herfindahl()
-            h /= float(len(f_ins))
-            print("%s,%s" % (per, h))
+                if smooth:
+                    par.smooth_until_stable()
+                m += par.metric(metric)
+            m /= float(len(f_ins))
+            print("%s,%s,%s" % (per, self.dist(per, scale, infile), m))
             
     def generate_multi_borders(self, db, out_file, smooth):
         files = [self.comm_path(i, False) for i in self.percent_range()]
@@ -211,7 +199,6 @@ class Scales:
             cb.add_file(bord_file, per_dist)
         cb.write(out_file)
                 
-                    
     def generate_maps(self, region):
         for per_dist in self.percent_range():
             bord_file = self.bord_path(per_dist)

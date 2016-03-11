@@ -470,7 +470,7 @@ def scales_communities(ctx):
     
 @cli.command()
 @click.pass_context
-def scales_rand_index_seq(ctx):
+def scales_rand(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
@@ -489,9 +489,12 @@ def scales_entropy(ctx):
     db.open()
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
+    smooth = ctx.obj['smooth']
+    scale = ctx.obj['scale']
+    infile = ctx.obj['infile']
 
     scales = Scales(outdir, intervals)
-    scales.entropy(db)
+    scales.metric("entropy", db, smooth, scale, infile)
 
 
 @cli.command()
@@ -502,9 +505,12 @@ def scales_herfindahl(ctx):
     db.open()
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
+    smooth = ctx.obj['smooth']
+    scale = ctx.obj['scale']
+    infile = ctx.obj['infile']
 
     scales = Scales(outdir, intervals)
-    scales.herfindahl(db)
+    scales.metric("herfindahl", db, smooth, scale, infile)
 
 
 @cli.command()

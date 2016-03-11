@@ -1,4 +1,5 @@
 import math
+import sys
 
 
 def modes(comms):
@@ -145,3 +146,12 @@ class Partition:
             h += p * p
 
         return h
+
+    def metric(self, metric):
+        if metric == 'entropy':
+            return self.entropy()
+        elif metric == 'herfindahl':
+            return self.herfindahl()
+        else:
+            print('unknown metric: %s' % metric)
+            sys.exit()
