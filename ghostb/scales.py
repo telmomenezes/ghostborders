@@ -70,7 +70,7 @@ class Scales:
 
     def abs_log_scale(self, per):
         max_dist = 100.
-        return math.pow(float(per) / 100., 10) * max_dist
+        return math.pow(float(per) / 100., 2) * max_dist
     
     def generate_graphs(self, db, infile, scale):
         if scale == 'percentiles':
