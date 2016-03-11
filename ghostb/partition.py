@@ -125,3 +125,23 @@ class Partition:
             h -= p * math.log(p)
 
         return h
+
+    # compute Herfindahl index
+    # https://en.wikipedia.org/wiki/Herfindahl_index
+    def herfindahl(self):
+        freqs = {}
+        total = 0.
+        for loc in self.comms:
+            comm = self.comms[loc]
+            if comm in freqs:
+                freqs[comm] += 1.
+            else:
+                freqs[comm] = 1.
+            total += 1.
+
+        h = 0.
+        for comm in freqs:
+            p = freqs[comm] / total
+            h += p * p
+
+        return h

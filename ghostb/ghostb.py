@@ -496,6 +496,19 @@ def scales_entropy(ctx):
 
 @cli.command()
 @click.pass_context
+def scales_herfindahl(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outdir = ctx.obj['outdir']
+    intervals = int(ctx.obj['intervals'])
+
+    scales = Scales(outdir, intervals)
+    scales.herfindahl(db)
+
+
+@cli.command()
+@click.pass_context
 def scales_borders(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])

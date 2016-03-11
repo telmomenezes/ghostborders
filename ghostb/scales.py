@@ -172,6 +172,25 @@ class Scales:
             entropy /= float(len(f_ins))
             print("%s,%s" % (per, entropy))
 
+    def herfindahl(self, db):
+        percentiles = self.percent_range()
+
+        # voronoi
+        vor = Voronoi(db)
+        
+        for per in percentiles:
+            dir_in = self.comm_path(per, True)
+            f_ins = []
+            for (dirpath, dirnames, filenames) in os.walk(dir_in):
+                f_ins.extend(filenames)
+            entropy = 0.
+            for f in f_ins:
+                par = Partition(vor, "%s/%s" % (dir_in, f))
+                #par.smooth_until_stable()
+                h += par.herfindahl()
+            h /= float(len(f_ins))
+            print("%s,%s" % (per, h))
+            
     def generate_multi_borders(self, db, out_file, smooth):
         files = [self.comm_path(i, False) for i in self.percent_range()]
         mb = MultiBorders(db, files, self.percent_range(), smooth)
