@@ -183,7 +183,7 @@ class Scales:
             f_ins = []
             for (dirpath, dirnames, filenames) in os.walk(dir_in):
                 f_ins.extend(filenames)
-            entropy = 0.
+            h = 0.
             for f in f_ins:
                 par = Partition(vor, "%s/%s" % (dir_in, f))
                 #par.smooth_until_stable()
