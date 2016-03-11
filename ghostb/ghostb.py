@@ -21,7 +21,7 @@ from ghostb.draw_map import draw_map
 from ghostb.draw_map2 import draw_map2
 from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
-from ghostb.percentiles import Percentiles
+from ghostb.scales import Scales
 from ghostb.locs_metrics import LocsMetrics
 
 
@@ -56,11 +56,12 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--max_time', help='Maximum time.', default=-1)
 @click.option('--intervals', help='Number of intervals.', default=4)
 @click.option('--thick', help='Line thickness factor.', default=1.)
+@click.option('--scale', help='Scale type.', default='percentiles')
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
         runs, two, photo_dens_file, pop_dens_file, osm, resolution, width, best,
-        max_dist, graph_file, dist_file, max_time, intervals, thick):
+        max_dist, graph_file, dist_file, max_time, intervals, thick, scale):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -92,7 +93,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'dist_file': dist_file,
         'max_time': max_time,
         'intervals': intervals,
-        'thick': thick
+        'thick': thick,
+        'scale': scale
     }
 
 
@@ -430,70 +432,71 @@ def graph_info(ctx):
 
 @cli.command()
 @click.pass_context
-def percentile_graphs(ctx):
+def scales_graphs(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
     infile = ctx.obj['infile']
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
+    scale = ctx.obj['scale']
     
-    per = Percentiles(outdir, intervals)
-    per.generate_graphs(db, infile)
+    scales = Scales(outdir, intervals)
+    scales.generate_graphs(db, infile, scale)
 
 
 @cli.command()
 @click.pass_context
-def percentile_normalize(ctx):
+def scales_normalize(ctx):
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
     
-    per = Percentiles(outdir, intervals)
-    per.normalize()
+    scales = Scales(outdir, intervals)
+    scales.normalize()
 
 
 @cli.command()
 @click.pass_context
-def percentile_communities(ctx):
+def scales_communities(ctx):
     outdir = ctx.obj['outdir']
     two = ctx.obj['two']
     runs = int(ctx.obj['runs'])
     best = ctx.obj['best']
     intervals = int(ctx.obj['intervals'])
 
-    per = Percentiles(outdir, intervals)
-    per.generate_communities(two, runs, best)
+    scales = Scales(outdir, intervals)
+    scales.generate_communities(two, runs, best)
 
     
 @cli.command()
 @click.pass_context
-def percentile_rand_index_seq(ctx):
+def scales_rand_index_seq(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
 
-    per = Percentiles(outdir, intervals)
-    per.rand_index_seq(db)
+    scales = Scales(outdir, intervals)
+    scales.rand_index_seq(db)
 
 
 @cli.command()
 @click.pass_context
-def percentile_entropy(ctx):
+def scales_entropy(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
 
-    per = Percentiles(outdir, intervals)
-    per.entropy(db)
+    scales = Scales(outdir, intervals)
+    scales.entropy(db)
 
 
 @cli.command()
 @click.pass_context
-def percentile_borders(ctx):
+def scales_borders(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
@@ -502,13 +505,13 @@ def percentile_borders(ctx):
     smooth = ctx.obj['smooth']
     intervals = int(ctx.obj['intervals'])
     
-    per = Percentiles(outdir, intervals)
-    per.generate_borders(db, best, smooth)
+    scales = Scales(outdir, intervals)
+    scales.generate_borders(db, best, smooth)
 
 
 @cli.command()
 @click.pass_context
-def percentile_multi_borders(ctx):
+def scales_multi_borders(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
@@ -517,41 +520,41 @@ def percentile_multi_borders(ctx):
     smooth = ctx.obj['smooth']
     intervals = int(ctx.obj['intervals'])
     
-    per = Percentiles(outdir, intervals)
-    per.generate_multi_borders(db, outfile, smooth)
+    scales = Scales(outdir, intervals)
+    scales.generate_multi_borders(db, outfile, smooth)
 
 
 @cli.command()
 @click.pass_context
-def percentile_crop_borders(ctx):
+def scales_crop_borders(ctx):
     outdir = ctx.obj['outdir']
     shapefile = ctx.obj['shapefile']
     intervals = int(ctx.obj['intervals'])
 
-    per = Percentiles(outdir, intervals)
-    per.crop_borders(shapefile)
+    scales = Scales(outdir, intervals)
+    scales.crop_borders(shapefile)
 
 
 @cli.command()
 @click.pass_context
-def percentile_combine_borders(ctx):
+def scales_combine_borders(ctx):
     outdir = ctx.obj['outdir']
     outfile = ctx.obj['outfile']
     intervals = int(ctx.obj['intervals'])
     
-    per = Percentiles(outdir, intervals)
-    per.combine_borders(outfile)
+    scales = Scales(outdir, intervals)
+    scales.combine_borders(outfile)
 
 
 @cli.command()
 @click.pass_context
-def percentile_maps(ctx):
+def scales_maps(ctx):
     outdir = ctx.obj['outdir']
     region = ctx.obj['region']
     intervals = int(ctx.obj['intervals'])
     
-    per = Percentiles(outdir, intervals)
-    per.generate_maps(region)
+    scales = Scales(outdir, intervals)
+    scales.generate_maps(region)
 
 
 @cli.command()

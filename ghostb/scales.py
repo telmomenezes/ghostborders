@@ -1,4 +1,6 @@
 import os
+import sys
+import math
 import numpy as np
 from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
@@ -13,7 +15,7 @@ from ghostb.voronoi import Voronoi
 from ghostb.partition import Partition
 
     
-class Percentiles:
+class Scales:
     def __init__(self, outdir, intervals):
         self.outdir = outdir
         self.intervals = intervals
@@ -66,8 +68,13 @@ class Percentiles:
         self.write_percentiles(per_table)
         return per_table
 
-    def generate_graphs(self, db, infile):
-        per_table = self.compute_percentiles(infile)
+    def abs_log_scale(self, per):
+        max_dist = 100.
+        return math.pow(float(per) / 100., 10) * max_dist
+    
+    def generate_graphs(self, db, infile, scale):
+        if scale == 'percentiles':
+            per_table = self.compute_percentiles(infile)
         
         fd = FilterDists(db)
         
@@ -76,11 +83,14 @@ class Percentiles:
         gg = GenGraph(db, graph_file)
         gg.generate()
 
-        for per_dist in self.percent_range():
-            if per_dist < 100:
-                filtered_file = self.graph_path(per_dist)
+        for per in self.percent_range():
+            if per < 100:
+                filtered_file = self.graph_path(per)
                 print('generating: %s' % filtered_file)
-                max_dist = per_table[per_dist]
+                if scale == 'percentiles':
+                    max_dist = per_table[per]
+                else:
+                    max_dist = self.abs_log_scale(per)
                 fd.filter(graph_file, filtered_file, max_dist)
 
         print('done.')
@@ -157,7 +167,7 @@ class Percentiles:
             entropy = 0.
             for f in f_ins:
                 par = Partition(vor, "%s/%s" % (dir_in, f))
-                par.smooth_until_stable()
+                #par.smooth_until_stable()
                 entropy += par.entropy()
             entropy /= float(len(f_ins))
             print("%s,%s" % (per, entropy))
