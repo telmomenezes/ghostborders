@@ -57,11 +57,12 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--intervals', help='Number of intervals.', default=4)
 @click.option('--thick', help='Line thickness factor.', default=1.)
 @click.option('--scale', help='Scale type.', default='percentiles')
+@click.option('--metric', help='Metric type.')
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
         runs, two, photo_dens_file, pop_dens_file, osm, resolution, width, best,
-        max_dist, graph_file, dist_file, max_time, intervals, thick, scale):
+        max_dist, graph_file, dist_file, max_time, intervals, thick, scale, metric):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -94,7 +95,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'max_time': max_time,
         'intervals': intervals,
         'thick': thick,
-        'scale': scale
+        'scale': scale,
+        'metric': metric
     }
 
 
@@ -483,7 +485,7 @@ def scales_rand(ctx):
 
 @cli.command()
 @click.pass_context
-def scales_entropy(ctx):
+def scales_metric(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
@@ -492,25 +494,10 @@ def scales_entropy(ctx):
     smooth = ctx.obj['smooth']
     scale = ctx.obj['scale']
     infile = ctx.obj['infile']
+    metric = ctx.obj['metric']
 
     scales = Scales(outdir, intervals)
-    scales.metric("entropy", db, smooth, scale, infile)
-
-
-@cli.command()
-@click.pass_context
-def scales_herfindahl(ctx):
-    dbname = ctx.obj['dbname']
-    db = DB(dbname, ctx.obj['config'])
-    db.open()
-    outdir = ctx.obj['outdir']
-    intervals = int(ctx.obj['intervals'])
-    smooth = ctx.obj['smooth']
-    scale = ctx.obj['scale']
-    infile = ctx.obj['infile']
-
-    scales = Scales(outdir, intervals)
-    scales.metric("herfindahl", db, smooth, scale, infile)
+    scales.metric(metric, db, smooth, scale, infile)
 
 
 @cli.command()

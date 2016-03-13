@@ -108,50 +108,66 @@ class Partition:
                     dist += self.loc_dist(part, loc1, loc2)
         return dist / count
 
-    # compute information entropy
-    def entropy(self):
+    def freqs(self):
         freqs = {}
-        total = 0.
         for loc in self.comms:
             comm = self.comms[loc]
             if comm in freqs:
                 freqs[comm] += 1.
             else:
                 freqs[comm] = 1.
-            total += 1.
 
+        total = float(len(self.comms))
+        for comm in freqs:
+            freqs[comm] /= total
+
+        return freqs
+    
+    # compute information entropy
+    def entropy(self):
+        freqs = self.freqs()
         h = 0.
         for comm in freqs:
-            p = freqs[comm] / total
+            p = freqs[comm]
             h -= p * math.log(p)
-
         return h
 
     # compute Herfindahl index
     # https://en.wikipedia.org/wiki/Herfindahl_index
     def herfindahl(self):
-        freqs = {}
-        total = 0.
-        for loc in self.comms:
-            comm = self.comms[loc]
-            if comm in freqs:
-                freqs[comm] += 1.
-            else:
-                freqs[comm] = 1.
-            total += 1.
-
+        freqs = self.freqs()
         h = 0.
         for comm in freqs:
-            p = freqs[comm] / total
+            p = freqs[comm]
             h += p * p
-
         return h
 
+    # compute Herfindahl index
+    # http://mokslasplius.lt/rizikos-fizika/en/herfindahl-hirschman-indeksas-ir-entropija
+    def herfindahl_norm(self):
+        freqs = self.freqs()
+        N = float(len(freqs))
+        h = 0.
+        for comm in freqs:
+            p = freqs[comm]
+            h += (p * p) - 1. / N
+        h /= 1. - 1. / N
+        return h
+
+    # number of communities
+    def count(self):
+        freqs = self.freqs()
+        return float(len(freqs))
+    
     def metric(self, metric):
         if metric == 'entropy':
             return self.entropy()
         elif metric == 'herfindahl':
             return self.herfindahl()
+        elif metric == 'herfindahl_norm':
+            return self.herfindahl_norm()
+        elif metric = 'count':
+            return self.count()
         else:
             print('unknown metric: %s' % metric)
             sys.exit()
