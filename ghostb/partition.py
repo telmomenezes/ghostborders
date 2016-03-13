@@ -166,7 +166,7 @@ class Partition:
             return self.herfindahl()
         elif metric == 'herfindahl_norm':
             return self.herfindahl_norm()
-        elif metric = 'count':
+        elif metric == 'count':
             return self.count()
         else:
             print('unknown metric: %s' % metric)
