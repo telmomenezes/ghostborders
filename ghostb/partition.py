@@ -81,7 +81,7 @@ class Partition:
         while True:
             i += 1
             updates = self.smooth()
-            #print('smoothing pass %s, %s updates.' % (i, updates))
+            print('smoothing pass %s, %s updates.' % (i, updates))
             if updates == 0:
                 return
         
@@ -142,20 +142,6 @@ class Partition:
             h += p * p
         return h
 
-    # compute Herfindahl index
-    # http://mokslasplius.lt/rizikos-fizika/en/herfindahl-hirschman-indeksas-ir-entropija
-    def herfindahl_norm(self):
-        freqs = self.freqs()
-        N = float(len(freqs))
-        h = 0.
-        for comm in freqs:
-            p = freqs[comm]
-            p -= 1. / N
-            h += p * p
-        if h > 0.:
-            h /= 1. - 1. / N
-        return h
-
     # number of communities
     def count(self):
         freqs = self.freqs()
@@ -166,8 +152,6 @@ class Partition:
             return self.entropy()
         elif metric == 'herfindahl':
             return self.herfindahl()
-        elif metric == 'herfindahl_norm':
-            return self.herfindahl_norm()
         elif metric == 'count':
             return self.count()
         else:
