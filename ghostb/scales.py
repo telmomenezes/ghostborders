@@ -174,10 +174,7 @@ class Scales:
             for f in f_ins:
                 par = Partition(vor, "%s/%s" % (dir_in, f))
                 if smooth:
-                    print('smoothing')
                     par.smooth_until_stable()
-                else:
-                    print('no smoothing')
                 m += par.metric(metric)
             m /= float(len(f_ins))
             print("%s,%s,%s" % (per, self.dist(per, scale, infile), m))
