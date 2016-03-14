@@ -150,7 +150,8 @@ class Partition:
         h = 0.
         for comm in freqs:
             p = freqs[comm]
-            h += (p * p) - (1. / N)
+            p -= 1. / N
+            h += p * p
         if h > 0.:
             h /= 1. - 1. / N
         return h
