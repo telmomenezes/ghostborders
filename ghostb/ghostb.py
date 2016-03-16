@@ -10,7 +10,7 @@ from ghostb.useractivity import UserActivity
 from ghostb.userlocation import UserLocation
 from ghostb.userhome import UserHome
 from ghostb.photodensity import PhotoDensity
-from ghostb.comment_locations import CommentLocations
+from ghostb.assign_locations import AssignLocations
 from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
 from ghostb.confmodel import normalize_with_confmodel
@@ -266,12 +266,13 @@ def photodensity(ctx):
 
 @cli.command()
 @click.pass_context
-def comment_locations(ctx):
+def assign_locations(ctx):
     config = ctx.obj['config']
     db = DB(ctx.obj['dbname'], config)
     db.open()
-    cl = CommentLocations(db)
-    cl.fix()
+    table = ctx.obj['table']
+    al = AssignLocations(db, table)
+    al.fix()
     db.close()
 
 
