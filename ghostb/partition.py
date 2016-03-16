@@ -29,6 +29,8 @@ class Partition:
             cols = line.split(',')
             self.comms[int(cols[0])] = int(cols[1])
 
+        self.singleton_id = -1
+
     def comm(self, loc):
         if loc in self.comms:
             return self.comms[loc]
@@ -112,6 +114,9 @@ class Partition:
         freqs = {}
         for loc in self.comms:
             comm = self.comms[loc]
+            if comm < 0:
+                self.singleton_id -= 1
+                comm = self.singleton_id
             if comm in freqs:
                 freqs[comm] += 1.
             else:
