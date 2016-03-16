@@ -58,11 +58,13 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--thick', help='Line thickness factor.', default=1.)
 @click.option('--scale', help='Scale type.', default='percentiles')
 @click.option('--metric', help='Metric type.')
+@click.option('--table', help='Table name.', default='media')
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
         runs, two, photo_dens_file, pop_dens_file, osm, resolution, width, best,
-        max_dist, graph_file, dist_file, max_time, intervals, thick, scale, metric):
+        max_dist, graph_file, dist_file, max_time, intervals, thick, scale, metric,
+        table):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -96,7 +98,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'intervals': intervals,
         'thick': thick,
         'scale': scale,
-        'metric': metric
+        'metric': metric,
+        'table': table
     }
 
 
@@ -301,10 +304,11 @@ def gen_graph(ctx):
     dbname = ctx.obj['dbname']
     graph_file = ctx.obj['graph_file']
     dist_file = ctx.obj['dist_file']
+    table = ctx.obj['table']
     max_time = ctx.obj['max_time']
     db = DB(dbname, ctx.obj['config'])
     db.open()
-    gg = GenGraph(db, graph_file, dist_file, max_time)
+    gg = GenGraph(db, graph_file, dist_file, table, max_time)
     gg.generate()
     db.close()
 
@@ -442,9 +446,10 @@ def scales_graphs(ctx):
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
     scale = ctx.obj['scale']
+    table = ctx.obj['table']
     
     scales = Scales(outdir, intervals)
-    scales.generate_graphs(db, infile, scale)
+    scales.generate_graphs(db, infile, scale, table)
 
 
 @cli.command()

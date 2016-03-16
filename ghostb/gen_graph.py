@@ -16,8 +16,9 @@ def time_delta(link, loc_ts):
 
 
 class GenGraph:
-    def __init__(self, db, graph_file='', dist_file='', max_time=-1):
+    def __init__(self, db, graph_file='', dist_file='', table='media', max_time=-1):
         self.db = db
+        self.table = table
         self.max_time = max_time
         self.write_graph = False
         self.write_dist = False
@@ -30,7 +31,6 @@ class GenGraph:
             self.f_dist.write('distance,time\n')
             self.write_dist = True
             self.locmap = LocMap(db)
-        
 
     def write_ll(self):
         f = open(self.graph_file, 'w')
@@ -64,7 +64,8 @@ class GenGraph:
                 print('%s,%s\n' % (dist, time))
         
     def process_user(self, user_id):
-        self.db.cur.execute("SELECT location, ts FROM media WHERE user=%s" % user_id)
+        self.db.cur.execute("SELECT location, ts FROM % WHERE user=%s"
+                            % (self.table, user_id))
         data = self.db.cur.fetchall()
         locations = [x[0] for x in data]
 
@@ -77,13 +78,6 @@ class GenGraph:
             else:
                 loc_ts[loc] = [ts,]
         
-        #freqs = {}
-        #for l in locations:
-        #    if l in freqs:
-        #        freqs[l] += 1
-        #    else:
-        #        freqs[l] = 1
-
         # make locations unique
         locations = set(locations)
 
@@ -93,17 +87,13 @@ class GenGraph:
             time = time_delta(link, loc_ts)
             self.process_link(link, time)
 
-        # create self-loops for locations where a single user has more than one event
-        #for l in freqs:
-        #    if freqs[l] > 1:
-        #        self.process_link([l , l], loc_ts)
-
     def generate(self):
         if self.write_graph:
             print('generating graph.')
         if self.write_dist:
             print('generating distance/time link distribution.')
-
+        print('using table: %s' % self.table)
+            
         self.db.cur.execute("SELECT count(id) FROM user")
         nusers = self.db.cur.fetchone()[0]
         print("%s users to process" % nusers)

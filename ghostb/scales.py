@@ -87,12 +87,12 @@ class Scales:
             print('Unknown scale type: %s' % scale)
             sys.exit()
     
-    def generate_graphs(self, db, infile, scale):
+    def generate_graphs(self, db, infile, scale, table):
         fd = FilterDists(db)
         
         graph_file = self.graph_path(100)
         print('generating: %s' % graph_file)
-        gg = GenGraph(db, graph_file)
+        gg = GenGraph(db, graph_file=graph_file, table=table)
         gg.generate()
 
         for per in self.percent_range():
