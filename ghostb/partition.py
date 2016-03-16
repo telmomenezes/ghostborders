@@ -19,8 +19,10 @@ class Partition:
 
         # init comms
         self.comms = {}
+        singleton_id = -1
         for loc in self.vor.locmap.coords:
-            self.comms[loc] = -1
+            self.comms[loc] = singleton_id
+            singleton_id -= 1
 
         # read communities from csv
         lines = [line.rstrip('\n') for line in open(path)]
@@ -28,14 +30,6 @@ class Partition:
         for line in lines:
             cols = line.split(',')
             self.comms[int(cols[0])] = int(cols[1])
-
-        self.singleton_id = -1
-
-    def comm(self, loc):
-        if loc in self.comms:
-            return self.comms[loc]
-        else:
-            return -1
 
     # find the mode community for a given location and its neighbors
     # in case of a tie, uses the largest community
@@ -88,10 +82,10 @@ class Partition:
                 return
         
     def loc_dist(self, part, loc1, loc2):
-        comm1a = self.comm(loc1)
-        comm2a = self.comm(loc2)
-        comm1b = part.comm(loc1)
-        comm2b = part.comm(loc2)
+        comm1a = self.comms[loc1]
+        comm2a = self.comms[loc2]
+        comm1b = part.comms[loc1]
+        comm2b = part.comms[loc2]
         if (comm1a == comm2a) == (comm1b == comm2b):
             return 0.
         else:
@@ -114,9 +108,6 @@ class Partition:
         freqs = {}
         for loc in self.comms:
             comm = self.comms[loc]
-            if comm < 0:
-                self.singleton_id -= 1
-                comm = self.singleton_id
             if comm in freqs:
                 freqs[comm] += 1.
             else:
