@@ -115,5 +115,5 @@ class Voronoi:
     def __init__(self, db):
         self.locmap = LocMap(db)
         segments = point_map2segments(self.locmap.coords)
-        self.vor = [normalize_segment(x) for x in segments]
+        self.segments = [normalize_segment(x) for x in segments]
         self.neighbors = voronoi2neighbors(self.vor)
