@@ -95,7 +95,7 @@ def normalize_segment(segment):
             'id2': id2}
 
 
-def voronoi2neighbors(vor):
+def segments2neighbors(vor):
     neighbors = {}
     for segment in vor:
         id1 = segment['id1']
@@ -116,4 +116,4 @@ class Voronoi:
         self.locmap = LocMap(db)
         segments = point_map2segments(self.locmap.coords)
         self.segments = [normalize_segment(x) for x in segments]
-        self.neighbors = voronoi2neighbors(self.vor)
+        self.neighbors = segments2neighbors(self.segments)
