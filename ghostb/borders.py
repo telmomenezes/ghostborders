@@ -27,11 +27,11 @@ class Borders:
         self.smooth = smooth
         self.vor = Voronoi(db)
         
-    def check_border(self, par, segment):
+    def check_border(self, comms, segment):
         id1 = segment['id1']
         id2 = segment['id2']
-        comm1 = par.comms[id1]
-        comm2 = par.comms[id2]
+        comm1 = comms[id1]
+        comm2 = comms[id2]
 
         # no border between empty regions
         if (comm1 < 0) and (comm2 < 0):
@@ -39,16 +39,33 @@ class Borders:
         
         return comm1 != comm2
 
-    def borders(self, par):
-        return [segment for segment in self.vor.segments if self.check_border(par, segment)]
+    def borders(self, comms):
+        return [segment for segment in self.vor.segments
+                if self.check_border(comms, segment)]
     
     def process_file(self, f_in):
         print("processing file %s ..." % f_in)
         par = Partition(self.vor, f_in)
         if self.smooth:
             par.smooth_until_stable()
-        return self.borders(par)
+        return self.borders(par.comms)
 
+    def files2comms(self, files):
+        pars = []
+        nfiles = len(self.files)
+        for i in range(nfiles):
+            par = Partition(self.vor, self.files[i])
+            if self.smooth:
+                par.smooth_until_stable()
+            pars.append(par)
+
+        # converting community lists to tuples so that they can be used as keys
+        comms = {}
+        for loc_id in self.vor.locmap.coords:
+            comms[loc_id] = tuple([pars[i].comms[loc_id] for i in range(nfiles)])
+            
+        return comms
+    
     def file_list2borders(self, f_ins, dir_in=''):
         if len(dir_in) > 0:
             path = '%s/' % dir_in
@@ -85,3 +102,36 @@ class Borders:
         else:
             bs = self.file2borders(file_in)
         voronoi2file(bs, f_out)
+
+    def metrics(self, seg, comms, scales):
+        id1 = seg['id1']
+        id2 = seg['id2']
+        comm1 = comms[id1]
+        comm2 = comms[id2]
+            
+        summ = 0.
+        h = 0.
+        for i in range(len(scales)):
+            if comm1[i] != comm2[i]:
+                scale = scales[i]
+                summ += scale
+                h += 1.
+
+        mean_dist = summ / h
+
+        return mean_dist, h
+
+    def multi_borders2file(self, bs, comms, scales, path):
+        f = open(path, 'w')
+        f.write('x1,y1,x2,y2,weight,mean_dist,std_dist,max_weight,h\n')
+
+        for seg in bs:
+            mean_dist, h = self.metrics(seg, comms, scales)
+            f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s\n' %
+                    (seg['x1'], seg['y1'], seg['x2'], seg['y2'], 1., mean_dist, 0., 1., h))
+        f.close()
+        
+    def process_multi(self, files, scales, f_out):
+        comms = self.files2comms(files)
+        bs = self.borders(comms)
+        self.multi_borders2file(bs, comms, scales, f_out)
