@@ -22,6 +22,17 @@ def voronoi2file(vor, path):
     f.close()
 
     
+def isempty(comm):
+    if isinstance(comm, int):
+        return comm < 0
+
+    for i in comm:
+        if i >= 0:
+            return False
+
+    return True
+
+    
 class Borders:
     def __init__(self, db, smooth):
         self.smooth = smooth
@@ -34,7 +45,7 @@ class Borders:
         comm2 = comms[id2]
 
         # no border between empty regions
-        if (comm1 < 0) and (comm2 < 0):
+        if isempty(comm1) and isempty(comm2):
             return False
         
         return comm1 != comm2
@@ -45,26 +56,25 @@ class Borders:
     
     def process_file(self, f_in):
         print("processing file %s ..." % f_in)
-        par = Partition(self.vor, f_in)
+        par = Partition(self.vor)
+        par.read(f_in)
         if self.smooth:
             par.smooth_until_stable()
         return self.borders(par.comms)
 
     def files2comms(self, files):
         pars = []
-        nfiles = len(self.files)
+        nfiles = len(files)
         for i in range(nfiles):
-            par = Partition(self.vor, self.files[i])
-            if self.smooth:
-                par.smooth_until_stable()
+            par = Partition(self.vor)
+            par.read(files[i])
             pars.append(par)
 
-        # converting community lists to tuples so that they can be used as keys
-        comms = {}
-        for loc_id in self.vor.locmap.coords:
-            comms[loc_id] = tuple([pars[i].comms[loc_id] for i in range(nfiles)])
-            
-        return comms
+        multi_par = Partition(self.vor)
+        multi_par.combine(pars)
+        if self.smooth:
+            multi_par.smooth_until_stable()
+        return multi_par.comms
     
     def file_list2borders(self, f_ins, dir_in=''):
         if len(dir_in) > 0:

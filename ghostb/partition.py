@@ -14,7 +14,7 @@ def modes(comms):
 
 
 class Partition:
-    def __init__(self, vor, path):
+    def __init__(self, vor):
         self.vor = vor
 
         # init comms
@@ -24,6 +24,7 @@ class Partition:
             self.comms[loc] = singleton_id
             singleton_id -= 1
 
+    def read(self, path):
         # read communities from csv
         lines = [line.rstrip('\n') for line in open(path)]
         del lines[0]
@@ -31,6 +32,11 @@ class Partition:
             cols = line.split(',')
             self.comms[int(cols[0])] = int(cols[1])
 
+    def combine(self, pars):
+        npars = len(pars)
+        for loc_id in self.vor.locmap.coords:
+            self.comms[loc_id] = tuple([pars[i].comms[loc_id] for i in range(npars)])
+            
     # find the mode community for a given location and its neighbors
     # in case of a tie, uses the largest community
     def mode_community(self, loc, comm_sizes):
