@@ -14,7 +14,7 @@ def modes(comms):
 
 
 class Partition:
-    def __init__(self, vor):
+    def __init__(self, vor, singletons=True):
         self.vor = vor
 
         # init comms
@@ -22,7 +22,8 @@ class Partition:
         singleton_id = -1
         for loc in self.vor.locmap.coords:
             self.comms[loc] = singleton_id
-            singleton_id -= 1
+            if singletons:
+                singleton_id -= 1
 
     def read(self, path):
         # read communities from csv

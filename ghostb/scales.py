@@ -145,6 +145,7 @@ class Scales:
         for per in percentiles:
             comm_file = self.comm_path(per, False)
             par = Partition(vor, comm_file)
+            par.read(comm_file)
             par.smooth_until_stable()
             pars[per] = par
 
@@ -171,7 +172,8 @@ class Scales:
                 f_ins.extend(filenames)
             m = 0.
             for f in f_ins:
-                par = Partition(vor, "%s/%s" % (dir_in, f))
+                par = Partition(vor)
+                par.read("%s/%s" % (dir_in, f))
                 if smooth:
                     par.smooth_until_stable()
                 m += par.metric(metric)

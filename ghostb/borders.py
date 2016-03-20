@@ -33,17 +33,6 @@ def isempty(comm):
     return True
 
 
-def isnotsame(comm1, comm2):
-    if isinstance(comm1, int):
-        return comm1 != comm2
-
-    for i in range(len(comm1)):
-        if (comm1[i] >= 0) or (comm2[i] >= 0):
-            return comm1[i] != comm2[i]
-
-    return False
-
-
 class Borders:
     def __init__(self, db, smooth):
         self.smooth = smooth
@@ -59,7 +48,7 @@ class Borders:
         if isempty(comm1) and isempty(comm2):
             return False
         
-        return isnotsame(comm1, comm2)
+        return comm1 != comm2
 
     def borders(self, comms):
         return [segment for segment in self.vor.segments
@@ -67,7 +56,7 @@ class Borders:
     
     def process_file(self, f_in):
         print("processing file %s ..." % f_in)
-        par = Partition(self.vor)
+        par = Partition(self.vor, False)
         par.read(f_in)
         if self.smooth:
             par.smooth_until_stable()
@@ -77,11 +66,11 @@ class Borders:
         pars = []
         nfiles = len(files)
         for i in range(nfiles):
-            par = Partition(self.vor)
+            par = Partition(self.vor, False)
             par.read(files[i])
             pars.append(par)
 
-        multi_par = Partition(self.vor)
+        multi_par = Partition(self.vor, False)
         multi_par.combine(pars)
         if self.smooth:
             multi_par.smooth_until_stable()
