@@ -32,7 +32,18 @@ def isempty(comm):
 
     return True
 
-    
+
+def isnotsame(comm1, comm2):
+    if isinstance(comm1, int):
+        return comm1 != comm2
+
+    for i in range(len(comm1)):
+        if (comm1[i] >= 0) or (comm2[i] >= 0):
+            return comm1[i] != comm2[i]
+
+    return False
+
+
 class Borders:
     def __init__(self, db, smooth):
         self.smooth = smooth
@@ -48,7 +59,7 @@ class Borders:
         if isempty(comm1) and isempty(comm2):
             return False
         
-        return comm1 != comm2
+        return isnotsame(comm1, comm2)
 
     def borders(self, comms):
         return [segment for segment in self.vor.segments
