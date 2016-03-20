@@ -409,6 +409,7 @@ def draw2(ctx):
     resolution = ctx.obj['resolution']
     width = ctx.obj['width']
     thick = float(ctx.obj['thick'])
+    intervals = int(ctx.obj['intervals'])
     draw_map2(borders_file=infile,
               output_file=outfile,
               region=region,
@@ -417,7 +418,8 @@ def draw2(ctx):
               osm=osm,
               resolution=resolution,
               width=width,
-              thickness=thick)
+              thickness=thick,
+              intervals=intervals)
 
     
 @cli.command()
