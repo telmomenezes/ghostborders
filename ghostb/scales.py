@@ -56,7 +56,7 @@ class Scales:
     def compute_percentiles(self, infile):
         per_table = {}
         
-        print('loading file: %s' % infile)
+        # print('loading file: %s' % infile)
         data = np.genfromtxt(infile, names=['dist', 'time'], skip_header=1, delimiter=',')
         # print('computing percentiles...')
         for per in self.percent_range():
@@ -164,7 +164,8 @@ class Scales:
 
     def metric(self, metric, db, smooth, scale, infile):
         vor = Voronoi(db)
-        
+
+        print("percentile,distance,metric")
         for per in self.percent_range():
             dir_in = self.comm_path(per, True)
             f_ins = []
