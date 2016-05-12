@@ -5,7 +5,6 @@ from ghostb.locations import Locations
 from ghostb.config import Config
 from ghostb.retriever import Retriever
 from ghostb.fixlocations import FixLocations
-from ghostb.cropborders import CropBorders
 from ghostb.useractivity import UserActivity
 from ghostb.userlocation import UserLocation
 from ghostb.userhome import UserHome
@@ -17,8 +16,6 @@ from ghostb.confmodel import normalize_with_confmodel
 from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
-from ghostb.draw_map import draw_map
-from ghostb.draw_map2 import draw_map2
 from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
 from ghostb.scales import Scales
@@ -41,30 +38,22 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--indir', help='Input directory.')
 @click.option('--outdir', help='Output directory.', default=None)
 @click.option('--smooth/--nosmooth', help='Smooth communities.', default=False)
-@click.option('--shapefile', help='Shape file.', multiple=True)
 @click.option('--runs', help='Number of runs.', default=100)
 @click.option('--two/--many', default=False)
-@click.option('--photo_dens_file', help='Photo densities file.', default=None)
-@click.option('--pop_dens_file', help='Population densities file.', default=None)
-@click.option('--osm/--noosm', default=False)
-@click.option('--resolution', help='Map resolution.', default='i')
-@click.option('--width', help='Map width.', default=50.)
 @click.option('--best/--all', default=False)
 @click.option('--max_dist', help='Maximum distance.')
 @click.option('--graph_file', help='Output graph file.', default='')
 @click.option('--dist_file', help='Output distribution file.', default='')
 @click.option('--max_time', help='Maximum time.', default=-1)
 @click.option('--intervals', help='Number of intervals.', default=4)
-@click.option('--thick', help='Line thickness factor.', default=1.)
 @click.option('--scale', help='Scale type.', default='percentiles')
 @click.option('--metric', help='Metric type.')
 @click.option('--table', help='Table name.', default='media')
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
-        max_lng,rows, cols, infile, outfile, smooth, indir, outdir, shapefile,
-        runs, two, photo_dens_file, pop_dens_file, osm, resolution, width, best,
-        max_dist, graph_file, dist_file, max_time, intervals, thick, scale, metric,
-        table):
+        max_lng,rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
+        best, max_dist, graph_file, dist_file, max_time, intervals, scale,
+        metric, table):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -82,21 +71,14 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'indir': indir,
         'outdir': outdir,
         'smooth': smooth,
-        'shapefile': shapefile,
         'runs': runs,
         'two': two,
-        'photo_dens_file': photo_dens_file,
-        'pop_dens_file': pop_dens_file,
-        'osm': osm,
-        'resolution': resolution,
-        'width': width,
         'best': best,
         'max_dist': max_dist,
         'graph_file': graph_file,
         'dist_file': dist_file,
         'max_time': max_time,
         'intervals': intervals,
-        'thick': thick,
         'scale': scale,
         'metric': metric,
         'table': table
@@ -205,16 +187,6 @@ def fix_locations(ctx):
     fixer = FixLocations(db)
     fixer.run()
     db.close()
-
-
-@cli.command()
-@click.pass_context
-def crop_borders(ctx):
-    infile = ctx.obj['infile']
-    shapefile = ctx.obj['shapefile']
-    cropper = CropBorders(infile, shapefile)
-    cropper.crop()
-    cropper.write()
 
 
 @cli.command()
@@ -378,52 +350,6 @@ def borders(ctx):
 
 @cli.command()
 @click.pass_context
-def draw(ctx):
-    infile = ctx.obj['infile']
-    outfile = ctx.obj['outfile']
-    region = ctx.obj['region']
-    photo_dens_file = ctx.obj['photo_dens_file']
-    pop_dens_file = ctx.obj['pop_dens_file']
-    osm = ctx.obj['osm']
-    resolution = ctx.obj['resolution']
-    width = ctx.obj['width']
-    draw_map(borders_file=infile,
-             output_file=outfile,
-             region=region,
-             photo_dens_file=photo_dens_file,
-             pop_dens_file=pop_dens_file,
-             osm=osm,
-             resolution=resolution,
-             width=width)
-
-
-@cli.command()
-@click.pass_context
-def draw2(ctx):
-    infile = ctx.obj['infile']
-    outfile = ctx.obj['outfile']
-    region = ctx.obj['region']
-    photo_dens_file = ctx.obj['photo_dens_file']
-    pop_dens_file = ctx.obj['pop_dens_file']
-    osm = ctx.obj['osm']
-    resolution = ctx.obj['resolution']
-    width = ctx.obj['width']
-    thick = float(ctx.obj['thick'])
-    intervals = int(ctx.obj['intervals'])
-    draw_map2(borders_file=infile,
-              output_file=outfile,
-              region=region,
-              photo_dens_file=photo_dens_file,
-              pop_dens_file=pop_dens_file,
-              osm=osm,
-              resolution=resolution,
-              width=width,
-              thickness=thick,
-              intervals=intervals)
-
-    
-@cli.command()
-@click.pass_context
 def locphotos(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
@@ -540,17 +466,6 @@ def scales_multi_borders(ctx):
 
 @cli.command()
 @click.pass_context
-def scales_crop_borders(ctx):
-    outdir = ctx.obj['outdir']
-    shapefile = ctx.obj['shapefile']
-    intervals = int(ctx.obj['intervals'])
-
-    scales = Scales(outdir, intervals)
-    scales.crop_borders(shapefile)
-
-
-@cli.command()
-@click.pass_context
 def scales_combine_borders(ctx):
     outdir = ctx.obj['outdir']
     outfile = ctx.obj['outfile']
@@ -558,17 +473,6 @@ def scales_combine_borders(ctx):
     
     scales = Scales(outdir, intervals)
     scales.combine_borders(outfile)
-
-
-@cli.command()
-@click.pass_context
-def scales_maps(ctx):
-    outdir = ctx.obj['outdir']
-    region = ctx.obj['region']
-    intervals = int(ctx.obj['intervals'])
-    
-    scales = Scales(outdir, intervals)
-    scales.generate_maps(region)
 
 
 @cli.command()

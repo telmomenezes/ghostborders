@@ -7,9 +7,7 @@ from ghostb.filter_dists import FilterDists
 from ghostb.communities import Communities
 from ghostb.borders import Borders
 from ghostb.combine_borders import CombineBorders
-from ghostb.draw_map import draw_map
 from ghostb.confmodel import normalize_with_confmodel
-from ghostb.cropborders import CropBorders
 from ghostb.voronoi import Voronoi
 from ghostb.partition import Partition
 
@@ -185,14 +183,6 @@ class Scales:
         files = [self.comm_path(i, False) for i in self.percent_range()]
         b = Borders(db, smooth)
         b.process_multi(files, self.percent_range(), out_file)
-                
-    def crop_borders(self, shapefile):
-        for per_dist in self.percent_range():
-            bord_file = self.bord_path(per_dist)
-            print('Cropping: %s' % bord_file)
-            cropper = CropBorders(bord_file, shapefile)
-            cropper.crop()
-            cropper.write(bord_file)
                     
     def combine_borders(self, out_file):
         cb = CombineBorders()
@@ -200,10 +190,3 @@ class Scales:
             bord_file = self.bord_path(per_dist)
             cb.add_file(bord_file, per_dist)
         cb.write(out_file)
-                
-    def generate_maps(self, region):
-        for per_dist in self.percent_range():
-            bord_file = self.bord_path(per_dist)
-            map_file = self.map_path(per_dist)
-            print('drawing map: %s' % map_file)
-            draw_map(bord_file, map_file, region, osm=True)

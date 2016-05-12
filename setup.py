@@ -19,5 +19,6 @@ setup(
     entry_points='''
         [console_scripts]
         ghostb=ghostb.ghostb:cli
+        ghostb_vis=ghostb.ghostb_vis:cli
     ''',
 )
