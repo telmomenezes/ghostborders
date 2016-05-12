@@ -35,7 +35,7 @@ http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error
 ### All -- next steps ###
 
     $ pip install --editable .
-    $ pip install basemap --allow-external basemap --allow-unverified basemap
+    $ pip install https://github.com/matplotlib/basemap/archive/v1.0.7rel.tar.gz
 
 ## How to use ##
 
