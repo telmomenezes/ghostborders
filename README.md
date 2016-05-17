@@ -67,10 +67,6 @@ Add a grid of points:
 
     $ ghostb --db <db_name> user_activity
 
-#### Compute month data ####
-
-    $ ghostb --db <db_name> monthly
-
 #### Compute user homebases ####
 
     $ ghostb --db <db_name> userhome
