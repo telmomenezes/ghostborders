@@ -22,6 +22,13 @@ from ghostb.scales import Scales
 from ghostb.locs_metrics import LocsMetrics
 
 
+def parse_scales(scales):
+    if len(scales) == 0:
+        return []
+    else:
+        return [int(x) for x in scales.split(',')]
+
+
 @click.group()
 @click.option('--db', help='Database name.')
 @click.option('--locs_file', help='Path to locations file.')
@@ -49,11 +56,12 @@ from ghostb.locs_metrics import LocsMetrics
 @click.option('--scale', help='Scale type.', default='percentiles')
 @click.option('--metric', help='Metric type.')
 @click.option('--table', help='Table name.', default='media')
+@click.option('--scales', help='List of scales.', default='')
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
         best, max_dist, graph_file, dist_file, max_time, intervals, scale,
-        metric, table):
+        metric, table, scales):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -81,7 +89,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'intervals': intervals,
         'scale': scale,
         'metric': metric,
-        'table': table
+        'table': table,
+        'scales': parse_scales(scales)
     }
 
 
@@ -459,9 +468,10 @@ def scales_multi_borders(ctx):
     outfile = ctx.obj['outfile']
     smooth = ctx.obj['smooth']
     intervals = int(ctx.obj['intervals'])
-    
-    scales = Scales(outdir, intervals)
-    scales.generate_multi_borders(db, outfile, smooth)
+    scales = ctx.obj['scales']
+
+    s = Scales(outdir, intervals)
+    s.generate_multi_borders(db, outfile, smooth, scales)
 
 
 @cli.command()

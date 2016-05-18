@@ -179,10 +179,13 @@ class Scales:
             m /= float(len(f_ins))
             print("%s,%s,%s" % (per, self.dist(per, scale, infile), m))
             
-    def generate_multi_borders(self, db, out_file, smooth):
-        files = [self.comm_path(i, False) for i in self.percent_range()]
+    def generate_multi_borders(self, db, out_file, smooth, scales):
+        if len(scales) == 0:
+            scales = self.percent_range()
+        print('Using scales: %s' % scales)
+        files = [self.comm_path(i, False) for i in scales]
         b = Borders(db, smooth)
-        b.process_multi(files, self.percent_range(), out_file)
+        b.process_multi(files, scales, out_file)
                     
     def combine_borders(self, out_file):
         cb = CombineBorders()

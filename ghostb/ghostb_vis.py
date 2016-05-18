@@ -1,4 +1,5 @@
 import click
+from ghostb.config import Config
 from ghostb.cropborders import CropBorders
 from ghostb.draw_map import draw_map
 from ghostb.draw_map2 import draw_map2
