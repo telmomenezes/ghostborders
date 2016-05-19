@@ -147,7 +147,11 @@ Optional parameters:
 
 ### Generate distance distribution file ###
 
-$ ghostb --db <db_name> --dist_file <dist_file> gen_graph
+    $ ghostb --db <db_name> --dist_file <dist_file> gen_graph
+
+### Generate graph files ###
+
+    $ ghostb --db <db_name> --infile <dist_file> --outdir <dir> scales_graphs
 
 # Contacts #
 

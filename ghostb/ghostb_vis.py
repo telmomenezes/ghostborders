@@ -18,7 +18,7 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--osm/--noosm', default=False)
 @click.option('--resolution', help='Map resolution.', default='i')
 @click.option('--width', help='Map width.', default=50.)
-@click.option('--intervals', help='Number of intervals.', default=4)
+@click.option('--intervals', help='Number of intervals.', default=100)
 @click.option('--thick', help='Line thickness factor.', default=1.)
 @click.pass_context
 def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile,

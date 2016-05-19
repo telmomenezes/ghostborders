@@ -52,7 +52,7 @@ def parse_scales(scales):
 @click.option('--graph_file', help='Output graph file.', default='')
 @click.option('--dist_file', help='Output distribution file.', default='')
 @click.option('--max_time', help='Maximum time.', default=-1)
-@click.option('--intervals', help='Number of intervals.', default=4)
+@click.option('--intervals', help='Number of intervals.', default=100)
 @click.option('--scale', help='Scale type.', default='percentiles')
 @click.option('--metric', help='Metric type.')
 @click.option('--table', help='Table name.', default='media')
