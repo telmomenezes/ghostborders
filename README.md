@@ -39,7 +39,7 @@ Provide the `host`, `user` name and `password` to access the database. If the da
 
 ### Instagram API ###
 
-To be able to make requests to the Instagram API, for retrieval tasks, you must provide a `CLIENT_ID` and `CLIENT_SECRET`. You can obtain these by registering on the (Instagram developers area)[https://www.instagram.com/developer/].
+To be able to make requests to the Instagram API, for retrieval tasks, you must provide a `CLIENT_ID` and `CLIENT_SECRET`. You can obtain these by registering on the [Instagram developers area](https://www.instagram.com/developer/).
 
 ### Time range ###
 
@@ -50,7 +50,7 @@ These are the UNIX timestamps to define a time range for retrieval tasks. Only p
 ### OS X ###
 
 * XCode
-* The `igraph` library. To install with (homebrew)[http://brew.sh/]:
+* The `igraph` library. To install with [homebrew](http://brew.sh/):
     $ brew install homebrew/science/igraph
 
 #### ValueError: unknown locale: UTF-8 ####
