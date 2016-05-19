@@ -63,7 +63,8 @@ class Communities:
     def compute(self, two):
         g = self.build_graph()
 
-        comms = igraph.Graph.community_multilevel(g, weights="weight", return_levels=False)
+        #comms = igraph.Graph.community_multilevel(g, weights="weight", return_levels=False)
+        comms = igraph.Graph.community_leading_eigenvector(g, weights="weight")
         memb = comms.membership
 
         # force dichotomy (horrible exponential time algo)
