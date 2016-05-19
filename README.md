@@ -49,41 +49,45 @@ http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error
 
 # How to use #
 
-#### Create database ####
+## Retrieve Data ##
+
+### Create database ###
 
 Creates the database to be used by further operations.
 
     $ ghostb --db <db_name> create_db
 
-#### Create locations ####
+### Create locations ###
 
 Add locations from file:
 
-ghostb --db <db_name> --locs_file <locations_file> --country_code <country_code> add_locations
+    $ ghostb --db <db_name> --locs_file <locations_file> --country_code <country_code> add_locations
 
 Add a grid of points:
 
     $ ghostb --db <db_name> --min_lat <min_lat> --min_lng <min_lng> --max_lat <max_lat> --max_lng <max_lng> --rows <rows> --cols <cols> add_grid
 
-#### Retrive data from Instagram ####
+### Retrive data from Instagram ###
 
     $ ghostb --db <db_name> retrieve
 
-#### Fix locations (attaches photos to the closest known location) ####
+### Fix locations (attaches photos to the closest known location) ###
 
     $ ghostb --db <db_name> fix_locations
 
-#### Compute user activity ####
+### Compute user activity ###
 
     $ ghostb --db <db_name> user_activity
 
-#### Compute user homebases ####
+### Compute user homebases ###
 
     $ ghostb --db <db_name> userhome
 
-#### Assign locations to comments ####
+### Assign locations to comments ###
 
     $ ghostb --db <db_name> comment_locations
+
+## Generate Simple Maps ##
 
 #### Generate graphs ####
 
@@ -141,6 +145,10 @@ Optional parameters:
 * resolution: map resolution (default: i)
 * width: map width
 
-## Contacts ##
+## Generate Multi-Scale Maps ##
+
+TODO
+
+# Contacts #
 
 * telmo@telmomenezes.com
