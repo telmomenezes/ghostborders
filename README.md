@@ -1,14 +1,29 @@
 # What is GhostBorders? #
 
-TODO
+GhostBorders is a set of tools to study socio-geographical borders using social media data.
+
+It's capabilities include:
+
+* Retrieving metadata from photos and other media shared in social media platforms. [Instagram](http://instagram.com) is currently supported;
+* Generating location graphs from above data;
+* Performing community detection on location graphs;
+* Deriving borders from communities;
+* Drawing maps with socio-geographical borders;
+* Working with multiple scales.
 
 # Installation #
 
+Installation is performed by first cloning the source code to your computer. Then a number of prerequisites have to be installed, depending on the operating system. `pip` is used to complete the installation.
+
+Everything is done on the terminal.
+
 ## Clone Repository ##
 
-TODO
+Start by cloning the source code to your current local directory.
 
-## Install MySQL ##
+    $ git clone https://github.com/telmomenezes/ghostborders.git
+
+## Install MariaDB ##
 
 TODO
 
@@ -16,7 +31,7 @@ TODO
 
 TODO
 
-## Install Prerequisites ##
+## Prerequisites ##
 
 ### OS X ###
 
