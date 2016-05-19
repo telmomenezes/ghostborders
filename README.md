@@ -1,6 +1,6 @@
-## What is GhostBorders? ##
+# What is GhostBorders? #
 
-* TBD
+* TODO
 
 ## Installation ##
 
