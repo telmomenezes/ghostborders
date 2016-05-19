@@ -83,7 +83,7 @@ Add a grid of points:
 
     $ ghostb --db <db_name> userhome
 
-### Assign locations to comments ###
+### Assign locations to comments (optional) ###
 
     $ ghostb --db <db_name> comment_locations
 
@@ -99,15 +99,13 @@ max_time specifies a time thershold for links to be included in the graph. It do
 
     $ ghostb --db <db_name> [--graph_file <graph_output>] [--dist_file <dist_output>] [--max_time] <max_time> gen_graph
 
-#### Filter distances ####
+#### Filter distances (optional) ####
 
     $ ghostb --db <db_name> --infile <input_file> --outfile <output_file> --max_dist <max_distance> filter_dists
 
-#### Normalize with configuration model ####
+#### Normalize with configuration model (optional) ####
 
-10 is a good value for the number of runs.
-
-    $ ghostb --infile <input_file> --outfile <output_file> --runs <number_of_runs> confmodel
+    $ ghostb --infile <input_file> --outfile <output_file> confmodel
 
 #### Find communities ####
 
@@ -145,9 +143,11 @@ Optional parameters:
 * resolution: map resolution (default: i)
 * width: map width
 
-## Generate Multi-Scale Maps ##
+## Create Multi-Scale Maps ##
 
-TODO
+### Generate distance distribution file ###
+
+$ ghostb --db <db_name> --dist_file <dist_file> gen_graph
 
 # Contacts #
 
