@@ -64,7 +64,7 @@ class GenGraph:
                 print('%s,%s\n' % (dist, time))
         
     def process_user(self, user_id):
-        self.db.cur.execute("SELECT location, ts FROM % WHERE user=%s"
+        self.db.cur.execute("SELECT location, ts FROM %s WHERE user=%s"
                             % (self.table, user_id))
         data = self.db.cur.fetchall()
         locations = [x[0] for x in data]
