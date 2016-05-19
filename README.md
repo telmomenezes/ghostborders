@@ -17,19 +17,33 @@ Installation is performed by first cloning the source code to your computer. The
 
 Everything is done on the terminal.
 
+Two commands become available: `ghostb` and `ghostb_vis`. The first is multipurpose, while the second performs tasks related to map drawing. They are separated so that you can install only the prerequisites for `ghostb`. This can be useful because the prerequisites for `ghostb_vis` are tricky to install on some operating systems. This way you can still easily use such systems for data retrieval and graph computations.
+
 ## Clone Repository ##
 
 Start by cloning the source code to your current local directory.
 
     $ git clone https://github.com/telmomenezes/ghostborders.git
 
-## Install MariaDB ##
+## MariaDB / MySQL ##
 
-TODO
+GhostBorders uses either [MariaDB](http://mariadb.org) or [MySQL](http://mysql.com) as its main database. To install one of them in your server, refer to the instructions on their website.
 
 ## Create Config File ##
 
-TODO
+Copy the file `ghostb.conf.template` to `ghostb.conf` and open the latter in a text editor. Provide the correct information for the things below.
+
+### Database ###
+
+Provide the `host`, `user` name and `password` to access the database. If the database server is running on the local machine, `host` can be `localhost`. 
+
+### Instagram API ###
+
+To be able to make requests to the Instagram API, for retrieval tasks, you must provide a `CLIENT_ID` and `CLIENT_SECRET`. You can obtain these by registering on the (Instagram developers area)[https://www.instagram.com/developer/].
+
+### Time range ###
+
+These are the UNIX timestamps to define a time range for retrieval tasks. Only photos created between the two timestamps will be retrieved.
 
 ## Prerequisites ##
 
