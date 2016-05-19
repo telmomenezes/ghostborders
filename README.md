@@ -116,23 +116,25 @@ If the optional --best switch is specified, only the partition with the highest 
 #### Compute borders ####
 
 To use a directory as input:
+
     $ ghostb --db <db_name> --indir <input_directory> --outfile <output_file> borders
 
 To use a file as input:
+
     $ ghostb --db <db_name> --infile <input_file> --outfile <output_file> borders
 
 #### Crop borders ####
 
 Takes a .csv borders file and a shapefile and outputs a new .csv borders file with the borders cropped as to not extend beyond the country limits defines in the shapefile.
 
-    $ ghostb --infile <input file> --shapefile <shapefile> crop_borders > <output file>
+    $ ghostb_vis --infile <input file> --shapefile <shapefile> crop_borders > <output file>
 
 The shapefile should be specified without the extension. Shapefiles can be obtained here:
 http://www.gadm.org/country
 
 #### Draw map ####
 
-    $ ghostb --infile <borders_file> --outfile <output_file> --country <region> draw
+    $ ghostb_vis --infile <borders_file> --outfile <output_file> --country <region> draw
 
 Optional parameters:
 * photo_dens_file: photo densities file
