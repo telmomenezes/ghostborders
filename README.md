@@ -51,6 +51,7 @@ These are the UNIX timestamps to define a time range for retrieval tasks. Only p
 
 * XCode
 * The `igraph` library. To install with [homebrew](http://brew.sh/):
+
     $ brew install homebrew/science/igraph
 
 #### ValueError: unknown locale: UTF-8 ####
@@ -67,10 +68,20 @@ http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error
 
 ## Create Virtual Environment and Install Python Packages ##
 
+It is advisable to work with virtual environments. To create one in the current directory you can do this:
+
     $ virtualenv -p /usr/local/bin/python3 venv
+
+The, anytime you want to activate it:
+
     $ source venv/bin/activate
 
+Finally, after activating the virtual environment above, you can install GhostBorders and its Python dependencies:
+
     $ pip install --editable .
+
+The above is enough to run `ghostb` commands. If you also want to be able to run `ghostb_vis`, you must install the bascamp matplotlib module:
+
     $ pip install https://github.com/matplotlib/basemap/archive/v1.0.7rel.tar.gz
 
 # How to use #
