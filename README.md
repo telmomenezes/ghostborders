@@ -81,14 +81,6 @@ For a predefined region, a grid can be added with this command:
 
     $ ghostb --db <db_name> fix_locations
 
-### Compute user activity ###
-
-    $ ghostb --db <db_name> user_activity
-
-### Compute user homebases ###
-
-    $ ghostb --db <db_name> userhome
-
 ### Assign locations to comments (optional) ###
 
     $ ghostb --db <db_name> comment_locations

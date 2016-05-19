@@ -5,9 +5,6 @@ from ghostb.locations import Locations
 from ghostb.config import Config
 from ghostb.retriever import Retriever
 from ghostb.fixlocations import FixLocations
-from ghostb.useractivity import UserActivity
-from ghostb.userlocation import UserLocation
-from ghostb.userhome import UserHome
 from ghostb.photodensity import PhotoDensity
 from ghostb.assign_locations import AssignLocations
 from ghostb.gen_graph import GenGraph
@@ -195,42 +192,6 @@ def fix_locations(ctx):
     db.open()
     fixer = FixLocations(db)
     fixer.run()
-    db.close()
-
-
-@cli.command()
-@click.pass_context
-def user_activity(ctx):
-    click.echo('Computing user activity')
-    config = ctx.obj['config']
-    db = DB(ctx.obj['dbname'], config)
-    db.open()
-    activity = UserActivity(db)
-    activity.update()
-    db.close()
-
-
-@cli.command()
-@click.pass_context
-def user_locations(ctx):
-    click.echo('Computing userlocations')
-    config = ctx.obj['config']
-    db = DB(ctx.obj['dbname'], config)
-    db.open()
-    ul = UserLocation(db)
-    ul.generate()
-    db.close()
-
-
-@cli.command()
-@click.pass_context
-def userhome(ctx):
-    click.echo('Computing user homes')
-    config = ctx.obj['config']
-    db = DB(ctx.obj['dbname'], config)
-    db.open()
-    uhome = UserHome(db)
-    uhome.generate()
     db.close()
 
 
