@@ -49,14 +49,13 @@ These are the UNIX timestamps to define a time range for retrieval tasks. Only p
 
 ### OS X ###
 
-* Install XCode
-
-
+* XCode
+* The `igraph` library. To install with (homebrew)[http://brew.sh/]:
     $ brew install homebrew/science/igraph
 
 #### ValueError: unknown locale: UTF-8 ####
 
-Solution:
+Solution if you have this problem:
 http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error-valueerror-unknown-locale-utf-8
 
 ### Linux (Debian / Ubuntu) ###
@@ -68,8 +67,6 @@ http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error
 
 ## Create Virtual Environment and Install Python Packages ##
 
-    $ export LC_ALL=C.UTF-8
-    $ export LANG=C.UTF-8
     $ virtualenv -p /usr/local/bin/python3 venv
     $ source venv/bin/activate
 
