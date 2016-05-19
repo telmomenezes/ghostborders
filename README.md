@@ -61,11 +61,11 @@ Creates the database to be used by further operations.
 
 It is necessary to add a set of geographical locations to the database, for which the retrieval process can then request data. It is possible to add locations from a file, from a grid of points inside a given rectangle, or from a grid of points inside a predefined region.
 
-For a country, using the provided file cities1000.txt to add locations is a good option:
+For a country, using the provided file `cities1000.txt` to add locations is a good option:
 
     $ ghostb --db <db_name> --locs_file <locations_file> --country_code <country_code> add_locations
 
-For any ad hoc region you can add a grid of points like so:
+For any *ad hoc* region you can add a grid of points like so:
 
     $ ghostb --db <db_name> --min_lat <min_lat> --min_lng <min_lng> --max_lat <max_lat> --max_lng <max_lng> --rows <rows> --cols <cols> add_grid
 
