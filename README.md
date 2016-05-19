@@ -1,17 +1,22 @@
 # What is GhostBorders? #
 
-* TODO
+TODO
 
-## Installation ##
+# Installation #
 
-* Install MySQL
-* Create config file
+## Clone Repository ##
 
+TODO
 
-    $ export LC_ALL=C.UTF-8
-    $ export LANG=C.UTF-8
-    $ virtualenv -p /usr/local/bin/python3 venv
-    $ source venv/bin/activate
+## Install MySQL ##
+
+TODO
+
+## Create Config File ##
+
+TODO
+
+## Install Prerequisites ##
 
 ### OS X ###
 
@@ -32,12 +37,17 @@ http://stackoverflow.com/questions/19961239/pelican-3-3-pelican-quickstart-error
     $ sudo apt-get build-dep python-imaging
     $ sudo apt-get install libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev
 
-### All -- next steps ###
+## Create Virtual Environment and Install Python Packages ##
+
+    $ export LC_ALL=C.UTF-8
+    $ export LANG=C.UTF-8
+    $ virtualenv -p /usr/local/bin/python3 venv
+    $ source venv/bin/activate
 
     $ pip install --editable .
     $ pip install https://github.com/matplotlib/basemap/archive/v1.0.7rel.tar.gz
 
-## How to use ##
+# How to use #
 
 #### Create database ####
 
