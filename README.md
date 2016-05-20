@@ -182,13 +182,17 @@ Optional parameters:
 
 ## Create Multi-Scale Maps ##
 
-### Generate distance distribution file ###
+### Generate Distance Distribution File ###
 
     $ ghostb --db <db_name> --dist_file <dist_file> gen_graph
 
-### Generate graph files ###
+### Generate Graph Files ###
 
     $ ghostb --db <db_name> --infile <dist_file> --outdir <dir> scales_graphs
+
+### Community Detection ###
+
+    $ ghostb --outdir <dir> --best scales_communities
 
 # Contacts #
 
