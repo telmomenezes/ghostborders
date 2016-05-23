@@ -2,12 +2,12 @@ import os
 import sys
 import math
 import numpy as np
+import ghostb.graph
 from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
 from ghostb.communities import Communities
 from ghostb.borders import Borders
 from ghostb.combine_borders import CombineBorders
-from ghostb.confmodel import normalize_with_confmodel
 from ghostb.voronoi import Voronoi
 from ghostb.partition import Partition
 
@@ -104,7 +104,7 @@ class Scales:
     def normalize(self):
         for per_dist in self.percent_range():
             graph_file = self.graph_path(per_dist)
-            normalize_with_confmodel(graph_file, graph_file)
+            ghostb.graph.normalize_with_confmodel(graph_file, graph_file)
         
     def generate_communities(self, two, runs, best):
         fname = '%s/metrics.csv' % self.outdir

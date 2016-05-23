@@ -1,4 +1,5 @@
 import click
+import ghostb.graph
 import ghostb.cropdata
 from ghostb.db import DB
 from ghostb.locations import Locations
@@ -9,7 +10,6 @@ from ghostb.photodensity import PhotoDensity
 from ghostb.assign_locations import AssignLocations
 from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
-from ghostb.confmodel import normalize_with_confmodel
 from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
@@ -275,7 +275,7 @@ def filter_dists(ctx):
 def confmodel(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
-    normalize_with_confmodel(infile, outfile)
+    ghostb.graph.normalize_with_confmodel(infile, outfile)
 
 
 @cli.command()
