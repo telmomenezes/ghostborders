@@ -85,7 +85,3 @@ class Locations:
     def clean(self):
         self.db.cur.execute("DELETE FROM location")
         self.db.conn.commit()
-        self.db.cur.execute("DELETE FROM userlocation")
-        self.db.conn.commit()
-        self.db.cur.execute("DELETE FROM locationlocation")
-        self.db.conn.commit()

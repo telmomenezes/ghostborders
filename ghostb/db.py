@@ -119,18 +119,4 @@ class DB:
         self.__exec_or_ignore("CREATE INDEX comment_user ON comment (user)")
         self.__exec_or_ignore("CREATE INDEX comment_ts ON comment (ts)")
 
-        # create table userlocation
-        self.__exec_or_ignore("CREATE TABLE userlocation (user BIGINT)")
-        self.__exec_or_ignore("ALTER TABLE userlocation ADD COLUMN location BIGINT")
-        self.__exec_or_ignore("ALTER TABLE userlocation ADD COLUMN weight BIGINT")
-        self.__exec_or_ignore("ALTER TABLE userlocation ADD COLUMN w DOUBLE")
-        self.__exec_or_ignore("CREATE INDEX userlocation_user ON userlocation (user)")
-        self.__exec_or_ignore("CREATE INDEX userlocation_location ON userlocation (location)")
-
-        # create table locationlocation
-        self.__exec_or_ignore("CREATE TABLE locationlocation (loc1 BIGINT)")
-        self.__exec_or_ignore("ALTER TABLE locationlocation ADD COLUMN loc2 BIGINT")
-        self.__exec_or_ignore("ALTER TABLE locationlocation ADD COLUMN weight BIGINT")
-        self.__exec_or_ignore("ALTER TABLE locationlocation ADD COLUMN month CHAR(7) DEFAULT NULL")
-
         self.conn.commit()
