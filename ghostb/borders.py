@@ -1,5 +1,5 @@
 from ghostb.voronoi import Voronoi
-from ghostb.partition import Partition
+import ghostb.partition as part
 from os import walk
 
 
@@ -36,7 +36,7 @@ def isempty(comm):
 class Borders:
     def __init__(self, db, smooth):
         self.smooth = smooth
-        self.vor = Voronoi(db)
+        self.db = db
         
     def check_border(self, comms, segment):
         id1 = segment['id1']
@@ -50,13 +50,20 @@ class Borders:
         
         return comm1 != comm2
 
+    def init_voronoi(self, files):
+        vertices = set()
+        for file in files:
+            fverts = set(part.read(file).keys())
+            vertices = vertices.union(fverts)
+        self.vor = Voronoi(self.db, vertices)
+
     def borders(self, comms):
         return [segment for segment in self.vor.segments
                 if self.check_border(comms, segment)]
     
     def process_file(self, f_in):
         print("processing file %s ..." % f_in)
-        par = Partition(self.vor, False)
+        par = part.Partition(self.vor, False)
         par.read(f_in)
         if self.smooth:
             par.smooth_until_stable()
@@ -66,11 +73,11 @@ class Borders:
         pars = []
         nfiles = len(files)
         for i in range(nfiles):
-            par = Partition(self.vor, False)
+            par = part.Partition(self.vor, False)
             par.read(files[i])
             pars.append(par)
 
-        multi_par = Partition(self.vor, False)
+        multi_par = part.Partition(self.vor, False)
         multi_par.combine(pars)
         if self.smooth:
             multi_par.smooth_until_stable()
@@ -81,7 +88,9 @@ class Borders:
             path = '%s/' % dir_in
         else:
             path = ''
-        border_sets = [self.process_file('%s%s' % (path, f)) for f in f_ins]
+        files = ['%s%s' % (path, f) for f in f_ins]
+        self.init_voronoi(files)
+        border_sets = [self.process_file(f) for f in files]
         total = float(len(border_sets))
         segments = {}
         for border_set in border_sets:
@@ -142,6 +151,7 @@ class Borders:
         f.close()
         
     def process_multi(self, files, scales, f_out):
+        self.init_voronoi(files)
         comms = self.files2comms(files)
         bs = self.borders(comms)
         self.multi_borders2file(bs, comms, scales, f_out)

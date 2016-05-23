@@ -13,6 +13,17 @@ def modes(comms):
     return [comm for comm in distrib if distrib[comm] == maxfq]
 
 
+def read(path):
+    # read communities from csv
+    comms = {}
+    lines = [line.rstrip('\n') for line in open(path)]
+    del lines[0]
+    for line in lines:
+        cols = line.split(',')
+        comms[int(cols[0])] = int(cols[1])
+    return comms
+
+
 class Partition:
     def __init__(self, vor, singletons=True):
         self.vor = vor
@@ -26,12 +37,7 @@ class Partition:
                 singleton_id -= 1
 
     def read(self, path):
-        # read communities from csv
-        lines = [line.rstrip('\n') for line in open(path)]
-        del lines[0]
-        for line in lines:
-            cols = line.split(',')
-            self.comms[int(cols[0])] = int(cols[1])
+        self.comms = read(path)
 
     def combine(self, pars):
         npars = len(pars)

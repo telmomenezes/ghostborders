@@ -18,12 +18,12 @@ def point2id(point, m):
     return None
 
 
-def point_map2segments(m):
+def point_map2segments(m, vertices):
     ids = []
     lats = []
     lngs = []
     point_list = []
-    for key in m:
+    for key in vertices:
         ids.append(key)
         lat = m[key]['lat']
         lng = m[key]['lng']
@@ -112,8 +112,8 @@ def segments2neighbors(vor):
 
 
 class Voronoi:
-    def __init__(self, db):
+    def __init__(self, db, vertices):
         self.locmap = LocMap(db)
-        segments = point_map2segments(self.locmap.coords)
+        segments = point_map2segments(self.locmap.coords, vertices)
         self.segments = [normalize_segment(x) for x in segments]
         self.neighbors = segments2neighbors(self.segments)
