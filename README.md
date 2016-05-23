@@ -171,7 +171,7 @@ http://www.gadm.org/country
 
 #### Draw map ####
 
-    $ ghostb_vis --infile <borders_file> --outfile <output_file> --country <region> draw
+    $ ghostb_vis --infile <borders_file> --outfile <output_file> --region <region> draw
 
 Optional parameters:
 * photo_dens_file: photo densities file
