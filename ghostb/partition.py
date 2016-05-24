@@ -104,19 +104,6 @@ class Partition:
         else:
             return 1.
 
-    # compute Rand index
-    # https://en.wikipedia.org/wiki/Rand_index
-    def distance(self, part):
-        locs = set([loc for loc in self.comms] + [loc for loc in part.comms])
-        count = 0.
-        dist = 0.
-        for loc1 in locs:
-            for loc2 in locs:
-                if loc2 > loc1:
-                    count += 1.
-                    dist += self.loc_dist(part, loc1, loc2)
-        return dist / count
-
     def freqs(self):
         freqs = {}
         for loc in self.comms:

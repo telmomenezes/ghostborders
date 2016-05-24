@@ -131,35 +131,6 @@ class Scales:
                 comm_dir = self.comm_path(per_dist, True)
                 bord.process(comm_dir, None, bord_file)
 
-    def rand_index_seq(self, db):
-        window = 1
-        percentiles = self.percent_range()
-
-        # voronoi
-        vor = Voronoi(db)
-        
-        # read all partitions
-        pars = {}
-        for per in percentiles:
-            comm_file = self.comm_path(per, False)
-            par = Partition(vor, comm_file)
-            par.read(comm_file)
-            par.smooth_until_stable()
-            pars[per] = par
-
-        steps = len(percentiles)
-        for i in range(window, steps):
-            dist = 0.
-            per1 = percentiles[i]
-            par1 = pars[per]
-            for j in range(0, window):
-                per2 = percentiles[i - j - 1]
-                par2 = pars[per2]
-                dist += par1.distance(par2)
-            dist /= window
-
-            print("%s,%s" % (per1, dist))
-
     def metric(self, metric, db, smooth, scale, infile):
         vor = Voronoi(db)
 

@@ -386,19 +386,6 @@ def scales_communities(ctx):
     scales = Scales(outdir, intervals)
     scales.generate_communities(two, runs, best)
 
-    
-@cli.command()
-@click.pass_context
-def scales_rand(ctx):
-    dbname = ctx.obj['dbname']
-    db = DB(dbname, ctx.obj['config'])
-    db.open()
-    outdir = ctx.obj['outdir']
-    intervals = int(ctx.obj['intervals'])
-
-    scales = Scales(outdir, intervals)
-    scales.rand_index_seq(db)
-
 
 @cli.command()
 @click.pass_context
