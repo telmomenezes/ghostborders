@@ -376,6 +376,17 @@ def scales_normalize(ctx):
 
 @cli.command()
 @click.pass_context
+def scales_filter_low_degree(ctx):
+    outdir = ctx.obj['outdir']
+    intervals = int(ctx.obj['intervals'])
+    min_degree = int(ctx.obj['min_degree'])
+    
+    scales = Scales(outdir, intervals)
+    scales.filter_low_degree(min_degree)
+
+
+@cli.command()
+@click.pass_context
 def scales_communities(ctx):
     outdir = ctx.obj['outdir']
     two = ctx.obj['two']
