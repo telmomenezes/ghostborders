@@ -99,6 +99,6 @@ def filter_low_degree(g, min_degree):
             g_new[edge] = g[edge]
         else:
             count += 1
-    precent = (float(count) / float(len(g))) * 100.0
+    percent = (float(count) / float(len(g))) * 100.0
     print('filtered out edges: %s; percentage: %s' % (count, percent))
     return g_new
