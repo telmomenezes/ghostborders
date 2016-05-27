@@ -124,3 +124,9 @@ def filter_low_degree(g, min_degree):
     percent = (float(count) / float(len(g))) * 100.0
     print('filtered out edges: %s; percentage: %s' % (count, percent))
     return g_new
+
+
+def write_degrees(g):
+    degs = degrees(g)
+    for loc in degs:
+        print('%s,%s' % (loc, degs[loc]))

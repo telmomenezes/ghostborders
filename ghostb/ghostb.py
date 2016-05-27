@@ -304,6 +304,14 @@ def confmodel(ctx):
 
 @cli.command()
 @click.pass_context
+def write_degrees(ctx):
+    infile = ctx.obj['infile']
+    g = ghostb.graph.read_graph(infile)
+    ghostb.graph.write_degrees(g)
+
+
+@cli.command()
+@click.pass_context
 def filter_low_degree(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
