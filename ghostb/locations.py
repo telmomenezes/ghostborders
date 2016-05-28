@@ -22,6 +22,7 @@
 
 import csv
 import ghostb.region_defs
+import ghostb.graph
 
 
 def safe_unicode(obj, *args):
@@ -107,3 +108,30 @@ class Locations:
     def clean(self):
         self.db.cur.execute("DELETE FROM location")
         self.db.conn.commit()
+
+    def filter_low_degree(self, graph_file, min_ratio):
+        print('filtering graph %, ratio >= %s' % (graph_file, min_ratio))
+
+        g = ghostb.graph.read_graph(graph_file)
+        degs = ghostb.graph.degrees(g)
+        total = 0.0
+        count = 0.0
+        for loc in degs:
+            total += float(degs[loc])
+            count += 1.0
+
+        mean_degree = total / count 
+
+        inactive = 0.0
+        for loc in degs:
+            ratio = float(degs[loc]) / mean_degree
+            if ratio >= min_ratio:
+                active = 1
+            else:
+                active = 0
+                ianctive += 1.0
+            self.db.cur.execute("UPDATE location SET active=%s WHERE id=%s", (active, loc))
+            self.db.conn.commit()
+
+        percent = (inactive / count) * 100.0
+        print('filtered out locations: %s; percentage: %s' % (count, percent))

@@ -110,22 +110,6 @@ def normalize_with_confmodel(csv_in, csv_out):
     write_graph(g, csv_out)
 
 
-def filter_low_degree(g, min_degree):
-    print('filtering graph, degree >= %s' % min_degree)
-    count = 0
-    degs = degrees(g)
-    g_new = {}
-    for edge in g:
-        deg = min(degs[edge[0]], degs[edge[1]])
-        if deg >= min_degree:
-            g_new[edge] = g[edge]
-        else:
-            count += 1
-    percent = (float(count) / float(len(g))) * 100.0
-    print('filtered out edges: %s; percentage: %s' % (count, percent))
-    return g_new
-
-
 def write_degrees(g):
     degs = degrees(g)
     for loc in degs:
