@@ -75,7 +75,7 @@ class FixLocations:
 
             # unly reassing for inactive locations
             if update:
-                photos = [photo for photo in photos if photo['location'] not in self.locmap.coords]
+                photos = [photo for photo in photos if photo['location'] not in self.locs]
 
             ups = [self.fixed_location(x) for x in photos]
             ups = [x for x in ups if x is not None]
