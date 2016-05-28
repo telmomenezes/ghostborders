@@ -21,37 +21,39 @@
 
 
 import ghostb.geo
-
-
-def nearest(photo, locs):
-    new_loc = {
-        'location': -1,
-        'dist': 9999999
-    }
-
-    for loc in locs:
-        dist = ghostb.geo.distance(photo, loc)
-        if dist < new_loc['dist']:
-            new_loc['id'] = loc['id']
-            new_loc['dist'] = dist
-
-    return new_loc
-
-
-def fixed_location(photo, locs):
-    new_loc = nearest(photo, locs)
-    if photo['location'] != new_loc['id']:
-        return {
-            'location': new_loc['id'],
-            'id': photo['id']
-        }
-    else:
-        return None
+from ghostb.locmap import LocMap
 
 
 class FixLocations:
     def __init__(self, db):
         self.db = db
+        locmap = LocMap(db)
+        self.locs = locmap.coords
+
+    def nearest(self, photo):
+        new_loc = {
+            'location': -1,
+            'dist': 9999999
+        }
+
+        for loc in self.locs:
+            dist = ghostb.geo.distance(photo, loc)
+            if dist < new_loc['dist']:
+                new_loc['id'] = loc['id']
+                new_loc['dist'] = dist
+
+        return new_loc
+
+
+    def fixed_location(self, photo):
+        new_loc = self.nearest(photo)
+        if photo['location'] != new_loc['id']:
+            return {
+                'location': new_loc['id'],
+                'id': photo['id']
+            }
+        else:
+            return None
 
     def update_locations(self, updates):
         args = [(x['location'], x['id']) for x in updates]
@@ -59,10 +61,6 @@ class FixLocations:
         self.db.conn.commit()
 
     def run(self):
-        self.db.cur.execute("SELECT id, lat, lng FROM location")
-        locs = self.db.cur.fetchall()
-        locs = [{'id': x[0], 'lat': x[1], 'lng': x[2]} for x in locs]
-
         self.db.cur.execute("SELECT count(id) as c FROM media")
         nphotos = self.db.cur.fetchone()[0]
         print("%s photos to process" % nphotos)
@@ -75,7 +73,7 @@ class FixLocations:
             if len(photos) == 0:
                 break
 
-            ups = [fixed_location(x, locs) for x in photos]
+            ups = [self.fixed_location(x) for x in photos]
             ups = [x for x in ups if x is not None]
             self.update_locations(ups)
             print("number of updates: %s" % len(ups))
