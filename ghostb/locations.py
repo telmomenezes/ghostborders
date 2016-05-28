@@ -110,7 +110,7 @@ class Locations:
         self.db.conn.commit()
 
     def filter_low_degree(self, graph_file, min_ratio):
-        print('filtering graph %, ratio >= %s' % (graph_file, min_ratio))
+        print('filtering graph %s, ratio >= %s' % (graph_file, min_ratio))
 
         g = ghostb.graph.read_graph(graph_file)
         degs = ghostb.graph.degrees(g)
