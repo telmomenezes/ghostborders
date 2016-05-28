@@ -129,7 +129,7 @@ class Locations:
                 active = 1
             else:
                 active = 0
-                ianctive += 1.0
+                inactive += 1.0
             self.db.cur.execute("UPDATE location SET active=%s WHERE id=%s", (active, loc))
             self.db.conn.commit()
 
