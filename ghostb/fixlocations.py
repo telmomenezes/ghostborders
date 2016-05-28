@@ -37,9 +37,9 @@ class FixLocations:
         }
 
         for loc in self.locs:
-            dist = ghostb.geo.distance(photo, loc)
+            dist = ghostb.geo.distance(photo, self.locs[loc])
             if dist < new_loc['dist']:
-                new_loc['id'] = loc['id']
+                new_loc['id'] = loc
                 new_loc['dist'] = dist
 
         return new_loc
