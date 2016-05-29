@@ -21,6 +21,7 @@
 
 
 import os
+import os.path
 import sys
 import math
 import numpy as np
@@ -110,9 +111,13 @@ class Scales:
         fd = FilterDists(db)
         
         graph_file = self.graph_path(100)
-        print('generating: %s' % graph_file)
-        gg = GenGraph(db, graph_file=graph_file, table=table)
-        gg.generate()
+
+        if os.path.isfile(graph_file):
+            print('full graph file found: %s' % graph_file)
+        else:
+            print('generating: %s' % graph_file)
+            gg = GenGraph(db, graph_file=graph_file, table=table)
+            gg.generate()
 
         for per in self.percent_range():
             if per < 100:
