@@ -76,16 +76,11 @@ class Scales:
     
     def compute_percentiles(self, infile):
         per_table = {}
-        
-        # print('loading file: %s' % infile)
-        data = np.genfromtxt(infile, names=['dist', 'time'], skip_header=1, delimiter=',')
-        # print('computing percentiles...')
+        data = np.genfromtxt(infile, names=['dist'], skip_header=1, delimiter=',')
         for per in self.percent_range():
             dist_per = np.percentile(data['dist'], per)
             per_table[per] = dist_per
-            # print('[percentile %s] dist: %s' % (per, dist_per))
 
-        # print('writing percentiles...')
         self.write_percentiles(per_table)
         return per_table
 
