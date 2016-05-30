@@ -195,6 +195,10 @@ Optional parameters:
 
     $ ghostb --outdir <dir> --best scales_communities
 
+### Compute Borders ###
+
+    $ ghostb --db <db_name> --outdir <dir> [--best] scales_borders
+
 # Contacts #
 
 * telmo@telmomenezes.com
