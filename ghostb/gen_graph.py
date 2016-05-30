@@ -26,22 +26,10 @@ from ghostb.locmap import LocMap
 import ghostb.geo as geo
 
 
-def time_delta(link, loc_ts):
-    min_delta = -1
-    for ts1 in loc_ts[link[0]]:
-        for ts2 in loc_ts[link[1]]:
-            if ts1 != ts2:
-                delta = abs(ts1 - ts2)
-                if (min_delta < 0) or (delta < min_delta):
-                    min_delta = delta
-    return min_delta
-
-
 class GenGraph:
-    def __init__(self, db, graph_file='', dist_file='', table='media', max_time=-1):
+    def __init__(self, db, graph_file='', dist_file='', table='media'):
         self.db = db
         self.table = table
-        self.max_time = max_time
         self.write_graph = False
         self.write_dist = False
         if graph_file != '':
@@ -50,7 +38,7 @@ class GenGraph:
             self.ll = {}
         if dist_file != '':
             self.f_dist = open(dist_file, 'w')
-            self.f_dist.write('distance,time\n')
+            self.f_dist.write('distance\n')
             self.write_dist = True
             self.locmap = LocMap(db)
 
@@ -61,7 +49,7 @@ class GenGraph:
             f.write('%s,%s,%s\n' % (k[0], k[1], self.ll[k]))
         f.close()
 
-    def process_link(self, link, time):
+    def process_link(self, link):
         v1 = link[0]
         v2 = link[1]
         if v1 > v2:
@@ -70,35 +58,25 @@ class GenGraph:
         l = (v1, v2)
 
         if self.write_graph:
-            if (self.max_time < 0) or (time <= self.max_time):
-                if l in self.ll:
-                    self.ll[l] += 1
-                else:
-                    self.ll[l] = 1
+            if l in self.ll:
+                self.ll[l] += 1
+            else:
+                self.ll[l] = 1
 
         if self.write_dist:
             loc1 = self.locmap.coords[l[0]]
             loc2 = self.locmap.coords[l[1]]
             dist = geo.distance(loc1, loc2)
-            if (time > 0) and (dist > 0):
-                self.f_dist.write('%s,%s\n' % (dist, time))
+            if dist > 0:
+                self.f_dist.write('%s\n' % (dist,))
             else:
-                print('%s,%s\n' % (dist, time))
+                print('zero distance found between %s and %s' % (loc1, loc2))
         
     def process_user(self, user_id):
-        self.db.cur.execute("SELECT location, ts FROM %s WHERE user=%s"
+        self.db.cur.execute("SELECT location FROM %s WHERE user=%s"
                             % (self.table, user_id))
         data = self.db.cur.fetchall()
         locations = [x[0] for x in data]
-
-        loc_ts = {}
-        for x in data:
-            loc = x[0]
-            ts = x[1]
-            if loc in loc_ts:
-                loc_ts[loc].append(ts)
-            else:
-                loc_ts[loc] = [ts,]
         
         # make locations unique
         locations = set(locations)
@@ -106,14 +84,13 @@ class GenGraph:
         links = itertools.combinations(locations, 2)
 
         for link in links:
-            time = time_delta(link, loc_ts)
-            self.process_link(link, time)
+            self.process_link(link)
 
     def generate(self):
         if self.write_graph:
             print('generating graph.')
         if self.write_dist:
-            print('generating distance/time link distribution.')
+            print('generating link distance distribution.')
         print('using table: %s' % self.table)
             
         self.db.cur.execute("SELECT count(id) FROM user")

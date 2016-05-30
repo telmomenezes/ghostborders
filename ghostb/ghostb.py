@@ -71,7 +71,6 @@ def parse_scales(scales):
 @click.option('--min_ratio', help='Minimum ratio.', default=0.1)
 @click.option('--graph_file', help='Output graph file.', default='')
 @click.option('--dist_file', help='Output distribution file.', default='')
-@click.option('--max_time', help='Maximum time.', default=-1)
 @click.option('--intervals', help='Number of intervals.', default=100)
 @click.option('--scale', help='Scale type.', default='percentiles')
 @click.option('--metric', help='Metric type.')
@@ -81,8 +80,8 @@ def parse_scales(scales):
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
-        best, max_dist, min_ratio, graph_file, dist_file, max_time, intervals,
-        scale, metric, table, scales, update):
+        best, max_dist, min_ratio, graph_file, dist_file, intervals, scale,
+        metric, table, scales, update):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -107,7 +106,6 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'min_ratio': min_ratio,
         'graph_file': graph_file,
         'dist_file': dist_file,
-        'max_time': max_time,
         'intervals': intervals,
         'scale': scale,
         'metric': metric,
@@ -275,10 +273,9 @@ def gen_graph(ctx):
     graph_file = ctx.obj['graph_file']
     dist_file = ctx.obj['dist_file']
     table = ctx.obj['table']
-    max_time = ctx.obj['max_time']
     db = DB(dbname, ctx.obj['config'])
     db.open()
-    gg = GenGraph(db, graph_file, dist_file, table, max_time)
+    gg = GenGraph(db, graph_file, dist_file, table)
     gg.generate()
     db.close()
 
