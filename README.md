@@ -118,9 +118,10 @@ For a predefined region, a grid can be added with this command:
 
     $ ghostb --db <db_name> fix_locations
 
-### Assign locations to comments (optional) ###
+### Assign locations to comments / likes (optional) ###
 
-    $ ghostb --db <db_name> comment_locations
+    $ ghostb --db <db_name> --table comment assign_locations
+    $ ghostb --db <db_name> --table likes assign_locations
 
 ## Generate Simple Maps ##
 
