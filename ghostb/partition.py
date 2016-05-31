@@ -46,6 +46,14 @@ def read(path):
     return comms
 
 
+def community(partitions, partition_index, loc_id):
+    comms = partitions[partition_index].comms
+    if loc_id in comms:
+        return comms[loc_id]
+    else:
+        return -1
+
+
 class Partition:
     def __init__(self, vor, singletons=True):
         self.vor = vor
@@ -64,7 +72,7 @@ class Partition:
     def combine(self, pars):
         npars = len(pars)
         for loc_id in self.vor.locmap.coords:
-            self.comms[loc_id] = tuple([pars[i].comms[loc_id] for i in range(npars)])
+            self.comms[loc_id] = tuple([community(pars, i, loc_id) for i in range(npars)])
             
     # find the mode community for a given location and its neighbors
     # in case of a tie, uses the largest community
