@@ -86,6 +86,7 @@ class Communities:
         g = self.build_graph()
 
         comms = igraph.Graph.community_multilevel(g, weights="weight", return_levels=False)
+        #comms = igraph.Graph.community_multilevel(g, return_levels=False)
         #comms = igraph.Graph.community_leading_eigenvector(g, weights="weight")
         memb = comms.membership
 

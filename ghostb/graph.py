@@ -22,6 +22,7 @@
 
 import random
 import math
+import statistics
 
 
 def add_edge(graph, edge, weight=1.0):
@@ -115,7 +116,7 @@ def write_degrees(g):
     for loc in degs:
         print('%s,%s' % (loc, degs[loc]))
 
-def filter_low_degree(g, min_ratio):
+def filter_low_degree2(g, min_ratio):
     # compute mean degree
     degs = degrees(g)
     total = 0.0
@@ -131,10 +132,36 @@ def filter_low_degree(g, min_ratio):
         ratio = float(degs[loc]) / mean_degree
         if ratio >= min_ratio:
             active.append(loc)
+    active = set(active)
 
     # compute filtered graph
     new_g = {}
     for edge in g:
         if (edge[0] in active) and (edge[1] in active):
             new_g[edge] = g[edge]
+    return new_g
+
+
+def filter_low_degree(g, min_ratio):
+    # compute mean weight
+    total = 0.0
+    count = 0.0
+    for edge in g:
+        total += float(g[edge])
+        count += 1.0
+    mean_weight = total / count
+
+    print('mean_weight: %s' % mean_weight)
+
+    print('median weight: %s' % statistics.median(g.values()))
+
+    # compute filtered graph
+    discarded = 0.0
+    new_g = {}
+    for edge in g:
+        if float(g[edge]) >= min_ratio:
+            new_g[edge] = g[edge]
+        else:
+            discarded += 1.0
+    print('discarded %s%%.' % (discarded / count * 100.0))
     return new_g

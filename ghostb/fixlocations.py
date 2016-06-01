@@ -60,7 +60,7 @@ class FixLocations:
         self.db.cur.executemany("UPDATE media SET location=%s WHERE id=%s", args)
         self.db.conn.commit()
 
-    def run(self, update):
+    def run(self):
         self.db.cur.execute("SELECT count(id) as c FROM media")
         nphotos = self.db.cur.fetchone()[0]
         print("%s photos to process" % nphotos)
@@ -74,10 +74,6 @@ class FixLocations:
                 break
 
             n += len(photos)
-
-            # unly reassing for inactive locations
-            if update:
-                photos = [photo for photo in photos if photo['location'] not in self.locs]
 
             ups = [self.fixed_location(x) for x in photos]
             ups = [x for x in ups if x is not None]

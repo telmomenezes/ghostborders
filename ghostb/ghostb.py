@@ -76,12 +76,11 @@ def parse_scales(scales):
 @click.option('--metric', help='Metric type.')
 @click.option('--table', help='Table name.', default='media')
 @click.option('--scales', help='List of scales.', default='')
-@click.option('--update/--noupdate', default=False)
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
         best, max_dist, min_ratio, graph_file, dist_file, intervals, scale,
-        metric, table, scales, update):
+        metric, table, scales):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -110,8 +109,7 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'scale': scale,
         'metric': metric,
         'table': table,
-        'scales': parse_scales(scales),
-        'update': update
+        'scales': parse_scales(scales)
     }
 
 
@@ -213,10 +211,9 @@ def fix_locations(ctx):
     click.echo('Fixing locations')
     config = ctx.obj['config']
     db = DB(ctx.obj['dbname'], config)
-    update = ctx.obj['update']
     db.open()
     fixer = FixLocations(db)
-    fixer.run(update)
+    fixer.run()
     db.close()
 
 
