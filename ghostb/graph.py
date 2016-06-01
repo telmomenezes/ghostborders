@@ -123,7 +123,7 @@ def filter_low_degree(g, min_ratio):
     for loc in degs:
         total += float(degs[loc])
         count += 1.0
-    mean_degree = total / count 
+    mean_degree = total / count
 
     # determine active locaions
     active = []
@@ -134,7 +134,7 @@ def filter_low_degree(g, min_ratio):
 
     # compute filtered graph
     new_g = {}
-    for loc in g:
-        if loc in active:
-            new_g[loc] = [targ for targ in g[loc] if targ in active]
+    for edge in g:
+        if (edge[0] in active) and (edge[1] in active):
+            new_g[edge] = g[edge]
     return new_g
