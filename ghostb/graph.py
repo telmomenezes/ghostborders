@@ -119,14 +119,16 @@ def write_degrees(g):
         print('%s,%s' % (loc, degs[loc]))
 
 def filter_low_weight(g, min_weight):
+    count = 0.0
     discarded = 0.0
     new_g = {}
     for edge in g:
+        count += 1.0
         if float(g[edge]) >= min_weight:
             new_g[edge] = g[edge]
         else:
             discarded += 1.0
-    print('discarded %s%%.' % (discarded / count * 100.0))
+    print('discarded %s%%.' % ((discarded / count) * 100.0))
     return new_g
 
 
@@ -140,7 +142,7 @@ def write_dists(g, db, file_path):
         loc2 = locmap.coords[edge[1]]
         dist = geo.distance(loc1, loc2)
         if dist > 0:
-            for i in range(g[edge]):
+            for i in range(int(g[edge])):
                 f_dist.write('%s\n' % (dist,))
         else:
             print('zero distance found between %s and %s' % (loc1, loc2))

@@ -319,10 +319,11 @@ def write_degrees(ctx):
 @click.pass_context
 def filter_low_weight(ctx):
     infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
     min_weight = float(ctx.obj['min_weight'])
     g = ghostb.graph.read_graph(infile)
     g_new = ghostb.graph.filter_low_weight(g, min_weight)
-    ghostb.graph.write_graph(g_new)
+    ghostb.graph.write_graph(g_new, outfile)
 
 
 @cli.command()
@@ -380,6 +381,17 @@ def locphotos(ctx):
 def graph_info(ctx):
     infile = ctx.obj['infile']
     graphinfo(infile)
+
+
+@cli.command()
+@click.pass_context
+def locs_metrics(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outfile = ctx.obj['outfile']
+    lm = LocsMetrics(db)
+    lm.generate(outfile)
 
 
 @cli.command()
@@ -478,17 +490,6 @@ def scales_combine_borders(ctx):
     
     scales = Scales(outdir, intervals)
     scales.combine_borders(outfile)
-
-
-@cli.command()
-@click.pass_context
-def locs_metrics(ctx):
-    dbname = ctx.obj['dbname']
-    db = DB(dbname, ctx.obj['config'])
-    db.open()
-    outfile = ctx.obj['outfile']
-    lm = LocsMetrics(db)
-    lm.generate(outfile)
 
 
 if __name__ == '__main__':
