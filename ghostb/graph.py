@@ -165,3 +165,21 @@ def filter_low_degree(g, min_ratio):
             discarded += 1.0
     print('discarded %s%%.' % (discarded / count * 100.0))
     return new_g
+
+
+def write_dists(g, db, file_path):
+    f_dist = open(file_path, 'w')
+    f_dist.write('distance\n')
+    locmap = LocMap(db)
+
+    for edge in g:
+        loc1 = locmap.coords[edge[0]]
+        loc2 = locmap.coords[edge[1]]
+        dist = geo.distance(loc1, loc2)
+        if dist > 0:
+            for i in range(g[edge]):
+                f_dist.write('%s\n' % (dist,))
+        else:
+            print('zero distance found between %s and %s' % (loc1, loc2))
+
+    f_dist.close()

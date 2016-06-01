@@ -27,20 +27,11 @@ import ghostb.geo as geo
 
 
 class GenGraph:
-    def __init__(self, db, graph_file='', dist_file='', table='media'):
+    def __init__(self, db, graph_file, table='media'):
         self.db = db
         self.table = table
-        self.write_graph = False
-        self.write_dist = False
-        if graph_file != '':
-            self.graph_file = graph_file
-            self.write_graph = True
-            self.ll = {}
-        if dist_file != '':
-            self.f_dist = open(dist_file, 'w')
-            self.f_dist.write('distance\n')
-            self.write_dist = True
-            self.locmap = LocMap(db)
+        self.graph_file = graph_file
+        self.ll = {}
 
     def write_ll(self):
         f = open(self.graph_file, 'w')
@@ -57,21 +48,11 @@ class GenGraph:
             v2 = link[0]
         l = (v1, v2)
 
-        if self.write_graph:
-            if l in self.ll:
-                self.ll[l] += 1
-            else:
-                self.ll[l] = 1
+        if l in self.ll:
+            self.ll[l] += 1
+        else:
+            self.ll[l] = 1
 
-        if self.write_dist:
-            loc1 = self.locmap.coords[l[0]]
-            loc2 = self.locmap.coords[l[1]]
-            dist = geo.distance(loc1, loc2)
-            if dist > 0:
-                self.f_dist.write('%s\n' % (dist,))
-            else:
-                print('zero distance found between %s and %s' % (loc1, loc2))
-        
     def process_user(self, user_id):
         self.db.cur.execute("SELECT location FROM %s WHERE user=%s"
                             % (self.table, user_id))
@@ -87,10 +68,7 @@ class GenGraph:
             self.process_link(link)
 
     def generate(self):
-        if self.write_graph:
-            print('generating graph.')
-        if self.write_dist:
-            print('generating link distance distribution.')
+        print('generating graph.')
         print('using table: %s' % self.table)
             
         self.db.cur.execute("SELECT count(id) FROM user")
@@ -112,9 +90,6 @@ class GenGraph:
                 print("%s/%s (%s%%) processed" % (n, nusers, percent))
                 n += len(users)
 
-        if self.write_graph:
-            self.write_ll()
-        if self.write_dist:
-            self.f_dist.close()
+        self.write_ll()
     
         print("done.")

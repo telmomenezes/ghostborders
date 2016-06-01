@@ -127,13 +127,15 @@ For a predefined region, a grid can be added with this command:
 
 #### Generate graphs ####
 
-graph_file specifies the file path to write the graph to. If none is specified, the graph file is not generated.
+outfile specifies the file path to write the graph to.
 
-dist_file specifies the file path to write the distance and time link distribution to. If none is specified, the distribution file is not generated.
+    $ ghostb --db <db_name> --outfile <graph_output> gen_graph
 
-max_time specifies a time thershold for links to be included in the graph. It does not affect the distribution.
+#### Generate distances file ####
 
-    $ ghostb --db <db_name> [--graph_file <graph_output>] [--dist_file <dist_output>] [--max_time] <max_time> gen_graph
+outfile specifies the file path to write the link distance distribution to.
+
+    $ ghostb --db <db_name> --outfile <distances_output> dists
 
 #### Filter distances (optional) ####
 
