@@ -410,10 +410,10 @@ def scales_normalize(ctx):
 def scales_filter_low_degree(ctx):
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
-    min_degree = int(ctx.obj['min_degree'])
+    min_ratio = int(ctx.obj['min_ratio'])
     
     scales = Scales(outdir, intervals)
-    scales.filter_low_degree(min_degree)
+    scales.filter_low_degree(min_ratio)
 
 
 @cli.command()

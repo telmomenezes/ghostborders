@@ -113,19 +113,11 @@ class Locations:
         print('filtering graph %s, ratio >= %s' % (graph_file, min_ratio))
 
         g = ghostb.graph.read_graph(graph_file)
-        degs = ghostb.graph.degrees(g)
-        total = 0.0
-        count = 0.0
-        for loc in degs:
-            total += float(degs[loc])
-            count += 1.0
-
-        mean_degree = total / count 
+        new_g = ghostb.graph.filter_low_degree(g, min_ratio)
 
         inactive = 0.0
-        for loc in degs:
-            ratio = float(degs[loc]) / mean_degree
-            if ratio >= min_ratio:
+        for loc in g:
+            if loc in new_g:
                 active = 1
             else:
                 active = 0

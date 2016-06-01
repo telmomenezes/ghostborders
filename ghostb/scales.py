@@ -128,11 +128,11 @@ class Scales:
             graph_file = self.graph_path(per_dist)
             ghostb.graph.normalize_with_confmodel(graph_file, graph_file)
         
-    def filter_low_degree(self, min_degree):
+    def filter_low_degree(self, min_ratio):
         for per_dist in self.percent_range():
             graph_file = self.graph_path(per_dist)
             g = ghostb.graph.read_graph(graph_file)
-            g_new = ghostb.graph.filter_low_degree(g, min_degree)
+            g_new = ghostb.graph.filter_low_degree(g, min_ratio)
             ghostb.graph.write_graph(g_new, graph_file)
 
     def generate_communities(self, two, runs, best):

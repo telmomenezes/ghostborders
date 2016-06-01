@@ -114,3 +114,27 @@ def write_degrees(g):
     degs = degrees(g)
     for loc in degs:
         print('%s,%s' % (loc, degs[loc]))
+
+def filter_low_degree(g, min_ratio):
+    # compute mean degree
+    degs = degrees(g)
+    total = 0.0
+    count = 0.0
+    for loc in degs:
+        total += float(degs[loc])
+        count += 1.0
+    mean_degree = total / count 
+
+    # determine active locaions
+    active = []
+    for loc in degs:
+        ratio = float(degs[loc]) / mean_degree
+        if ratio >= min_ratio:
+            active.append(loc)
+
+    # compute filtered graph
+    new_g = {}
+    for loc in g:
+        if loc in active:
+            new_g[loc] = [targ for targ in g[loc] if targ in active]
+    return new_g
