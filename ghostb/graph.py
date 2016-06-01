@@ -23,6 +23,8 @@
 import random
 import math
 import statistics
+from ghostb.locmap import LocMap
+import ghostb.geo as geo
 
 
 def add_edge(graph, edge, weight=1.0):
@@ -116,50 +118,11 @@ def write_degrees(g):
     for loc in degs:
         print('%s,%s' % (loc, degs[loc]))
 
-def filter_low_degree2(g, min_ratio):
-    # compute mean degree
-    degs = degrees(g)
-    total = 0.0
-    count = 0.0
-    for loc in degs:
-        total += float(degs[loc])
-        count += 1.0
-    mean_degree = total / count
-
-    # determine active locaions
-    active = []
-    for loc in degs:
-        ratio = float(degs[loc]) / mean_degree
-        if ratio >= min_ratio:
-            active.append(loc)
-    active = set(active)
-
-    # compute filtered graph
-    new_g = {}
-    for edge in g:
-        if (edge[0] in active) and (edge[1] in active):
-            new_g[edge] = g[edge]
-    return new_g
-
-
-def filter_low_degree(g, min_ratio):
-    # compute mean weight
-    total = 0.0
-    count = 0.0
-    for edge in g:
-        total += float(g[edge])
-        count += 1.0
-    mean_weight = total / count
-
-    print('mean_weight: %s' % mean_weight)
-
-    print('median weight: %s' % statistics.median(g.values()))
-
-    # compute filtered graph
+def filter_low_weight(g, min_weight):
     discarded = 0.0
     new_g = {}
     for edge in g:
-        if float(g[edge]) >= min_ratio:
+        if float(g[edge]) >= min_weight:
             new_g[edge] = g[edge]
         else:
             discarded += 1.0

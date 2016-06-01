@@ -68,7 +68,7 @@ def parse_scales(scales):
 @click.option('--two/--many', default=False)
 @click.option('--best/--all', default=False)
 @click.option('--max_dist', help='Maximum distance.')
-@click.option('--min_ratio', help='Minimum ratio.', default=0.1)
+@click.option('--min_weight', help='Minimum edge weight.', default=5.0)
 @click.option('--intervals', help='Number of intervals.', default=100)
 @click.option('--scale', help='Scale type.', default='percentiles')
 @click.option('--metric', help='Metric type.')
@@ -77,7 +77,7 @@ def parse_scales(scales):
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
-        best, max_dist, min_ratio, intervals, scale, metric, table, scales):
+        best, max_dist, min_weight, intervals, scale, metric, table, scales):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -99,7 +99,7 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'two': two,
         'best': best,
         'max_dist': max_dist,
-        'min_ratio': min_ratio,
+        'min_weight': min_weight,
         'intervals': intervals,
         'scale': scale,
         'metric': metric,
@@ -175,6 +175,7 @@ def add_region_grid(ctx):
     locs = Locations(db)
     locs.add_region_grid(region, rows, cols)
     db.close()
+
 
 @cli.command()
 @click.pass_context
@@ -316,14 +317,12 @@ def write_degrees(ctx):
 
 @cli.command()
 @click.pass_context
-def filter_low_degree(ctx):
-    db = DB(ctx.obj['dbname'], ctx.obj['config'])
-    db.open()
+def filter_low_weight(ctx):
     infile = ctx.obj['infile']
-    min_ratio = float(ctx.obj['min_ratio'])
-    locs = Locations(db)
-    locs.filter_low_degree(infile, min_ratio)
-    db.close()
+    min_weight = float(ctx.obj['min_weight'])
+    g = ghostb.graph.read_graph(infile)
+    g_new = ghostb.graph.filter_low_weight(g, min_weight)
+    ghostb.graph.write_graph(g_new)
 
 
 @cli.command()
@@ -407,17 +406,6 @@ def scales_normalize(ctx):
     
     scales = Scales(outdir, intervals)
     scales.normalize()
-
-
-@cli.command()
-@click.pass_context
-def scales_filter_low_degree(ctx):
-    outdir = ctx.obj['outdir']
-    intervals = int(ctx.obj['intervals'])
-    min_ratio = float(ctx.obj['min_ratio'])
-    
-    scales = Scales(outdir, intervals)
-    scales.filter_low_degree(min_ratio)
 
 
 @cli.command()

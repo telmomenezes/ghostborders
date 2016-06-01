@@ -22,8 +22,6 @@
 
 import sys
 import itertools
-from ghostb.locmap import LocMap
-import ghostb.geo as geo
 
 
 class GenGraph:
