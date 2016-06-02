@@ -131,7 +131,6 @@ def filter_low_weight(g, min_weight):
     print('discarded %s%%.' % ((discarded / count) * 100.0))
     return new_g
 
-
 def write_dists(g, db, file_path):
     f_dist = open(file_path, 'w')
     f_dist.write('distance\n')

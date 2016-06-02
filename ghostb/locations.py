@@ -108,22 +108,3 @@ class Locations:
     def clean(self):
         self.db.cur.execute("DELETE FROM location")
         self.db.conn.commit()
-
-    def filter_low_degree(self, graph_file, min_ratio):
-        print('filtering graph %s, ratio >= %s' % (graph_file, min_ratio))
-
-        g = ghostb.graph.read_graph(graph_file)
-        new_g = ghostb.graph.filter_low_degree(g, min_ratio)
-
-        inactive = 0.0
-        for loc in g:
-            if loc in new_g:
-                active = 1
-            else:
-                active = 0
-                inactive += 1.0
-            self.db.cur.execute("UPDATE location SET active=%s WHERE id=%s", (active, loc))
-            self.db.conn.commit()
-
-        percent = (inactive / count) * 100.0
-        print('filtered out locations: %s; percentage: %s' % (count, percent))

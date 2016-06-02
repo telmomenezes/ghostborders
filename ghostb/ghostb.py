@@ -32,6 +32,7 @@ from ghostb.photodensity import PhotoDensity
 from ghostb.assign_locations import AssignLocations
 from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
+from ghostb.replace_low_degree import ReplaceLowDegree
 from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
@@ -69,6 +70,7 @@ def parse_scales(scales):
 @click.option('--best/--all', default=False)
 @click.option('--max_dist', help='Maximum distance.')
 @click.option('--min_weight', help='Minimum edge weight.', default=5.0)
+@click.option('--min_degree', help='Minimum location degree.', default=5.0)
 @click.option('--intervals', help='Number of intervals.', default=100)
 @click.option('--scale', help='Scale type.', default='percentiles')
 @click.option('--metric', help='Metric type.')
@@ -77,7 +79,8 @@ def parse_scales(scales):
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng,rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
-        best, max_dist, min_weight, intervals, scale, metric, table, scales):
+        best, max_dist, min_weight, min_degree, intervals, scale, metric, table,
+        scales):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -100,6 +103,7 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'best': best,
         'max_dist': max_dist,
         'min_weight': min_weight,
+        'min_degree': min_degree,
         'intervals': intervals,
         'scale': scale,
         'metric': metric,
@@ -324,6 +328,20 @@ def filter_low_weight(ctx):
     g = ghostb.graph.read_graph(infile)
     g_new = ghostb.graph.filter_low_weight(g, min_weight)
     ghostb.graph.write_graph(g_new, outfile)
+
+
+@cli.command()
+@click.pass_context
+def replace_low_degree(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    infile = ctx.obj['infile']
+    outfile = ctx.obj['outfile']
+    min_degree = float(ctx.obj['min_degree'])
+    rld = ReplaceLowDegree(db, infile, min_degree)
+    rld.run(outfile)
+    db.close()
 
 
 @cli.command()
