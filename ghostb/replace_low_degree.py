@@ -91,7 +91,10 @@ class ReplaceLowDegree:
         # compute filtered graph
         new_g = {}
         for edge in self.g:
-            ghostb.graph.add_edge(new_g, self.fix_edge(edge), self.g[edge])
+            new_edge = self.fix_edge(edge)
+            # do not add self-loops (can be created by fix_edge)
+            if new_edge[0] != new_edge[1]:
+                ghostb.graph.add_edge(new_g, new_edge, self.g[edge])
         
         # write new graph
         ghostb.graph.write_graph(new_g, outfile)
