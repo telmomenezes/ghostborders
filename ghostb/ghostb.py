@@ -424,7 +424,7 @@ def scales_graphs(ctx):
     table = ctx.obj['table']
     
     scales = Scales(outdir, intervals)
-    scales.generate_graphs(db, infile, scale, table)
+    scales.generate_graphs(db, scale, table)
 
 
 @cli.command()
