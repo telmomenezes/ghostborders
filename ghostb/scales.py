@@ -32,7 +32,7 @@ from ghostb.communities import Communities
 from ghostb.borders import Borders
 from ghostb.combine_borders import CombineBorders
 from ghostb.voronoi import Voronoi
-from ghostb.partition import Partition
+import ghostb.partition as part
 
     
 class Scales:
@@ -85,9 +85,9 @@ class Scales:
         # check if percentiles file already exists
         percentiles_file = self.percentiles_path()
         if os.path.isfile(percentiles_file):
-            data = np.genfromtxt(self.dists_path(), names=['percentile', 'dist'], skip_header=1, delimiter=',')
+            data = np.genfromtxt(percentiles_file, names=['percentile', 'dist'], skip_header=1, delimiter=',')
             for row in data:
-                per_table[int(data['percentile'])] = float(data['dist'])
+                per_table[int(row['percentile'])] = float(row['dist'])
         # if not, compute percentiles and create file
         else:
             data = np.genfromtxt(self.dists_path(), names=['dist'], skip_header=1, delimiter=',')
@@ -168,19 +168,28 @@ class Scales:
                 comm_dir = self.comm_path(per_dist, True)
                 bord.process(comm_dir, None, bord_file)
 
-    def metric(self, metric, db, smooth, scale):
-        vor = Voronoi(db)
-
+    def metric(self, metric, db, best, smooth, scale):
         print("percentile,distance,metric")
         for per in self.percent_range():
-            dir_in = self.comm_path(per, True)
             f_ins = []
-            for (dirpath, dirnames, filenames) in os.walk(dir_in):
-                f_ins.extend(filenames)
+            if best:
+                f_ins = [self.comm_path(per, False)]
+            else:
+                dir_in = self.comm_path(per, True)
+                for (dirpath, dirnames, filenames) in os.walk(dir_in):
+                    f_ins.extend(filenames)
+                f_ins = ["%s/%s" % (dir_in, f) for f in f_ins]
+
+            vertices = set()
+            for f in f_ins:
+                fverts = set(part.read(f).keys())
+                vertices = vertices.union(fverts)
+            vor = Voronoi(db, vertices)
+
             m = 0.
             for f in f_ins:
-                par = Partition(vor)
-                par.read("%s/%s" % (dir_in, f))
+                par = part.Partition(vor)
+                par.read(f)
                 if smooth:
                     par.smooth_until_stable()
                 m += par.metric(metric)

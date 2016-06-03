@@ -457,13 +457,14 @@ def scales_metric(ctx):
     db = DB(dbname, ctx.obj['config'])
     db.open()
     outdir = ctx.obj['outdir']
+    best = ctx.obj['best']
     intervals = int(ctx.obj['intervals'])
     smooth = ctx.obj['smooth']
     scale = ctx.obj['scale']
     metric = ctx.obj['metric']
 
     scales = Scales(outdir, intervals)
-    scales.metric(metric, db, smooth, scale, infile)
+    scales.metric(metric, db, best, smooth, scale)
 
 
 @cli.command()
