@@ -73,7 +73,7 @@ class Scales:
         return '%s/percentiles.csv' % self.outdir
 
     def write_percentiles(self, per_table):
-        f = open(self.per_path(), 'w')
+        f = open(self.percentiles_path(), 'w')
         f.write('percentile,distance\n')
         for per in per_table:
             f.write('%s,%s\n' % (per, per_table[per]))
