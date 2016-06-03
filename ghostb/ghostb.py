@@ -73,7 +73,7 @@ def parse_scales(scales):
 @click.option('--min_degree', help='Minimum location degree.', default=5.0)
 @click.option('--intervals', help='Number of intervals.', default=100)
 @click.option('--scale', help='Scale type.', default='percentiles')
-@click.option('--metric', help='Metric type.')
+@click.option('--metric', help='Metric type.', default='herfindahl')
 @click.option('--table', help='Table name.', default='media')
 @click.option('--scales', help='List of scales.', default='')
 @click.pass_context
