@@ -418,7 +418,6 @@ def scales_graphs(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
-    infile = ctx.obj['infile']
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
     scale = ctx.obj['scale']
@@ -461,7 +460,6 @@ def scales_metric(ctx):
     intervals = int(ctx.obj['intervals'])
     smooth = ctx.obj['smooth']
     scale = ctx.obj['scale']
-    infile = ctx.obj['infile']
     metric = ctx.obj['metric']
 
     scales = Scales(outdir, intervals)
