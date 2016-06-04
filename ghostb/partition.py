@@ -35,9 +35,8 @@ def modes(comms):
     return [comm for comm in distrib if distrib[comm] == maxfq]
 
 
-def read(path):
+def read(path, comms={}):
     # read communities from csv
-    comms = {}
     lines = [line.rstrip('\n') for line in open(path)]
     del lines[0]
     for line in lines:
@@ -67,7 +66,7 @@ class Partition:
                 singleton_id -= 1
 
     def read(self, path):
-        self.comms = read(path)
+        self.comms = read(path, self.comms)
 
     def combine(self, pars):
         npars = len(pars)

@@ -169,6 +169,28 @@ class Scales:
                 bord.process(comm_dir, None, bord_file)
 
     def metric(self, metric, db, best, smooth, scale):
+        # create Voronoi
+        f_ins = []
+        for per in self.percent_range():
+            if best:
+                f_ins.append(self.comm_path(per, False))
+            else:
+                dir_in = self.comm_path(per, True)
+                for (dirpath, dirnames, filenames) in os.walk(dir_in):
+                    f_ins.extend(filenames)
+        
+        if not best:
+            f_ins = ["%s/%s" % (dir_in, f) for f in f_ins]
+
+        vertices = set()
+        for f in f_ins:
+            fverts = set(part.read(f).keys())
+            vertices = vertices.union(fverts)
+        vor = Voronoi(db, vertices)
+
+        print(vertices)
+
+        # compute metrics
         print("percentile,distance,metric")
         for per in self.percent_range():
             f_ins = []
@@ -179,12 +201,6 @@ class Scales:
                 for (dirpath, dirnames, filenames) in os.walk(dir_in):
                     f_ins.extend(filenames)
                 f_ins = ["%s/%s" % (dir_in, f) for f in f_ins]
-
-            vertices = set()
-            for f in f_ins:
-                fverts = set(part.read(f).keys())
-                vertices = vertices.union(fverts)
-            vor = Voronoi(db, vertices)
 
             m = 0.
             for f in f_ins:
