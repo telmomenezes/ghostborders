@@ -188,8 +188,6 @@ class Scales:
             vertices = vertices.union(fverts)
         vor = Voronoi(db, vertices)
 
-        print(vertices)
-
         # compute metrics
         print("percentile,distance,metric")
         for per in self.percent_range():
