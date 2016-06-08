@@ -22,6 +22,7 @@
 
 import math
 import sys
+import numpy as np
 
 
 def modes(comms):
@@ -64,6 +65,9 @@ class Partition:
             self.comms[loc] = singleton_id
             if singletons:
                 singleton_id -= 1
+
+        # init comm x comm
+        self.commxcomm = None
 
     def read(self, path):
         self.comms = read(path, self.comms)
@@ -123,15 +127,25 @@ class Partition:
             if updates == 0:
                 return
         
-    def loc_dist(self, part, loc1, loc2):
-        comm1a = self.comms[loc1]
-        comm2a = self.comms[loc2]
-        comm1b = part.comms[loc1]
-        comm2b = part.comms[loc2]
-        if (comm1a == comm2a) == (comm1b == comm2b):
-            return 0.
-        else:
-            return 1.
+    def init_commxcomm(self):
+        if self.commxcomm is None:
+            self.commxcomm = []
+            locs = self.comms
+            for loc1 in locs:
+                for loc2 in locs:
+                    if loc2 > loc1:
+                        self.commxcomm.append(int(self.comms[loc1] == self.comms[loc2]))
+        self.commxcomm = np.array(self.commxcomm)
+
+    # compute Rand index
+    # https://en.wikipedia.org/wiki/Rand_index
+    def distance(self, part):
+        self.init_commxcomm()
+        part.init_commxcomm()
+        count = len(self.commxcomm)
+        d = self.commxcomm - part.commxcomm
+        dist = np.count_nonzero(d)
+        return float(dist) / float(count)
 
     def freqs(self):
         freqs = {}

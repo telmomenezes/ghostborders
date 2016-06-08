@@ -209,7 +209,40 @@ class Scales:
                 m += par.metric(metric)
             m /= float(len(f_ins))
             print("%s,%s,%s" % (per, self.dist(per, scale), m))
+
+    def similarity_matrix(self, db, smooth):
+        # create Voronoi
+        f_ins = []
+        for per in self.percent_range():
+            f_ins.append(self.comm_path(per, False))
             
+        vertices = set()
+        for f in f_ins:
+            fverts = set(part.read(f).keys())
+            vertices = vertices.union(fverts)
+        vor = Voronoi(db, vertices)
+
+        # create paritions
+        parts = {}
+        for per in self.percent_range():
+            f_in = self.comm_path(per, False)
+            par = part.Partition(vor)
+            par.read(f_in)
+            if smooth:
+                par.smooth_until_stable()
+            parts[per] = par
+
+        for per1 in self.percent_range():
+            first = True
+            for per2 in self.percent_range():
+                dist = parts[per1].distance(parts[per2])
+                if first:
+                    first = False
+                else:
+                    print(',', end="")
+                print('%s' % dist, end="")
+            print('')
+
     def generate_multi_borders(self, db, out_file, smooth, scales):
         if len(scales) == 0:
             scales = self.percent_range()

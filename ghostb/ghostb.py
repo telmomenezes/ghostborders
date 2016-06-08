@@ -469,6 +469,20 @@ def scales_metric(ctx):
 
 @cli.command()
 @click.pass_context
+def similarity_matrix(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outdir = ctx.obj['outdir']
+    intervals = int(ctx.obj['intervals'])
+    smooth = ctx.obj['smooth']
+
+    scales = Scales(outdir, intervals)
+    scales.similarity_matrix(db, smooth)
+
+
+@cli.command()
+@click.pass_context
 def scales_borders(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
