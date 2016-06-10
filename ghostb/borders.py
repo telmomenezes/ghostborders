@@ -31,7 +31,7 @@ def line2row(line):
 
 
 def seg2list(segment):
-    return (segment['x1'], segment['y1'], segment['x2'], segment['y2'])
+    return segment['x1'], segment['y1'], segment['x2'], segment['y2']
 
 
 def voronoi2file(vor, path):
@@ -55,22 +55,54 @@ def isempty(comm):
     return True
 
 
+def check_border(comms, segment):
+    id1 = segment['id1']
+    id2 = segment['id2']
+    comm1 = comms[id1]
+    comm2 = comms[id2]
+
+    # no border between empty regions
+    if isempty(comm1) and isempty(comm2):
+        return False
+
+    return comm1 != comm2
+
+
+def metrics(seg, comms, scales):
+    id1 = seg['id1']
+    id2 = seg['id2']
+    comm1 = comms[id1]
+    comm2 = comms[id2]
+
+    summ = 0.
+    h = 0.
+    for i in range(len(scales)):
+        if comm1[i] != comm2[i]:
+            scale = scales[i]
+            summ += scale
+            h += 1.
+
+    mean_dist = summ / h
+
+    return mean_dist, h
+
+
+def multi_borders2file(bs, comms, scales, path):
+    f = open(path, 'w')
+    f.write('x1,y1,x2,y2,weight,mean_dist,std_dist,max_weight,h\n')
+
+    for seg in bs:
+        mean_dist, h = metrics(seg, comms, scales)
+        f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s\n' %
+                (seg['x1'], seg['y1'], seg['x2'], seg['y2'], 1., mean_dist, 0., 1., h))
+    f.close()
+
+
 class Borders:
     def __init__(self, db, smooth):
         self.smooth = smooth
         self.db = db
-        
-    def check_border(self, comms, segment):
-        id1 = segment['id1']
-        id2 = segment['id2']
-        comm1 = comms[id1]
-        comm2 = comms[id2]
-
-        # no border between empty regions
-        if isempty(comm1) and isempty(comm2):
-            return False
-        
-        return comm1 != comm2
+        self.vor = None
 
     def init_voronoi(self, files):
         vertices = set()
@@ -81,7 +113,7 @@ class Borders:
 
     def borders(self, comms):
         return [segment for segment in self.vor.segments
-                if self.check_border(comms, segment)]
+                if check_border(comms, segment)]
     
     def process_file(self, f_in):
         print("processing file %s ..." % f_in)
@@ -143,37 +175,9 @@ class Borders:
         else:
             bs = self.file2borders(file_in)
         voronoi2file(bs, f_out)
-
-    def metrics(self, seg, comms, scales):
-        id1 = seg['id1']
-        id2 = seg['id2']
-        comm1 = comms[id1]
-        comm2 = comms[id2]
-            
-        summ = 0.
-        h = 0.
-        for i in range(len(scales)):
-            if comm1[i] != comm2[i]:
-                scale = scales[i]
-                summ += scale
-                h += 1.
-
-        mean_dist = summ / h
-
-        return mean_dist, h
-
-    def multi_borders2file(self, bs, comms, scales, path):
-        f = open(path, 'w')
-        f.write('x1,y1,x2,y2,weight,mean_dist,std_dist,max_weight,h\n')
-
-        for seg in bs:
-            mean_dist, h = self.metrics(seg, comms, scales)
-            f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s\n' %
-                    (seg['x1'], seg['y1'], seg['x2'], seg['y2'], 1., mean_dist, 0., 1., h))
-        f.close()
         
     def process_multi(self, files, scales, f_out):
         self.init_voronoi(files)
         comms = self.files2comms(files)
         bs = self.borders(comms)
-        self.multi_borders2file(bs, comms, scales, f_out)
+        multi_borders2file(bs, comms, scales, f_out)

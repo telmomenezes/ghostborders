@@ -34,7 +34,12 @@ from ghostb.combine_borders import CombineBorders
 from ghostb.voronoi import Voronoi
 import ghostb.partition as part
 
-    
+
+def abs_log_scale(per):
+    max_dist = 100.
+    return math.pow(float(per) / 100., 2) * max_dist
+
+
 class Scales:
     def __init__(self, outdir, intervals):
         self.outdir = outdir
@@ -43,7 +48,7 @@ class Scales:
 
     def percent_range(self):
         step = 100.0 / self.intervals
-        return [int(i * step) for i in range (1, self.intervals + 1)]
+        return [int(i * step) for i in range(1, self.intervals + 1)]
         
     def make_path(self, name, per_dist, directory=False):
         path = '%s/%s-d%s' % (self.outdir, name, per_dist)
@@ -104,15 +109,11 @@ class Scales:
             self.per_table = self.percentiles_table()
         return self.per_table[per]
     
-    def abs_log_scale(self, per):
-        max_dist = 100.
-        return math.pow(float(per) / 100., 2) * max_dist
-    
     def dist(self, per, scale):
         if scale == 'percentiles':
             return self.percentile2dist(per)
         elif scale == 'log':
-            return self.abs_log_scale(per)
+            return abs_log_scale(per)
         else:
             print('Unknown scale type: %s' % scale)
             sys.exit()
@@ -178,9 +179,7 @@ class Scales:
                 dir_in = self.comm_path(per, True)
                 for (dirpath, dirnames, filenames) in os.walk(dir_in):
                     f_ins.extend(filenames)
-        
-        if not best:
-            f_ins = ["%s/%s" % (dir_in, f) for f in f_ins]
+                f_ins = ["%s/%s" % (dir_in, f) for f in f_ins]
 
         vertices = set()
         for f in f_ins:
@@ -242,6 +241,35 @@ class Scales:
                     print(',', end="")
                 print('%s' % dist, end="")
             print('')
+
+    def dist_sequence(self, db, smooth):
+        # create Voronoi
+        f_ins = []
+        for per in self.percent_range():
+            f_ins.append(self.comm_path(per, False))
+            
+        vertices = set()
+        for f in f_ins:
+            fverts = set(part.read(f).keys())
+            vertices = vertices.union(fverts)
+        vor = Voronoi(db, vertices)
+
+        # create paritions
+        parts = {}
+        for per in self.percent_range():
+            f_in = self.comm_path(per, False)
+            par = part.Partition(vor)
+            par.read(f_in)
+            if smooth:
+                par.smooth_until_stable()
+            parts[per] = par
+
+        prev = False
+        for per in self.percent_range():
+            if prev:
+                dist = parts[per].distance(parts[prev])
+                print('%s' % dist)
+            prev = per
 
     def generate_multi_borders(self, db, out_file, smooth, scales):
         if len(scales) == 0:

@@ -78,7 +78,7 @@ def parse_scales(scales):
 @click.option('--scales', help='List of scales.', default='')
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
-        max_lng,rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
+        max_lng, rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
         best, max_dist, min_weight, min_degree, intervals, scale, metric, table,
         scales):
     ctx.obj = {
@@ -166,6 +166,7 @@ def add_grid(ctx):
     locs = Locations(db)
     locs.add_grid(min_lat, min_lng, max_lat, max_lng, rows, cols)
     db.close()
+
 
 @cli.command()
 @click.pass_context
@@ -479,6 +480,20 @@ def similarity_matrix(ctx):
 
     scales = Scales(outdir, intervals)
     scales.similarity_matrix(db, smooth)
+
+
+@cli.command()
+@click.pass_context
+def dist_sequence(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outdir = ctx.obj['outdir']
+    intervals = int(ctx.obj['intervals'])
+    smooth = ctx.obj['smooth']
+
+    scales = Scales(outdir, intervals)
+    scales.dist_sequence(db, smooth)
 
 
 @cli.command()
