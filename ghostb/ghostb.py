@@ -40,6 +40,7 @@ from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
 from ghostb.scales import Scales
 from ghostb.locs_metrics import LocsMetrics
+from ghostb.breakpoints import find_breakpoints
 
 
 def parse_scales(scales):
@@ -76,11 +77,12 @@ def parse_scales(scales):
 @click.option('--metric', help='Metric type.', default='herfindahl')
 @click.option('--table', help='Table name.', default='media')
 @click.option('--scales', help='List of scales.', default='')
+@click.option('--window', help='Breakpoint min window.', default=10)
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng, rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
         best, max_dist, min_weight, min_degree, intervals, scale, metric, table,
-        scales):
+        scales, window):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -108,7 +110,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'scale': scale,
         'metric': metric,
         'table': table,
-        'scales': parse_scales(scales)
+        'scales': parse_scales(scales),
+        'window': window
     }
 
 
@@ -536,6 +539,16 @@ def scales_combine_borders(ctx):
     
     scales = Scales(outdir, intervals)
     scales.combine_borders(outfile)
+
+
+@cli.command()
+@click.pass_context
+def breakpoints(ctx):
+    infile = ctx.obj['infile']
+    intervals = int(ctx.obj['intervals'])
+    window = int(ctx.obj['window'])
+
+    find_breakpoints(infile, intervals, window)
 
 
 if __name__ == '__main__':

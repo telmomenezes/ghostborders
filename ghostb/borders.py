@@ -55,7 +55,7 @@ def isempty(comm):
     return True
 
 
-def check_border(comms, segment):
+def check_border(comms, segment, index=-1):
     id1 = segment['id1']
     id2 = segment['id2']
     comm1 = comms[id1]
@@ -65,26 +65,32 @@ def check_border(comms, segment):
     if isempty(comm1) and isempty(comm2):
         return False
 
-    return comm1 != comm2
+    if index < 0:
+        return comm1 != comm2
+    else:
+        return comm1[index] != comm2[index]
 
 
 def metrics(seg, comms, scales):
-    id1 = seg['id1']
-    id2 = seg['id2']
-    comm1 = comms[id1]
-    comm2 = comms[id2]
-
+    # compute mean distance and h
     summ = 0.
     h = 0.
     for i in range(len(scales)):
-        if comm1[i] != comm2[i]:
-            scale = scales[i]
-            summ += scale
+        if check_border(comms, seg, i):
+            summ += scales[i]
             h += 1.
-
     mean_dist = summ / h
 
-    return mean_dist, h
+    # compute standard deviation of distance
+    summ = 0.
+    for i in range(len(scales)):
+        if check_border(comms, seg, i):
+            x = scales[i] - mean_dist
+            x *= x
+            summ += x
+    std_dist = summ / h
+
+    return mean_dist, h, std_dist
 
 
 def multi_borders2file(bs, comms, scales, path):
@@ -92,9 +98,9 @@ def multi_borders2file(bs, comms, scales, path):
     f.write('x1,y1,x2,y2,weight,mean_dist,std_dist,max_weight,h\n')
 
     for seg in bs:
-        mean_dist, h = metrics(seg, comms, scales)
+        mean_dist, h, std_dist = metrics(seg, comms, scales)
         f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s\n' %
-                (seg['x1'], seg['y1'], seg['x2'], seg['y2'], 1., mean_dist, 0., 1., h))
+                (seg['x1'], seg['y1'], seg['x2'], seg['y2'], 1., mean_dist, std_dist, 1., h))
     f.close()
 
 
