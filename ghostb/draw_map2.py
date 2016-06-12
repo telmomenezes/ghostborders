@@ -21,6 +21,7 @@
 
 
 import matplotlib as mpl
+
 mpl.use('pdf')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -32,7 +33,6 @@ import ghostb.maps as maps
 from ghostb.locmap import LocMap
 import numpy as np
 
-
 # Some constants
 # colors
 land_color = 'white'
@@ -43,8 +43,7 @@ phantom_border_color = 'red'
 # widths
 border_width = 2.
 coastline_width = 3.
-#phantom_border_width_factor = 2.
-phantom_border_width_factor = .1
+phantom_border_width_factor = 2.
 river_width = 1.5
 point_size_factor = 10.
 # options
@@ -56,14 +55,13 @@ draw_rivers = True
 def draw_map2(borders_file, output_file, region, photo_dens_file=None,
               pop_dens_file=None, osm=False, resolution='i', width=50., thickness=1.,
               intervals=4):
-
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
     cols = co.shape[0]
 
     if photo_dens_file is not None:
         dens = genfromtxt(photo_dens_file, delimiter=',', skip_header=1)
 
-    cc = region_coords[region] 
+    cc = region_coords[region]
     x0 = cc[1]
     y0 = cc[0]
     x1 = cc[3]
@@ -102,7 +100,7 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
                 if d < 1:
                     d = 1
                 d = math.log(float(d))
-                #d = float(d)
+                # d = float(d)
                 if d < min_dens:
                     min_dens = d
                 if d > max_dens:
@@ -118,7 +116,7 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
                 if d < 1:
                     d = 1
                 d = math.log(float(d))
-                #d = float(d)
+                # d = float(d)
                 poly = Polygon(xy, facecolor=sm.to_rgba(d), alpha=0.9)
                 plt.gca().add_patch(poly)
     else:
@@ -131,7 +129,7 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
             pdens = math.log(dens[i][2])
             if pdens > max_photo_dens:
                 max_photo_dens = pdens
-    
+
         for i in range(len(dens)):
             x, y = m(dens[i][1], dens[i][0])
             x -= xorig
@@ -141,7 +139,7 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
                 weight = 0.001
             color = (0, 0, 1.0)
             weight *= point_size_factor
-            #poly = m.ellipse(x, y, radius, radius, 20, facecolor=color, edgecolor='none', alpha=0.8)
+            # poly = m.ellipse(x, y, radius, radius, 20, facecolor=color, edgecolor='none', alpha=0.8)
             m.plot(x, y, 'b.', markersize=weight)
 
     # draw phantom borders
@@ -155,14 +153,13 @@ def draw_map2(borders_file, output_file, region, photo_dens_file=None,
             mean_dst = co[i][5]
             std_dst = co[i][6]
             h = co[i][8]
-            if h >= 15.0:
-                color = 'black'
-                if h <= intervals / 2.:
-                    if mean_dst > 50.0:
-                        color = 'red'
-                    else:
-                        color = 'blue'
-                lw = h * phantom_border_width_factor * thickness
-                m.plot(x, y, color, linewidth=lw, alpha=max_weight)
+            color = 'black'
+            if h <= intervals / 2.:
+                if mean_dst > 50.0:
+                    color = 'red'
+                else:
+                    color = 'blue'
+            lw = h * phantom_border_width_factor * thickness
+            m.plot(x, y, color, linewidth=lw, alpha=max_weight)
 
     plt.savefig(output_file)

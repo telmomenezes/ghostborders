@@ -23,7 +23,7 @@
 import numpy as np
 
 
-def mean_dist(data, a, b):
+def mean_inner_dist(data, a, b):
     count = 0.0
     dist = 0.0
     for i in range(a, b):
@@ -36,24 +36,83 @@ def mean_dist(data, a, b):
     return dist
 
 
-def mean_mean_dist(data, breaks, intervals):
-    total = 0.0
+def mean_outter_dist(data, a, b, intervals):
+    count = 0.0
+    dist = 0.0
+    for i in range(a, b):
+        for j in range(0, intervals):
+            if (j < a) or (j >= b):
+                count += 1.0
+                dist += data[i][j]
+    if count == 0.0:
+        return 0.0
+    dist /= count
+    return dist
+
+
+def intervals_dist(data, a, b, c):
+    count = 0.0
+    dist = 0.0
+    for i in range(a, b):
+        for j in range(b, c):
+            count += 1.0
+            dist += data[i][j]
+    if count == 0.0:
+        return 0.0
+    dist /= count
+    return dist
+
+
+def scores(data, breaks, intervals):
+    total_intra = 0.0
+    total_inter = float('inf')
     start = 0
-    for b in breaks:
-        total += mean_dist(data, start, b) * (b - start)
+    for i in range(len(breaks)):
+        b = breaks[i]
+        c = intervals
+        if i + 1 < len(breaks):
+            c = breaks[i + 1]
+        total_intra += mean_inner_dist(data, start, b) * (b - start)
+        inter = intervals_dist(data, start, b, c)
+        if inter < total_inter:
+            total_inter = inter
         start = b
-    total += mean_dist(data, start, intervals) * (intervals - start)
-    return total / intervals
+    total_intra += mean_inner_dist(data, start, intervals) * (intervals - start)
+    total_intra /= intervals
+    return total_intra, total_inter
 
 
-def valid_break(breaks, brk, window):
+def valid_break(breaks, brk):
     for i in breaks:
-        if abs(i - brk) < window:
+        if abs(i - brk) < 1:
             return False
     return True
 
 
-def find_breakpoints(infile, intervals, window):
+def find_best_scale(data, a, b):
+    best_dist = float('inf')
+    best_scale = -1
+    for scale in range(a, b):
+        dist = 0.0
+        for i in range(a, b):
+            dist += data[scale][i]
+        if dist < best_dist:
+            best_dist = dist
+            best_scale = scale
+    return best_scale
+
+
+def best_scales(data, breakpoints):
+    scales = []
+    start = 0
+    for b in breakpoints:
+        scales.append(find_best_scale(data, start, b))
+        start = b
+    scales.append(find_best_scale(data, start, 100))
+    return scales
+
+
+def find_breakpoints(infile, intervals):
     data = np.genfromtxt(infile, skip_header=0, delimiter=',')
 
     breaks = []
@@ -63,21 +122,23 @@ def find_breakpoints(infile, intervals, window):
     while True:
         best = []
         best_score = float('inf')
-        for i in range(intervals):
-            if valid_break(breaks, i, window):
+        for i in range(1, intervals):
+            if valid_break(breaks, i):
                 new_breaks = breaks[:]
                 new_breaks.append(i)
-                score = mean_mean_dist(data, new_breaks, intervals)
+                new_breaks.sort()
+                intra, inter = scores(data, new_breaks, intervals)
+                score = intra / inter
                 if score < best_score:
                     best_score = score
                     best = new_breaks
         breaks = best
         if best_score < best_best_score:
-            # print(best_score)
-            # print(best)
-            best_breaks = breaks
             best_best_score = best_score
+            best_breaks = breaks
         else:
             break
 
-    print(best_breaks)
+    scales = best_scales(data, best_breaks)
+    print('breakpoints: %s' % best_breaks)
+    print('scales: %s' % scales)
