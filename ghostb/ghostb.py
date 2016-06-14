@@ -77,11 +77,12 @@ def parse_scales(scales):
 @click.option('--metric', help='Metric type.', default='herfindahl')
 @click.option('--table', help='Table name.', default='media')
 @click.option('--scales', help='List of scales.', default='')
+@click.option('--optimize', help='What to optimize for (speed/memory).', default='speed')
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng, rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
         best, max_dist, min_weight, min_degree, intervals, scale, metric, table,
-        scales):
+        scales, optimize):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -109,7 +110,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'scale': scale,
         'metric': metric,
         'table': table,
-        'scales': parse_scales(scales)
+        'scales': parse_scales(scales),
+        'optimize': optimize
     }
 
 
@@ -478,9 +480,10 @@ def similarity_matrix(ctx):
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
     smooth = ctx.obj['smooth']
+    optimize = ctx.obj['optimize']
 
     scales = Scales(outdir, intervals)
-    scales.similarity_matrix(db, smooth)
+    scales.similarity_matrix(db, smooth, optimize)
 
 
 @cli.command()

@@ -209,7 +209,7 @@ class Scales:
             m /= float(len(f_ins))
             print("%s,%s,%s" % (per, self.dist(per, scale), m))
 
-    def similarity_matrix(self, db, smooth):
+    def similarity_matrix(self, db, smooth, optimize):
         # create Voronoi
         f_ins = []
         for per in self.percent_range():
@@ -219,6 +219,7 @@ class Scales:
         for f in f_ins:
             fverts = set(part.read(f).keys())
             vertices = vertices.union(fverts)
+        print(len(vertices))
         vor = Voronoi(db, vertices)
 
         # create paritions
@@ -235,6 +236,10 @@ class Scales:
             first = True
             for per2 in self.percent_range():
                 dist = parts[per1].distance(parts[per2])
+                # if optimizing for memory, destroy large cached arrays
+                if optimize == 'memory':
+                    parts[per1].commxcomm = None
+                    parts[per2].commxcomm = None
                 if first:
                     first = False
                 else:
