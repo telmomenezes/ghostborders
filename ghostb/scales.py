@@ -245,7 +245,7 @@ class Scales:
         for i in range(npers):
             per1 = pr[i]
             if use_disk and (i > 0):
-                parts[per1].load('tmp/%s' % per1)
+                parts[per1].load_commxcomm('tmp/%s' % per1)
             for j in range(npers):
                 per2 = pr[j]
                 if per1 < per2:
