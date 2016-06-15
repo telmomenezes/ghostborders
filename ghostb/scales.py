@@ -210,21 +210,27 @@ class Scales:
             print("%s,%s,%s" % (per, self.dist(per, scale), m))
 
     def similarity_matrix(self, db, smooth, optimize):
+        # create precentile range
+        pr = self.percent_range()
+        npers = len(pr)
+
+        # save memory
+        use_disk = optimize == 'memory'
+
         # create Voronoi
         f_ins = []
-        for per in self.percent_range():
+        for per in pr:
             f_ins.append(self.comm_path(per, False))
             
         vertices = set()
         for f in f_ins:
             fverts = set(part.read(f).keys())
             vertices = vertices.union(fverts)
-        print(len(vertices))
         vor = Voronoi(db, vertices)
 
         # create paritions
         parts = {}
-        for per in self.percent_range():
+        for per in pr:
             f_in = self.comm_path(per, False)
             par = part.Partition(vor)
             par.read(f_in)
@@ -232,20 +238,36 @@ class Scales:
                 par.smooth_until_stable()
             parts[per] = par
 
-        for per1 in self.percent_range():
-            first = True
-            for per2 in self.percent_range():
-                dist = parts[per1].distance(parts[per2])
-                # if optimizing for memory, destroy large cached arrays
-                if optimize == 'memory':
-                    parts[per1].commxcomm = None
-                    parts[per2].commxcomm = None
-                if first:
-                    first = False
+        # create distances cache
+        dists = np.zeros((npers, npers))
+
+        # compute distances
+        for i in range(npers):
+            per1 = pr[i]
+            if use_disk and (i > 0):
+                parts[per1].load('tmp/%s' % per1)
+            for j in range(npers):
+                per2 = pr[j]
+                if per1 < per2:
+                    if use_disk and (i > 0):
+                        parts[per2].load_commxcomm('tmp/%s' % per2)
+                    dist = parts[per1].distance(parts[per2])
+                    if use_disk:
+                        if i > 0:
+                            parts[per2].clean_commxcomm()
+                        else:
+                            parts[per2].save_commxcomm('tmp/%s' % per2)
+                            if j == 1:
+                                parts[per1].save_commxcomm('tmp/%s' % per1)
+                    dists[i][j] = dist
                 else:
+                    dist = dists[j][i]
+                if j > 0:
                     print(',', end="")
-                print('%s' % dist, end="")
-            print('')
+                print('%s' % dist, end="", flush=True)
+            print('', flush=True)
+            if use_disk:
+                parts[per1].clean_commxcomm()
 
     def dist_sequence(self, db, smooth):
         # create Voronoi

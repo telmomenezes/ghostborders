@@ -129,13 +129,23 @@ class Partition:
         
     def init_commxcomm(self):
         if self.commxcomm is None:
-            self.commxcomm = []
+            commxcomm = []
             locs = self.comms
             for loc1 in locs:
                 for loc2 in locs:
                     if loc2 > loc1:
-                        self.commxcomm.append(int(self.comms[loc1] == self.comms[loc2]))
-        self.commxcomm = np.array(self.commxcomm)
+                        commxcomm.append(int(self.comms[loc1] == self.comms[loc2]))
+            self.commxcomm = np.array(commxcomm)
+
+    def load_commxcomm(self, path):
+        self.commxcomm = np.load('%s.npy' % path)
+
+    def save_commxcomm(self, path):
+        np.save(path, self.commxcomm)
+        self.commxcomm = None
+
+    def clean_commxcomm(self):
+        self.commxcomm = None
 
     # compute Rand index
     # https://en.wikipedia.org/wiki/Rand_index
