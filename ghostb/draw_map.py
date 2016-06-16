@@ -21,7 +21,6 @@
 
 
 import matplotlib as mpl
-mpl.use('pdf')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import math
@@ -29,8 +28,6 @@ from mpl_toolkits.basemap import Basemap
 from numpy import genfromtxt
 from ghostb.region_defs import *
 import ghostb.maps as maps
-from ghostb.locmap import LocMap
-import numpy as np
 
 
 # Some constants
@@ -50,10 +47,20 @@ point_size_factor = 10.
 draw_rivers = True
 
 
+def draw_simple_borders(cols, co, m, xorig, yorig, extra):
+    for i in range(cols):
+        x, y = m((co[i][1], co[i][3]), (co[i][0], co[i][2]))
+        x = (x[0] - xorig, x[1] - xorig)
+        y = (y[0] - yorig, y[1] - yorig)
+        weight = co[i][4] * phantom_border_width_factor
+        m.plot(x, y, phantom_border_color, linewidth=weight)
+
+
 # resolutions:
 # c (crude), l (low), i (intermediate), h (high), f (full)
-def draw_map(borders_file, output_file, region, photo_dens_file=None,
-             pop_dens_file=None, osm=False, resolution='i', width=50.):
+def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
+         osm=False, resolution='i', width=50., draw_borders=draw_simple_borders, extra=None):
+    mpl.use('pdf')
 
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
     cols = co.shape[0]
@@ -90,7 +97,7 @@ def draw_map(borders_file, output_file, region, photo_dens_file=None,
 
     # draw population densities
     if pop_dens_file:
-        s = m.readshapefile(pop_dens_file, 'dens')
+        m.readshapefile(pop_dens_file, 'dens')
 
         min_dens = float("inf")
         max_dens = float("-inf")
@@ -100,7 +107,6 @@ def draw_map(borders_file, output_file, region, photo_dens_file=None,
                 if d < 1:
                     d = 1
                 d = math.log(float(d))
-                #d = float(d)
                 if d < min_dens:
                     min_dens = d
                 if d > max_dens:
@@ -116,7 +122,6 @@ def draw_map(borders_file, output_file, region, photo_dens_file=None,
                 if d < 1:
                     d = 1
                 d = math.log(float(d))
-                #d = float(d)
                 poly = Polygon(xy, facecolor=sm.to_rgba(d), alpha=0.9)
                 plt.gca().add_patch(poly)
     else:
@@ -137,31 +142,16 @@ def draw_map(borders_file, output_file, region, photo_dens_file=None,
             weight = math.log(dens[i][2]) / max_photo_dens
             if weight < 0.001:
                 weight = 0.001
-            color = (0, 0, 1.0)
             weight *= point_size_factor
-            #poly = m.ellipse(x, y, radius, radius, 20, facecolor=color, edgecolor='none', alpha=0.8)
             m.plot(x, y, 'b.', markersize=weight)
 
     # draw phantom borders
-    for i in range(cols):
-        x, y = m((co[i][1], co[i][3]), (co[i][0], co[i][2]))
-        x = (x[0] - xorig, x[1] - xorig)
-        y = (y[0] - yorig, y[1] - yorig)
-        weight = co[i][4] * phantom_border_width_factor
-        m.plot(x, y, phantom_border_color, linewidth=weight)
-
-    # draw scatter plot
-    #data = np.genfromtxt('/Users/telmo/projects/ghostborders/berlin-locs-metrics.csv', names=['loc','lat','lng','photos','users','dist','time','degree','neighbors','self','entropy','dist_var','angle_var','angle_entropy'], skip_header=1, delimiter=',')
-    #locmap = LocMap(db).coords
-    #max_dist = max(data['dist'])
-    #for i in range(len(data['loc'])):
-    #    if data['degree'][i] > 0.:
-    #        x, y = m(data['lng'][i], data['lat'][i])
-    #        x -= xorig
-    #        y -= yorig
-    #        weight = data['angle_entropy'][i] * 25.
-    #        dist = data['dist'][i] / max_dist
-    #        color = (dist, 0, 1.0 - dist)
-    #        m.plot(x, y, 'b.', markersize=weight, color=color)
+    draw_borders(cols, co, m, xorig, yorig, extra)
         
     plt.savefig(output_file)
+
+
+def draw_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
+             osm=False, resolution='i', width=50.):
+    draw(borders_file, output_file, region, photo_dens_file=photo_dens_file, pop_dens_file=pop_dens_file,
+         osm=osm, resolution=resolution, width=width, draw_borders=draw_simple_borders)

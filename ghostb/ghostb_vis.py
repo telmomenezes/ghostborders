@@ -24,7 +24,7 @@ import click
 from ghostb.config import Config
 from ghostb.cropborders import CropBorders
 from ghostb.draw_map import draw_map
-from ghostb.draw_map2 import draw_map2
+from ghostb.draw_multi_map import draw_multi_map
 from ghostb.scales_vis import ScalesVis
 
 
@@ -96,7 +96,7 @@ def draw(ctx):
 
 @cli.command()
 @click.pass_context
-def draw2(ctx):
+def draw_multi(ctx):
     infile = ctx.obj['infile']
     outfile = ctx.obj['outfile']
     region = ctx.obj['region']
@@ -107,16 +107,16 @@ def draw2(ctx):
     width = ctx.obj['width']
     thick = float(ctx.obj['thick'])
     intervals = int(ctx.obj['intervals'])
-    draw_map2(borders_file=infile,
-              output_file=outfile,
-              region=region,
-              photo_dens_file=photo_dens_file,
-              pop_dens_file=pop_dens_file,
-              osm=osm,
-              resolution=resolution,
-              width=width,
-              thickness=thick,
-              intervals=intervals)
+    draw_multi_map(borders_file=infile,
+                   output_file=outfile,
+                   region=region,
+                   photo_dens_file=photo_dens_file,
+                   pop_dens_file=pop_dens_file,
+                   osm=osm,
+                   resolution=resolution,
+                   width=width,
+                   thickness=thick,
+                   intervals=intervals)
 
 
 @cli.command()
