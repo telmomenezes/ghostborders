@@ -42,9 +42,10 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--width', help='Map width.', default=50.)
 @click.option('--intervals', help='Number of intervals.', default=100)
 @click.option('--thick', help='Line thickness factor.', default=1.)
+@click.option('--sep', help='Line separation factor.', default=1.)
 @click.pass_context
 def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile,
-        photo_dens_file, pop_dens_file, osm, resolution, width, intervals, thick):
+        photo_dens_file, pop_dens_file, osm, resolution, width, intervals, thick, sep):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'locs_file': locs_file,
@@ -59,7 +60,8 @@ def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile,
         'resolution': resolution,
         'width': width,
         'intervals': intervals,
-        'thick': thick
+        'thick': thick,
+        'sep': sep
     }
 
 
@@ -106,6 +108,7 @@ def draw_multi(ctx):
     resolution = ctx.obj['resolution']
     width = ctx.obj['width']
     thick = float(ctx.obj['thick'])
+    sep = float(ctx.obj['sep'])
     intervals = int(ctx.obj['intervals'])
     draw_multi_map(borders_file=infile,
                    output_file=outfile,
@@ -115,7 +118,8 @@ def draw_multi(ctx):
                    osm=osm,
                    resolution=resolution,
                    width=width,
-                   thickness=thick,
+                   thick=thick,
+                   sep=sep,
                    intervals=intervals)
 
 

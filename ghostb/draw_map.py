@@ -21,6 +21,7 @@
 
 
 import matplotlib as mpl
+mpl.use('pdf')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import math
@@ -47,7 +48,7 @@ point_size_factor = 10.
 draw_rivers = True
 
 
-def draw_simple_borders(cols, co, m, xorig, yorig, extra):
+def draw_simple_borders(cols, co, m, xorig, yorig, dims, extra):
     for i in range(cols):
         x, y = m((co[i][1], co[i][3]), (co[i][0], co[i][2]))
         x = (x[0] - xorig, x[1] - xorig)
@@ -60,7 +61,6 @@ def draw_simple_borders(cols, co, m, xorig, yorig, extra):
 # c (crude), l (low), i (intermediate), h (high), f (full)
 def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
          osm=False, resolution='i', width=50., draw_borders=draw_simple_borders, extra=None):
-    mpl.use('pdf')
 
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
     cols = co.shape[0]
@@ -77,9 +77,8 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
     dy = abs(y1 - y0)
 
     height = width * dy / dx
-
-    plt.figure(figsize=(width, height))
     m = Basemap(projection='merc', resolution=resolution, llcrnrlat=y0, llcrnrlon=x0, urcrnrlat=y1, urcrnrlon=x1)
+    plt.figure(figsize=(width, height))
 
     if osm:
         osm_img_path = maps.coords2path(y0, x0, y1, x1)
@@ -87,6 +86,8 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
         m.imshow(im, interpolation='lanczos', origin='upper')
 
     xorig, yorig = m(x0, y0)
+    dims = m(width, height)
+    dims = (abs(dims[0] - xorig), abs(dims[1] - yorig))
 
     if not osm:
         m.drawlsmask(resolution=resolution, grid=1.25, ocean_color=water_color, land_color=land_color)
@@ -146,7 +147,7 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
             m.plot(x, y, 'b.', markersize=weight)
 
     # draw phantom borders
-    draw_borders(cols, co, m, xorig, yorig, extra)
+    draw_borders(cols, co, m, xorig, yorig, dims, extra)
         
     plt.savefig(output_file)
 

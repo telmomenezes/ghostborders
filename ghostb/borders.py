@@ -77,7 +77,7 @@ def metrics(seg, comms, scales):
     h = 0.
     for i in range(len(scales)):
         if check_border(comms, seg, i):
-            summ += scales[i]
+            summ += float(i)
             h += 1.
     mean_dist = summ / h
 
@@ -85,7 +85,7 @@ def metrics(seg, comms, scales):
     summ = 0.
     for i in range(len(scales)):
         if check_border(comms, seg, i):
-            x = scales[i] - mean_dist
+            x = float(i) - mean_dist
             x *= x
             summ += x
     std_dist = summ / h
@@ -93,14 +93,22 @@ def metrics(seg, comms, scales):
     return mean_dist, h, std_dist
 
 
+def borders_flags(seg, comms, scales):
+    flags = 0
+    for i in range(len(scales)):
+        if check_border(comms, seg, i):
+            flags += 2 << i
+    return flags
+
+
 def multi_borders2file(bs, comms, scales, path):
     f = open(path, 'w')
-    f.write('x1,y1,x2,y2,weight,mean_dist,std_dist,max_weight,h\n')
+    f.write('x1,y1,x2,y2,borders\n')
 
     for seg in bs:
-        mean_dist, h, std_dist = metrics(seg, comms, scales)
-        f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s\n' %
-                (seg['x1'], seg['y1'], seg['x2'], seg['y2'], 1., mean_dist, std_dist, 1., h))
+        borders = borders_flags(seg, comms, scales)
+        f.write('%s,%s,%s,%s,%s\n' %
+                (seg['x1'], seg['y1'], seg['x2'], seg['y2'], borders))
     f.close()
 
 
