@@ -41,11 +41,13 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--resolution', help='Map resolution.', default='i')
 @click.option('--width', help='Map width.', default=50.)
 @click.option('--intervals', help='Number of intervals.', default=100)
-@click.option('--thick', help='Line thickness factor.', default=1.)
-@click.option('--sep', help='Line separation factor.', default=1.)
+@click.option('--thick', help='Line thickness factor.', default=10.)
+@click.option('--sep', help='Line separation factor.', default=0.0005)
+@click.option('--color', help='Line color.', default='darkred')
+@click.option('--linestyle', help='Line style.', default='solid')
 @click.pass_context
-def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile,
-        photo_dens_file, pop_dens_file, osm, resolution, width, intervals, thick, sep):
+def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_file, pop_dens_file, osm, resolution,
+        width, intervals, thick, sep, color, linestyle):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'locs_file': locs_file,
@@ -61,7 +63,9 @@ def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile,
         'width': width,
         'intervals': intervals,
         'thick': thick,
-        'sep': sep
+        'sep': sep,
+        'color': color,
+        'linestyle': linestyle
     }
 
 
@@ -86,6 +90,9 @@ def draw(ctx):
     osm = ctx.obj['osm']
     resolution = ctx.obj['resolution']
     width = ctx.obj['width']
+    thick = float(ctx.obj['thick'])
+    color = ctx.obj['color']
+    linestyle = ctx.obj['linestyle']
     draw_map(borders_file=infile,
              output_file=outfile,
              region=region,
@@ -93,7 +100,10 @@ def draw(ctx):
              pop_dens_file=pop_dens_file,
              osm=osm,
              resolution=resolution,
-             width=width)
+             width=width,
+             thick=thick,
+             color=color,
+             linestyle=linestyle)
 
 
 @cli.command()

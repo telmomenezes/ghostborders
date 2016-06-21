@@ -39,15 +39,18 @@ def draw_border(m, x, y, scales, borders, i, thick, sep, dims):
 
         ls = 'solid'
         if scale == 0 and scales > 2:
-            ls = '--'
+            ls = 'dashed'
         elif scale > 1:
-            ls = '--'
+            ls = 'dashed'
 
         # horizontal border translation
         delta = sep * dims[0] * scale
         xi = (x[0] + delta, x[1] + delta)
         yi = (y[0], y[1])
-        m.plot(xi, yi, color, linewidth=thick, ls=ls, alpha=1.)
+        line, = m.plot(xi, yi, color, linewidth=thick, ls=ls, alpha=1.)
+        if ls == 'dashed':
+            dashes = [20, 20]
+            line.set_dashes(dashes)
 
 
 def draw_multi_borders(cols, co, m, xorig, yorig, dims, extra):

@@ -49,12 +49,17 @@ draw_rivers = True
 
 
 def draw_simple_borders(cols, co, m, xorig, yorig, dims, extra):
+    thick = extra['thick']
+    color = extra['color']
+    linestyle = extra['linestyle']
     for i in range(cols):
         x, y = m((co[i][1], co[i][3]), (co[i][0], co[i][2]))
         x = (x[0] - xorig, x[1] - xorig)
         y = (y[0] - yorig, y[1] - yorig)
-        weight = co[i][4] * phantom_border_width_factor
-        m.plot(x, y, phantom_border_color, linewidth=weight)
+        line, = m.plot(x, y, color, linewidth=thick, ls=linestyle)
+        if linestyle == 'dashed':
+            dashes = [20, 20]
+            line.set_dashes(dashes)
 
 
 # resolutions:
@@ -153,6 +158,9 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
 
 
 def draw_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
-             osm=False, resolution='i', width=50.):
+             osm=False, resolution='i', width=50., thick=10., color='darkred', linestyle='solid'):
+    extra = {'thick': thick,
+             'color': color,
+             'linestyle': linestyle}
     draw(borders_file, output_file, region, photo_dens_file=photo_dens_file, pop_dens_file=pop_dens_file,
-         osm=osm, resolution=resolution, width=width, draw_borders=draw_simple_borders)
+         osm=osm, resolution=resolution, width=width, draw_borders=draw_simple_borders, extra=extra)
