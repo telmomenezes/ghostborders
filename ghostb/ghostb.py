@@ -29,7 +29,6 @@ from ghostb.config import Config
 from ghostb.retriever import Retriever
 from ghostb.fixlocations import FixLocations
 from ghostb.photodensity import PhotoDensity
-from ghostb.assign_locations import AssignLocations
 from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
 from ghostb.replace_low_degree import ReplaceLowDegree
@@ -229,18 +228,6 @@ def photodensity(ctx):
     db.open()
     pd = PhotoDensity(db)
     pd.generate()
-    db.close()
-
-
-@cli.command()
-@click.pass_context
-def assign_locations(ctx):
-    config = ctx.obj['config']
-    db = DB(ctx.obj['dbname'], config)
-    db.open()
-    table = ctx.obj['table']
-    al = AssignLocations(db, table)
-    al.fix()
     db.close()
 
 
