@@ -520,17 +520,6 @@ def scales_multi_borders(ctx):
 
 @cli.command()
 @click.pass_context
-def scales_combine_borders(ctx):
-    outdir = ctx.obj['outdir']
-    outfile = ctx.obj['outfile']
-    intervals = int(ctx.obj['intervals'])
-    
-    scales = Scales(outdir, intervals)
-    scales.combine_borders(outfile)
-
-
-@cli.command()
-@click.pass_context
 def breakpoints(ctx):
     infile = ctx.obj['infile']
     intervals = int(ctx.obj['intervals'])

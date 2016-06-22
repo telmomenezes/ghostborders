@@ -20,9 +20,6 @@
 #   along with GhostBorders.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import random
-import math
-import statistics
 from ghostb.locmap import LocMap
 import ghostb.geo as geo
 
@@ -118,6 +115,7 @@ def write_degrees(g):
     for loc in degs:
         print('%s,%s' % (loc, degs[loc]))
 
+
 def filter_low_weight(g, min_weight):
     count = 0.0
     discarded = 0.0
@@ -130,6 +128,7 @@ def filter_low_weight(g, min_weight):
             discarded += 1.0
     print('discarded %s%%.' % ((discarded / count) * 100.0))
     return new_g
+
 
 def write_dists(g, db, file_path):
     f_dist = open(file_path, 'w')

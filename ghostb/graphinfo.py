@@ -21,7 +21,6 @@
 
 
 import ghostb.graph as graph
-import math
 
 
 def graphinfo(csv_in):

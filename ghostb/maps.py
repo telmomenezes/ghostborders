@@ -40,7 +40,7 @@ def tile_image(zoom, x, y):
     url = tile_url(zoom, x, y)
     try:
         tile = urllib2.urlopen(url).read()
-    except(Exception, e):
+    except IOError:
         print("Unable to download image %s" % url)
         sys.exit(-1)
     return tile
@@ -71,7 +71,7 @@ def coords2png(lat0, lng0, lat1, lng1, out_file):
     y_width = y_tiles * TILE_SIDE
 
     # create image
-    img = Image.new("RGBA", (x_tiles * TILE_SIDE, y_tiles * TILE_SIDE), (0,0,0,0))
+    img = Image.new("RGBA", (x_tiles * TILE_SIDE, y_tiles * TILE_SIDE), (0, 0, 0, 0))
     for x in range(x0, x1 + 1):
         for y in range(y0, y1 + 1):
             print("processing tile %s, %s" % (x, y))

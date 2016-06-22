@@ -48,4 +48,3 @@ class Distances:
         
         mean_distance = total_distance / count
         print('mean distance: %s' % mean_distance)
-

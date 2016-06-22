@@ -30,7 +30,6 @@ from ghostb.gen_graph import GenGraph
 from ghostb.filter_dists import FilterDists
 from ghostb.communities import Communities
 from ghostb.borders import Borders
-from ghostb.combine_borders import CombineBorders
 from ghostb.voronoi import Voronoi
 import ghostb.partition as part
 
@@ -305,10 +304,3 @@ class Scales:
         files = [self.comm_path(i, False) for i in scales]
         b = Borders(db, smooth)
         b.process_multi(files, scales, out_file)
-                    
-    def combine_borders(self, out_file):
-        cb = CombineBorders()
-        for per_dist in self.percent_range():
-            bord_file = self.bord_path(per_dist)
-            cb.add_file(bord_file, per_dist)
-        cb.write(out_file)

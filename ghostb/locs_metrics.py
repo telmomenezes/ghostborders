@@ -20,7 +20,6 @@
 #   along with GhostBorders.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
 import itertools
 from ghostb.locmap import LocMap
 import ghostb.geo as geo
@@ -67,7 +66,7 @@ class LocsMetrics:
             self.locmap[loc]['dist_var'] = 0.
             self.locmap[loc]['angle'] = 0.
             self.locmap[loc]['angle_var'] = 0.
-            self.locmap[loc]['angle_entropy'] = [0. for x in range(DIRECTIONS)]
+            self.locmap[loc]['angle_entropy'] = [0. for _ in range(DIRECTIONS)]
 
     def update_entropy(self, loc, weight):
         degree = float(self.locmap[loc]['degree'])
@@ -213,7 +212,7 @@ class LocsMetrics:
             if loc in loc_ts:
                 loc_ts[loc].append(ts)
             else:
-                loc_ts[loc] = [ts,]
+                loc_ts[loc] = [ts, ]
         
         freqs = {}
         for l in locations:

@@ -44,7 +44,6 @@ class FixLocations:
 
         return new_loc
 
-
     def fixed_location(self, photo):
         new_loc = self.nearest(photo)
         if photo['location'] != new_loc['id']:

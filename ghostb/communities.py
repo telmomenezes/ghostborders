@@ -86,8 +86,6 @@ class Communities:
         g = self.build_graph()
 
         comms = igraph.Graph.community_multilevel(g, weights="weight", return_levels=False)
-        #comms = igraph.Graph.community_multilevel(g, return_levels=False)
-        #comms = igraph.Graph.community_leading_eigenvector(g, weights="weight")
         memb = comms.membership
 
         # force dichotomy (horrible exponential time algo)
@@ -107,7 +105,7 @@ class Communities:
             memb = best
 
         mod = g.modularity(memb, weights="weight")
-        return (memb, mod)
+        return memb, mod
 
     def write(self, memb, out_file):
         f = open(out_file, 'w')
@@ -138,5 +136,4 @@ class Communities:
 
         print('best modularity: %s' % best_mod)
         print('done.')
-        return (best_mod, best_ncomms)
-    
+        return best_mod, best_ncomms
