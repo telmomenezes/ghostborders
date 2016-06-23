@@ -41,9 +41,13 @@ class UserScales:
 
     def link_scale(self, link):
         dist = ghostb.geo.distance(self.locs[link[0]], self.locs[link[1]])
+        print('dist: %s' % dist)
         for i in range(len(self.scales)):
+            print('scale %s: %s' % (i, self.per_table[self.scales[i]]))
             if dist < self.per_table[self.scales[i]]:
+                print('#')
                 return i
+        print('!!')
 
     def write_line(self, user_id, links):
         scales = [0] * len(self.scales)
