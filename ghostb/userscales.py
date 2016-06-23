@@ -64,8 +64,9 @@ class UserScales:
         # make locations unique
         locations = set(locations)
 
-        links = itertools.combinations(locations, 2)
-        self.write_line(user_id, links)
+        if len(locations) > 1:
+            links = itertools.combinations(locations, 2)
+            self.write_line(user_id, links)
 
     def generate(self):
         print('generating user scales file.')
