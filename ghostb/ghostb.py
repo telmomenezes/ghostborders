@@ -1,5 +1,5 @@
 #   Copyright (c) 2016 Centre Marc Bloch Berlin
-#   (An-Institut der Humboldt Universität, UMIFRE CNRS-MAE).
+#   (An-Institut der Humboldt Universitat, UMIFRE CNRS-MAE).
 #   All rights reserved.
 #
 #   Written by Telmo Menezes <telmo@telmomenezes.com>
