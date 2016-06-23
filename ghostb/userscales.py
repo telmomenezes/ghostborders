@@ -21,34 +21,38 @@
 
 
 import itertools
+import numpy as np
+from ghostb.locmap import LocMap
+import ghostb.geo
 
 
-class GenGraph:
-    def __init__(self, db, outfile, table='media'):
+class UserScales:
+    def __init__(self, db, outfile, percentiles_file, scales, table='media'):
         self.db = db
         self.table = table
-        self.outfile = outfile
-        self.ll = {}
+        self.outfile = open(outfile, 'w')
+        self.scales = scales
+        locmap = LocMap(db)
+        self.locs = locmap.coords
+        self.per_table = {}
+        data = np.genfromtxt(percentiles_file, names=['percentile', 'dist'], skip_header=1, delimiter=',')
+        for row in data:
+            self.per_table[int(row['percentile'])] = float(row['dist'])
 
-    def write_ll(self):
-        f = open(self.outfile, 'w')
-        f.write('orig,targ,weight\n')
-        for k in self.ll:
-            f.write('%s,%s,%s\n' % (k[0], k[1], self.ll[k]))
-        f.close()
+    def link_scale(self, link):
+        dist = ghostb.geo.distance(self.locs[link[0]], self.locs[link[1]])
+        for i in range(len(self.scales)):
+            if dist < self.scales[i]:
+                return i
 
-    def process_link(self, link):
-        v1 = link[0]
-        v2 = link[1]
-        if v1 > v2:
-            v1 = link[1]
-            v2 = link[0]
-        l = (v1, v2)
-
-        if l in self.ll:
-            self.ll[l] += 1
-        else:
-            self.ll[l] = 1
+    def write_line(self, user_id, links):
+        scales = [0] * len(self.scales)
+        for link in links:
+            scales[self.link_scale(link)] += 1
+        self.outfile.write('%s' % user_id)
+        for s in scales:
+            self.outfile.write(',%s' % s)
+        self.outfile.write('\n')
 
     def process_user(self, user_id):
         self.db.cur.execute("SELECT location FROM %s WHERE user=%s"
@@ -60,18 +64,22 @@ class GenGraph:
         locations = set(locations)
 
         links = itertools.combinations(locations, 2)
-
-        for link in links:
-            self.process_link(link)
+        self.write_line(user_id, links)
 
     def generate(self):
-        print('generating graph.')
+        print('generating user scales file.')
         print('using table: %s' % self.table)
             
         self.db.cur.execute("SELECT count(id) FROM user")
         nusers = self.db.cur.fetchone()[0]
         print("%s users to process" % nusers)
-    
+
+        # write output file header
+        self.outfile.write('user')
+        for i in range(len(self.scales)):
+            self.outfile.write(',scale_%s' % i)
+        self.outfile.write('\n')
+
         done = False
         n = 0
         while not done:
@@ -87,6 +95,6 @@ class GenGraph:
                 print("%s/%s (%s%%) processed" % (n, nusers, percent))
                 n += len(users)
 
-        self.write_ll()
+        self.outfile.close()
     
         print("done.")
