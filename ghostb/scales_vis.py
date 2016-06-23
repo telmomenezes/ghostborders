@@ -27,9 +27,7 @@ from ghostb.draw_map import draw_map
 
 class ScalesVis(Scales):
     def __init__(self, outdir, intervals):
-        self.outdir = outdir
-        self.intervals = intervals
-        self.per_table = None
+        super(ScalesVis, self).__init__(outdir, intervals)
                 
     def crop_borders(self, shapefile):
         for per_dist in self.percent_range():

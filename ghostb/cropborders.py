@@ -86,6 +86,7 @@ class CropBorders:
         y1 = cc[2]
 
         bmap = Basemap(resolution='i', llcrnrlat=y0, llcrnrlon=x0, urcrnrlat=y1, urcrnrlon=x1)
+        bmap.land = None
 
         for path in self.shapefile_paths:
             bmap.readshapefile(path, 'land')

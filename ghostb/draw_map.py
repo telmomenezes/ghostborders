@@ -21,14 +21,18 @@
 
 
 import matplotlib as mpl
-mpl.use('pdf')
+import matplotlib.colors
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from matplotlib.patches import Polygon
 import math
 from mpl_toolkits.basemap import Basemap
 from numpy import genfromtxt
 from ghostb.region_defs import *
 import ghostb.maps as maps
+
+
+mpl.use('pdf')
 
 
 # Some constants
@@ -48,7 +52,7 @@ point_size_factor = 10.
 draw_rivers = True
 
 
-def draw_simple_borders(cols, co, m, xorig, yorig, dims, extra):
+def draw_simple_borders(cols, co, m, xorig, yorig, _, extra):
     thick = extra['thick']
     color = extra['color']
     linestyle = extra['linestyle']
@@ -69,9 +73,6 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
 
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
     cols = co.shape[0]
-
-    if photo_dens_file is not None:
-        dens = genfromtxt(photo_dens_file, delimiter=',', skip_header=1)
 
     cc = region_coords[region] 
     x0 = cc[1]
@@ -103,6 +104,8 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
 
     # draw population densities
     if pop_dens_file:
+        m.dens_info = None
+        m.dens = None
         m.readshapefile(pop_dens_file, 'dens')
 
         min_dens = float("inf")
@@ -119,7 +122,7 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
                     max_dens = d
 
         norm = mpl.colors.Normalize(vmin=min_dens, vmax=max_dens)
-        cmap = cm.Greens
+        cmap = cm.get_cmap('Greens')
         sm = cm.ScalarMappable(norm=norm, cmap=cmap)
 
         for xy, info in zip(m.dens, m.dens_info):
@@ -135,6 +138,7 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
 
     # draw photo densities
     if photo_dens_file is not None:
+        dens = genfromtxt(photo_dens_file, delimiter=',', skip_header=1)
         max_photo_dens = float("-inf")
         for i in range(len(dens)):
             pdens = math.log(dens[i][2])

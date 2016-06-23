@@ -21,7 +21,7 @@
 
 
 from shapely.geometry import box
-import scipy.spatial as spa
+import scipy.spatial
 import numpy as np
 from ghostb.locmap import LocMap
 
@@ -72,7 +72,7 @@ def point_map2segments(m, vertices):
 
     # Make voronoi
     # print('POINTS %s' % points)
-    vor = spa.Voronoi(points)
+    vor = scipy.spatial.Voronoi(points)
 
     # TODO: remove fake points?
 

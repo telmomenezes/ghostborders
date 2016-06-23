@@ -36,7 +36,10 @@ def modes(comms):
     return [comm for comm in distrib if distrib[comm] == maxfq]
 
 
-def read(path, comms={}):
+def read(path, in_comms=None):
+    comms = {}
+    if in_comms is not None:
+        comms = in_comms
     # read communities from csv
     lines = [line.rstrip('\n') for line in open(path)]
     del lines[0]
