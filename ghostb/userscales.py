@@ -46,11 +46,12 @@ class UserScales:
                 return i
         return len(self.scales)
 
-    def write_line(self, user_id, links):
+    def write_line(self, user_id, links, item_count, loc_count):
+        self.outfile.write('%s,%s,%s' % (user_id, item_count, loc_count))
+
         scales = [0] * (len(self.scales) + 1)
         for link in links:
             scales[self.link_scale(link)] += 1
-        self.outfile.write('%s' % user_id)
         for s in scales:
             self.outfile.write(',%s' % s)
         self.outfile.write('\n')
@@ -60,13 +61,15 @@ class UserScales:
                             % (self.table, user_id))
         data = self.db.cur.fetchall()
         locations = [x[0] for x in data]
+        item_count = len(locations)
         
         # make locations unique
         locations = set(locations)
+        loc_count = len(locations)
 
         if len(locations) > 1:
             links = itertools.combinations(locations, 2)
-            self.write_line(user_id, links)
+            self.write_line(user_id, links, item_count, loc_count)
 
     def generate(self):
         print('generating user scales file.')
@@ -77,7 +80,7 @@ class UserScales:
         print("%s users to process" % nusers)
 
         # write output file header
-        self.outfile.write('user')
+        self.outfile.write('user,item_count,loc_count')
         for i in range(len(self.scales) + 1):
             self.outfile.write(',scale_%s' % i)
         self.outfile.write('\n')
