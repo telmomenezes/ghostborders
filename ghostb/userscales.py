@@ -37,7 +37,7 @@ class UserScales:
         self.per_table = {}
         data = np.genfromtxt(percentiles_file, names=['percentile', 'dist'], skip_header=1, delimiter=',')
         for row in data:
-            self.per_table[int(row['percentile'])] = float(row['dist'])
+            self.per_table[int(row['percentile']) - 1] = float(row['dist'])
 
     def link_scale(self, link):
         dist = ghostb.geo.distance(self.locs[link[0]], self.locs[link[1]])
