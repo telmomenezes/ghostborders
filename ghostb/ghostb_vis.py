@@ -37,6 +37,7 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--shapefile', help='Shape file.', multiple=True)
 @click.option('--photo_dens_file', help='Photo densities file.', default=None)
 @click.option('--pop_dens_file', help='Population densities file.', default=None)
+@click.option('--top_cities_file', help='Top cities file.', default=None)
 @click.option('--osm/--noosm', default=False)
 @click.option('--resolution', help='Map resolution.', default='i')
 @click.option('--width', help='Map width.', default=50.)
@@ -45,9 +46,11 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--sep', help='Line separation factor.', default=0.0005)
 @click.option('--color', help='Line color.', default='darkred')
 @click.option('--linestyle', help='Line style.', default='solid')
+@click.option('--font_size', help='Font size.', default=30.0)
+@click.option('--dot_size', help='Dot size.', default=30.0)
 @click.pass_context
-def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_file, pop_dens_file, osm, resolution,
-        width, intervals, thick, sep, color, linestyle):
+def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_file, pop_dens_file, top_cities_file,
+        osm, resolution, width, intervals, thick, sep, color, linestyle, font_size, dot_size):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'locs_file': locs_file,
@@ -58,6 +61,7 @@ def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_f
         'shapefile': shapefile,
         'photo_dens_file': photo_dens_file,
         'pop_dens_file': pop_dens_file,
+        'top_cities_file': top_cities_file,
         'osm': osm,
         'resolution': resolution,
         'width': width,
@@ -65,7 +69,9 @@ def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_f
         'thick': thick,
         'sep': sep,
         'color': color,
-        'linestyle': linestyle
+        'linestyle': linestyle,
+        'font_size': font_size,
+        'dot_size': dot_size
     }
 
 
@@ -87,23 +93,29 @@ def draw(ctx):
     region = ctx.obj['region']
     photo_dens_file = ctx.obj['photo_dens_file']
     pop_dens_file = ctx.obj['pop_dens_file']
+    top_cities_file = ctx.obj['top_cities_file']
     osm = ctx.obj['osm']
     resolution = ctx.obj['resolution']
     width = ctx.obj['width']
     thick = float(ctx.obj['thick'])
     color = ctx.obj['color']
     linestyle = ctx.obj['linestyle']
+    font_size = float(ctx.obj['font_size'])
+    dot_size = float(ctx.obj['dot_size'])
     draw_map(borders_file=infile,
              output_file=outfile,
              region=region,
              photo_dens_file=photo_dens_file,
              pop_dens_file=pop_dens_file,
+             top_cities_file=top_cities_file,
              osm=osm,
              resolution=resolution,
              width=width,
              thick=thick,
              color=color,
-             linestyle=linestyle)
+             linestyle=linestyle,
+             font_size = font_size,
+             dot_size=dot_size)
 
 
 @cli.command()
@@ -114,23 +126,29 @@ def draw_multi(ctx):
     region = ctx.obj['region']
     photo_dens_file = ctx.obj['photo_dens_file']
     pop_dens_file = ctx.obj['pop_dens_file']
+    top_cities_file = ctx.obj['top_cities_file']
     osm = ctx.obj['osm']
     resolution = ctx.obj['resolution']
     width = ctx.obj['width']
     thick = float(ctx.obj['thick'])
     sep = float(ctx.obj['sep'])
     intervals = int(ctx.obj['intervals'])
+    font_size = float(ctx.obj['font_size'])
+    dot_size = float(ctx.obj['dot_size'])
     draw_multi_map(borders_file=infile,
                    output_file=outfile,
                    region=region,
                    photo_dens_file=photo_dens_file,
                    pop_dens_file=pop_dens_file,
+                   top_cities_file=top_cities_file,
                    osm=osm,
                    resolution=resolution,
                    width=width,
                    thick=thick,
                    sep=sep,
-                   intervals=intervals)
+                   intervals=intervals,
+                   font_size=font_size,
+                   dot_size=dot_size)
 
 
 @cli.command()

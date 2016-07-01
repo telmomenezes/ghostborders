@@ -21,18 +21,17 @@
 
 
 import matplotlib as mpl
+mpl.use('pdf')
 import matplotlib.colors
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import matplotlib.patheffects as path_effects
 from matplotlib.patches import Polygon
 import math
 from mpl_toolkits.basemap import Basemap
 from numpy import genfromtxt
 from ghostb.region_defs import *
 import ghostb.maps as maps
-
-
-mpl.use('pdf')
 
 
 # Some constants
@@ -68,8 +67,9 @@ def draw_simple_borders(cols, co, m, xorig, yorig, _, extra):
 
 # resolutions:
 # c (crude), l (low), i (intermediate), h (high), f (full)
-def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
-         osm=False, resolution='i', width=50., draw_borders=draw_simple_borders, extra=None):
+def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None, top_cities_file=None,
+         osm=False, resolution='i', width=50., draw_borders=draw_simple_borders, font_size=30.0, dot_size=30.0,
+         extra=None):
 
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
     cols = co.shape[0]
@@ -84,7 +84,7 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
 
     height = width * dy / dx
     m = Basemap(projection='merc', resolution=resolution, llcrnrlat=y0, llcrnrlon=x0, urcrnrlat=y1, urcrnrlon=x1)
-    plt.figure(figsize=(width, height))
+    fig = plt.figure(figsize=(width, height))
 
     if osm:
         osm_img_path = maps.coords2path(y0, x0, y1, x1)
@@ -157,14 +157,33 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
 
     # draw phantom borders
     draw_borders(cols, co, m, xorig, yorig, dims, extra)
-        
+
+    # draw top cities
+    if top_cities_file:
+        with open(top_cities_file, 'r') as f:
+            rows = f.read().split('\n')
+            for row in rows:
+                city = row.split(',')
+                name = city[0]
+                lat = float(city[2])
+                lng = float(city[3])
+                x, y = m(lng, lat)
+                x -= xorig
+                y -= yorig
+                m.plot(x, y, 'g.', markersize=dot_size)
+                y += dims[1] * 0.0002
+                text = plt.text(x, y, name, color='black', ha='center', va='bottom', size=font_size, weight='bold')
+                text.set_path_effects([path_effects.Stroke(linewidth=15, foreground='white'), path_effects.Normal()])
+
     plt.savefig(output_file)
 
 
-def draw_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
-             osm=False, resolution='i', width=50., thick=10., color='darkred', linestyle='solid'):
+def draw_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None, top_cities_file=None,
+             osm=False, resolution='i', width=50., thick=10., color='darkred', linestyle='solid', font_size=30.0,
+             dot_size=30.0):
     extra = {'thick': thick,
              'color': color,
              'linestyle': linestyle}
     draw(borders_file, output_file, region, photo_dens_file=photo_dens_file, pop_dens_file=pop_dens_file,
-         osm=osm, resolution=resolution, width=width, draw_borders=draw_simple_borders, extra=extra)
+         top_cities_file=top_cities_file, osm=osm, resolution=resolution, width=width, draw_borders=draw_simple_borders,
+         font_size=font_size, dot_size=dot_size, extra=extra)

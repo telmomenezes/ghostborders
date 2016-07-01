@@ -67,10 +67,12 @@ def draw_multi_borders(cols, co, m, xorig, yorig, dims, extra):
             draw_border(m, x, y, intervals, borders, j, thick, sep, dims)
 
 
-def draw_multi_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
-                   osm=False, resolution='i', width=50., thick=1.0, sep=1.0, intervals=100):
+def draw_multi_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None, top_cities_file=None,
+                   osm=False, resolution='i', width=50., thick=1.0, sep=1.0, intervals=100, font_size=30.0,
+                   dot_size=30.0):
     extra = {'thick': thick,
              'sep': sep,
              'intervals': intervals}
-    draw(borders_file, output_file, region, photo_dens_file=photo_dens_file, pop_dens_file=pop_dens_file, osm=osm,
-         resolution=resolution, width=width, draw_borders=draw_multi_borders, extra=extra)
+    draw(borders_file, output_file, region, photo_dens_file=photo_dens_file, pop_dens_file=pop_dens_file,
+         top_cities_file=top_cities_file, osm=osm, resolution=resolution, width=width, draw_borders=draw_multi_borders,
+         font_size=font_size, dot_size=dot_size, extra=extra)
