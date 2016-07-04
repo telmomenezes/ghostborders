@@ -36,10 +36,20 @@ class UserMetrics:
         data = self.db.cur.fetchall()
         locations = [x[0] for x in data]
         
-        # make locations unique
-        locations = set(locations)
+        # unique locations
+        ulocations = set(locations)
 
-        links = itertools.combinations(locations, 2)
+        # only compute metrics for users who have been to at least 2 distinct locations
+        if len(ulocations) >= 2:
+            photos = len(data)
+
+            # time stuff
+            times = [x[1] for x in data]
+            first_ts = min(times)
+            last_ts = max(times)
+
+            # locations
+            links = itertools.combinations(ulocations, 2)
 
     def generate(self):
         print('computing user metrics.')
