@@ -37,7 +37,7 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--shapefile', help='Shape file.', multiple=True)
 @click.option('--photo_dens_file', help='Photo densities file.', default=None)
 @click.option('--pop_dens_file', help='Population densities file.', default=None)
-@click.option('--top_cities_file', help='Top cities file.', default=None)
+@click.option('--top_cities_file', help='Top cities file.', multiple=True)
 @click.option('--osm/--noosm', default=False)
 @click.option('--resolution', help='Map resolution.', default='i')
 @click.option('--width', help='Map width.', default=50.)

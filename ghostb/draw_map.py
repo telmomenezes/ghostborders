@@ -71,6 +71,8 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
          osm=False, resolution='i', width=50., draw_borders=draw_simple_borders, font_size=30.0, dot_size=30.0,
          extra=None):
 
+    print('drawing to: %s' % output_file)
+
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
     cols = co.shape[0]
 
@@ -159,8 +161,8 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
     draw_borders(cols, co, m, xorig, yorig, dims, extra)
 
     # draw top cities
-    if top_cities_file:
-        with open(top_cities_file, 'r') as f:
+    for tcf in top_cities_file:
+        with open(tcf, 'r') as f:
             rows = f.read().split('\n')
             for row in rows:
                 city = row.split(',')
