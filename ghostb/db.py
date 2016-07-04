@@ -81,7 +81,6 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE media ADD COLUMN lat DOUBLE")
         self.__exec_or_ignore("ALTER TABLE media ADD COLUMN lng DOUBLE")
         self.__exec_or_ignore("ALTER TABLE media ADD COLUMN ig_id VARCHAR(255)")
-        self.__exec_or_ignore("ALTER TABLE media ADD COLUMN distance DOUBLE DEFAULT -1")
 
         self.__exec_or_ignore("CREATE UNIQUE INDEX unique_media_ig_id ON media(ig_id)")
         self.__exec_or_ignore("CREATE INDEX media_ig_id ON media (ig_id)")
@@ -90,8 +89,10 @@ class DB:
 
         # create user table
         self.__exec_or_ignore("CREATE TABLE user (id BIGINT PRIMARY KEY)")
+        self.__exec_or_ignore("ALTER TABLE user MODIFY id BIGINT AUTO_INCREMENT")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN username VARCHAR(255)")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN active BIGINT DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN distances TEXT DEFAULT NULL")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_dist DOUBLE DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_time_interval DOUBLE DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN first_ts BIGINT DEFAULT -1")
@@ -127,7 +128,6 @@ class DB:
 
         self.__exec_or_ignore("CREATE INDEX likes_user_media ON likes (user, media)")
         self.__exec_or_ignore("CREATE INDEX likes_user ON likes (user)")
-        self.__exec_or_ignore("CREATE INDEX likes_ts ON likes (ts)")
 
         # create comment table
         self.__exec_or_ignore("CREATE TABLE comment (id BIGINT PRIMARY KEY)")
@@ -137,10 +137,8 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE comment ADD COLUMN media BIGINT")
         self.__exec_or_ignore("ALTER TABLE comment ADD COLUMN location BIGINT")
         self.__exec_or_ignore("ALTER TABLE comment ADD COLUMN ts BIGINT")
-        self.__exec_or_ignore("ALTER TABLE comment ADD COLUMN distance DOUBLE DEFAULT -1")
 
         self.__exec_or_ignore("CREATE INDEX comment_user_media ON comment (user, media)")
         self.__exec_or_ignore("CREATE INDEX comment_user ON comment (user)")
-        self.__exec_or_ignore("CREATE INDEX comment_ts ON comment (ts)")
 
         self.conn.commit()
