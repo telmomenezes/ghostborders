@@ -21,32 +21,14 @@
 
 
 import itertools
+from ghostb.locmap import LocMap
+import ghostb.geo as geo
 
 
 class UserMetrics:
     def __init__(self, db):
         self.db = db
-        self.ll = {}
-
-    def write_ll(self):
-        f = open(self.outfile, 'w')
-        f.write('orig,targ,weight\n')
-        for k in self.ll:
-            f.write('%s,%s,%s\n' % (k[0], k[1], self.ll[k]))
-        f.close()
-
-    def process_link(self, link):
-        v1 = link[0]
-        v2 = link[1]
-        if v1 > v2:
-            v1 = link[1]
-            v2 = link[0]
-        l = (v1, v2)
-
-        if l in self.ll:
-            self.ll[l] += 1
-        else:
-            self.ll[l] = 1
+        self.locmap = LocMap(db)
 
     def process_user(self, user_id):
         self.db.cur.execute("SELECT location, ts FROM media WHERE user=%s"
@@ -58,9 +40,6 @@ class UserMetrics:
         locations = set(locations)
 
         links = itertools.combinations(locations, 2)
-
-        for link in links:
-            self.process_link(link)
 
     def generate(self):
         print('computing user metrics.')

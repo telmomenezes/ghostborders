@@ -94,6 +94,7 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN active BIGINT DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN distances TEXT DEFAULT NULL")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_dist DOUBLE DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_weighted_dist DOUBLE DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_time_interval DOUBLE DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN first_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN last_ts BIGINT DEFAULT -1")
