@@ -90,17 +90,20 @@ class DB:
 
         # create user table
         self.__exec_or_ignore("CREATE TABLE user (id BIGINT PRIMARY KEY)")
-        # self.__exec_or_ignore("ALTER TABLE user MODIFY id BIGINT AUTO_INCREMENT")
-        # self.__exec_or_ignore("ALTER TABLE user AUTO_INCREMENT = 1000000")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN username VARCHAR(255)")
-        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN homelat DOUBLE")
-        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN homelng DOUBLE")
-        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN home BIGINT")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN active BIGINT DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_dist DOUBLE DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_time_interval DOUBLE DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN first_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN last_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN photos BIGINT DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN comments_given BIGINT DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN comments_received BIGINT DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN likes_given BIGINT DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN likes_received BIGINT DEFAULT 0")
 
         self.__exec_or_ignore("CREATE INDEX user_username ON user (username)")
+        self.__exec_or_ignore("CREATE INDEX user_active ON user (active)")
 
         # create locations table
         self.__exec_or_ignore("CREATE TABLE location (id BIGINT PRIMARY KEY)")
