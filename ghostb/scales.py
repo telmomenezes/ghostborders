@@ -340,7 +340,7 @@ class Scales:
             users[user_id]['likes_given'] = row[12]
             users[user_id]['likes_received'] = row[13]
 
-        print('count,photos,first_ts,last_ts,mean_time_interval,locations,herfindahl,mean_dist,mean_weighted_dist,comments_given,comments_received,likes_given,likes_received')
+        print('percentile,count,photos,first_ts,last_ts,mean_time_interval,locations,herfindahl,mean_dist,mean_weighted_dist,comments_given,comments_received,likes_given,likes_received')
 
         for per in self.percent_range():
             count = 0.
@@ -385,5 +385,5 @@ class Scales:
             likes_given /= count
             likes_received /= count
 
-            print('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' %
-                  (count,photos, first_ts, last_ts, mean_time_interval, locations, herfindahl, mean_dist, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
+            print('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' %
+                  (per, count, photos, first_ts, last_ts, mean_time_interval, locations, herfindahl, mean_dist, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
