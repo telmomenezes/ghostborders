@@ -79,7 +79,7 @@ class UserMetrics:
             distances = [geo.distance(self.locs[link[0]], self.locs[link[1]]) for link in links]
             mean_distance = sum(distances) / len(distances)
 
-            dists_str = ','.join([str(d) for d in distances])
+            dists_str = ' '.join([str(d) for d in distances])
 
             total_dist = 0.
             count = 0
