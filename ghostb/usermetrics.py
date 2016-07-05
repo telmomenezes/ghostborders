@@ -28,11 +28,19 @@ import ghostb.geo as geo
 class UserMetrics:
     def __init__(self, db):
         self.db = db
-        self.locmap = LocMap(db)
+        locmap = LocMap(db)
+        self.locs = locmap.coords
+
+    def x_received(self, table, photo_ids):
+        total = 0
+        for id in photo_ids:
+            self.db.cur.execute("SELECT count(id) FROM %s WHERE media=%s" % (table, id))
+            data = self.db.cur.fetchall()
+            total += data[0][0]
+        return total
 
     def process_user(self, user_id):
-        self.db.cur.execute("SELECT location, ts FROM media WHERE user=%s"
-                            % (user_id, ))
+        self.db.cur.execute("SELECT location, ts, id FROM media WHERE user=%s ORDER BY ts" % (user_id, ))
         data = self.db.cur.fetchall()
         locations = [x[0] for x in data]
         
@@ -41,15 +49,56 @@ class UserMetrics:
 
         # only compute metrics for users who have been to at least 2 distinct locations
         if len(ulocations) >= 2:
+            # photos
             photos = len(data)
+            photo_ids = [x[2] for x in data]
 
             # time stuff
             times = [x[1] for x in data]
+            times.sort()
             first_ts = min(times)
             last_ts = max(times)
+            time_deltas = [times[i] - times[i - 1] for i in range(1, len(times))]
+            mean_time_interval = sum(t for t in time_deltas) / len(time_deltas)
 
-            # locations
+            # location stuff
+            loc_count = len(ulocations)
+            freqs = {}
+            for loc in ulocations:
+                freqs[loc] = 0
+            for loc in locations:
+                freqs[loc] += 1
             links = itertools.combinations(ulocations, 2)
+
+            distances = [geo.distance(self.locs[link[0]], self.locs[link[1]]) for link in links]
+            mean_distance = sum(distances) / len(links)
+
+            total_dist = 0.
+            count = 0
+            for i in range(1, len(locations)):
+                loc0 = locations[i - 1]
+                loc1 = locations[i]
+                if loc0 != loc1:
+                    dist = geo.distance(self.locs[loc0], self.locs[loc1])
+                    total_dist += dist
+                    count += 1
+            mean_weighted_dist = total_dist / count
+
+            # comments
+            self.db.cur.execute("SELECT count(id) FROM comment WHERE user=%s" % (user_id,))
+            data = self.db.cur.fetchall()
+            comments_given = data[0][0]
+            comments_received = self.x_received('comment', photo_ids)
+
+            # likes
+            self.db.cur.execute("SELECT count(id) FROM likes WHERE user=%s" % (user_id,))
+            data = self.db.cur.fetchall()
+            likes_given = data[0][0]
+            likes_received = self.x_received('comment', photo_ids)
+
+            print('first_ts: %s; last_ts: %s; mean_time_interval: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
+                  % (first_ts, last_ts, mean_time_interval, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
+
 
     def generate(self):
         print('computing user metrics.')
