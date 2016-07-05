@@ -92,7 +92,7 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE user MODIFY id BIGINT AUTO_INCREMENT")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN username VARCHAR(255)")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN active BIGINT DEFAULT 0")
-        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN distances TEXT DEFAULT NULL")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN dists_str MEDIUMTEXT DEFAULT NULL")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_dist DOUBLE DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_weighted_dist DOUBLE DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN mean_time_interval DOUBLE DEFAULT 0")
