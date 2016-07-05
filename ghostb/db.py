@@ -128,7 +128,7 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE likes ADD COLUMN location BIGINT")
         self.__exec_or_ignore("ALTER TABLE likes ADD COLUMN ts BIGINT")
 
-        self.__exec_or_ignore("CREATE INDEX likes_user_media ON likes (user, media)")
+        self.__exec_or_ignore("CREATE INDEX likes_media ON likes (media)")
         self.__exec_or_ignore("CREATE INDEX likes_user ON likes (user)")
 
         # create comment table
@@ -140,7 +140,7 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE comment ADD COLUMN location BIGINT")
         self.__exec_or_ignore("ALTER TABLE comment ADD COLUMN ts BIGINT")
 
-        self.__exec_or_ignore("CREATE INDEX comment_user_media ON comment (user, media)")
+        self.__exec_or_ignore("CREATE INDEX comment_media ON comment (media)")
         self.__exec_or_ignore("CREATE INDEX comment_user ON comment (user)")
 
         self.conn.commit()
