@@ -107,6 +107,14 @@ class Scales:
         if self.per_table is None:
             self.per_table = self.percentiles_table()
         return self.per_table[per]
+
+    def dist2percentile(self, dist):
+        if self.per_table is None:
+            self.per_table = self.percentiles_table()
+        for per in self.per_table:
+            if dist < self.per_table[per]:
+                return per
+        return max(self.per_table.keys())
     
     def dist(self, per, scale):
         if scale == 'percentiles':
@@ -126,7 +134,7 @@ class Scales:
             print('full graph file found: %s' % graph_file)
         else:
             print('generating: %s' % graph_file)
-            gg = GenGraph(db, graph_file=graph_file, table=table)
+            gg = GenGraph(db, outfile=graph_file, table=table)
             gg.generate()
 
         for per in self.percent_range():
@@ -304,3 +312,78 @@ class Scales:
         files = [self.comm_path(i, False) for i in scales]
         b = Borders(db, smooth)
         b.process_multi(files, scales, out_file)
+
+    def user_scales(self, dists_str):
+        dists = dists_str.split(' ')
+        dists = [float(s) for s in dists]
+        scales = [self.dist2percentile(d) for d in dists]
+        return set(scales)
+
+    def usermetrics(self, db):
+        users = {}
+        db.cur.execute("SELECT id,dists_str,photos,first_ts,last_ts,mean_time_interval,locations,herfindahl,mean_dist,mean_weighted_dist,comments_given,comments_received,likes_given,likes_received FROM user WHERE active=1")
+        for row in db.cur.fetchall():
+            user_id = row[0]
+            users[user_id] = {}
+            users[user_id]['scales'] = self.user_scales(row[1])
+            users[user_id]['min_scale'] = min(users[user_id]['scales'])
+            users[user_id]['photos'] = row[2]
+            users[user_id]['first_ts'] = row[3]
+            users[user_id]['last_ts'] = row[4]
+            users[user_id]['mean_time_interval'] = row[5]
+            users[user_id]['locations'] = row[6]
+            users[user_id]['herfindahl'] = row[7]
+            users[user_id]['mean_dist'] = row[8]
+            users[user_id]['mean_weighted_dist'] = row[9]
+            users[user_id]['comments_given'] = row[10]
+            users[user_id]['comments_received'] = row[11]
+            users[user_id]['likes_given'] = row[12]
+            users[user_id]['likes_received'] = row[13]
+
+        print('count,photos,first_ts,last_ts,mean_time_interval,locations,herfindahl,mean_dist,mean_weighted_dist,comments_given,comments_received,likes_given,likes_received')
+
+        for per in self.percent_range():
+            count = 0.
+            photos = 0.
+            first_ts = 0.
+            last_ts = 0.
+            mean_time_interval = 0.
+            locations = 0.
+            herfindahl = 0.
+            mean_dist = 0.
+            mean_weighted_dist = 0.
+            comments_given = 0.
+            comments_received = 0.
+            likes_given = 0.
+            likes_received = 0.
+            for user_id in users:
+                if users[user_id]['min_scale'] <= per:
+                    count += 1.
+                    photos += users[user_id]['photos']
+                    first_ts += users[user_id]['first_ts']
+                    last_ts += users[user_id]['last_ts']
+                    mean_time_interval += users[user_id]['mean_time_interval']
+                    locations += users[user_id]['locations']
+                    herfindahl += users[user_id]['herfindahl']
+                    mean_dist += users[user_id]['mean_dist']
+                    mean_weighted_dist += users[user_id]['mean_weighted_dist']
+                    comments_given += users[user_id]['comments_given']
+                    comments_received += users[user_id]['comments_received']
+                    likes_given += users[user_id]['likes_given']
+                    likes_received += users[user_id]['likes_received']
+
+            photos /= count
+            first_ts /= count
+            last_ts /= count
+            mean_time_interval /= count
+            locations /= count
+            herfindahl /= count
+            mean_dist /= count
+            mean_weighted_dist /= count
+            comments_given /= count
+            comments_received /= count
+            likes_given /= count
+            likes_received /= count
+
+            print('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' %
+                  (count,photos, first_ts, last_ts, mean_time_interval, locations, herfindahl, mean_dist, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))

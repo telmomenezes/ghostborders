@@ -548,6 +548,19 @@ def scales_multi_borders(ctx):
 
 @cli.command()
 @click.pass_context
+def scales_usermetrics(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    outdir = ctx.obj['outdir']
+    intervals = int(ctx.obj['intervals'])
+
+    s = Scales(outdir, intervals)
+    s.usermetrics(db)
+
+
+@cli.command()
+@click.pass_context
 def breakpoints(ctx):
     infile = ctx.obj['infile']
     intervals = int(ctx.obj['intervals'])
