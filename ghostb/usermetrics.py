@@ -107,7 +107,7 @@ class UserMetrics:
             # print('photos: %s; first_ts: %s; last_ts: %s; mean_time_interval: %s; loc_count: %s; herfindahl: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
             #      % (photos, first_ts, last_ts, mean_time_interval, loc_count, herfindahl, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
 
-            self.db.cur.execute('UPDATE user SET photos=%s,first_ts=%s,last_ts=%s,mean_time_interval=%s,loc_count=%s,locations=%s,herfindahl=%s,mean_distance=%s,mean_weighted_distance=%s,comments_given=%s,comments_received=%s,likes_given=%s,likes_received=%s WHERE id=%s'
+            self.db.cur.execute('UPDATE user SET active=1,photos=%s,first_ts=%s,last_ts=%s,mean_time_interval=%s,loc_count=%s,locations=%s,herfindahl=%s,mean_distance=%s,mean_weighted_distance=%s,comments_given=%s,comments_received=%s,likes_given=%s,likes_received=%s WHERE id=%s'
                                 % (photos, first_ts, last_ts, mean_time_interval, loc_count, dists_str, herfindahl, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received, user_id,))
 
     def generate(self):
