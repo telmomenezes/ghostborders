@@ -33,8 +33,8 @@ class UserMetrics:
 
     def x_received(self, table, photo_ids):
         total = 0
-        for id in photo_ids:
-            self.db.cur.execute("SELECT count(id) FROM %s WHERE media=%s" % (table, id))
+        for pid in photo_ids:
+            self.db.cur.execute("SELECT count(id) FROM %s WHERE media=%s" % (table, pid))
             data = self.db.cur.fetchall()
             total += data[0][0]
         return total
@@ -79,6 +79,8 @@ class UserMetrics:
             distances = [geo.distance(self.locs[link[0]], self.locs[link[1]]) for link in links]
             mean_distance = sum(distances) / len(distances)
 
+            dists_str = ','.join(distances)
+
             total_dist = 0.
             count = 0
             for i in range(1, len(locations)):
@@ -102,9 +104,11 @@ class UserMetrics:
             likes_given = data[0][0]
             likes_received = self.x_received('comment', photo_ids)
 
-            #print('photos: %s; first_ts: %s; last_ts: %s; mean_time_interval: %s; loc_count: %s; herfindahl: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
+            # print('photos: %s; first_ts: %s; last_ts: %s; mean_time_interval: %s; loc_count: %s; herfindahl: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
             #      % (photos, first_ts, last_ts, mean_time_interval, loc_count, herfindahl, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
 
+            self.db.cur.execute('UPDATE user SET photos=%s,first_ts=%s,last_ts=%s,mean_time_interval=%s,loc_count=%s,locations=%s,herfindahl=%s,mean_distance=%s,mean_weighted_distance=%s,comments_given=%s,comments_received=%s,likes_given=%s,likes_received=%s WHERE id=%s'
+                                % (photos, first_ts, last_ts, mean_time_interval, loc_count, dists_str, herfindahl, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received, user_id,))
 
     def generate(self):
         print('computing user metrics.')
