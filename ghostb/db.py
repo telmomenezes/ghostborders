@@ -100,6 +100,7 @@ class DB:
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN last_ts BIGINT DEFAULT -1")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN photos BIGINT DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN locations BIGINT DEFAULT 0")
+        self.__exec_or_ignore("ALTER TABLE user ADD COLUMN herfindahl DOUBLE DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN comments_given BIGINT DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN comments_received BIGINT DEFAULT 0")
         self.__exec_or_ignore("ALTER TABLE user ADD COLUMN likes_given BIGINT DEFAULT 0")
