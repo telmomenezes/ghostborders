@@ -50,12 +50,10 @@ class UserMetrics:
         # only compute metrics for users who have been to at least 2 distinct locations
         if len(ulocations) >= 2:
             # photos
-            print('# photos')
             photos = len(data)
             photo_ids = [x[2] for x in data]
 
             # time stuff
-            print('# time stuff')
             times = [x[1] for x in data]
             times.sort()
             first_ts = min(times)
@@ -64,13 +62,18 @@ class UserMetrics:
             mean_time_interval = sum(t for t in time_deltas) / len(time_deltas)
 
             # location stuff
-            print('# location stuff')
             loc_count = len(ulocations)
             freqs = {}
             for loc in ulocations:
                 freqs[loc] = 0
             for loc in locations:
                 freqs[loc] += 1
+
+            herfindahl = 0.0
+            for loc in freqs:
+                s = freqs[loc] / len(locations)
+                herfindahl += s * s
+
             links = itertools.combinations(ulocations, 2)
 
             distances = [geo.distance(self.locs[link[0]], self.locs[link[1]]) for link in links]
@@ -88,25 +91,19 @@ class UserMetrics:
             mean_weighted_dist = total_dist / count
 
             # comments
-            print('# comments')
             self.db.cur.execute("SELECT count(id) FROM comment WHERE user=%s" % (user_id,))
             data = self.db.cur.fetchall()
-            print('#1')
             comments_given = data[0][0]
-            print('#2')
             comments_received = self.x_received('comment', photo_ids)
 
             # likes
-            print('# likes')
             self.db.cur.execute("SELECT count(id) FROM likes WHERE user=%s" % (user_id,))
             data = self.db.cur.fetchall()
-            print('#1')
             likes_given = data[0][0]
-            print('#2')
             likes_received = self.x_received('comment', photo_ids)
 
-            print('photos: %s; first_ts: %s; last_ts: %s; mean_time_interval: %s; loc_count: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
-                  % (photos, first_ts, last_ts, mean_time_interval, loc_count, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
+            print('photos: %s; first_ts: %s; last_ts: %s; mean_time_interval: %s; loc_count: %s; herfindahl: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
+                  % (photos, first_ts, last_ts, mean_time_interval, loc_count, herfindahl, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
 
 
     def generate(self):
