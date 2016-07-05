@@ -64,7 +64,7 @@ class UserMetrics:
             mean_time_interval = sum(t for t in time_deltas) / len(time_deltas)
 
             # location stuff
-            print(' # location stuff')
+            print('# location stuff')
             loc_count = len(ulocations)
             freqs = {}
             for loc in ulocations:
@@ -91,14 +91,18 @@ class UserMetrics:
             print('# comments')
             self.db.cur.execute("SELECT count(id) FROM comment WHERE user=%s" % (user_id,))
             data = self.db.cur.fetchall()
+            print('#1')
             comments_given = data[0][0]
+            print('#2')
             comments_received = self.x_received('comment', photo_ids)
 
             # likes
             print('# likes')
             self.db.cur.execute("SELECT count(id) FROM likes WHERE user=%s" % (user_id,))
             data = self.db.cur.fetchall()
+            print('#1')
             likes_given = data[0][0]
+            print('#2')
             likes_received = self.x_received('comment', photo_ids)
 
             print('photos: %s; first_ts: %s; last_ts: %s; mean_time_interval: %s; loc_count: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
