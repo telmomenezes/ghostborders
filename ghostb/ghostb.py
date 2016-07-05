@@ -30,6 +30,7 @@ from ghostb.retriever import Retriever
 from ghostb.fixlocations import FixLocations
 from ghostb.photodensity import PhotoDensity
 from ghostb.gen_graph import GenGraph
+from ghostb.usermetrics import UserMetrics
 from ghostb.userscales import UserScales
 from ghostb.filter_dists import FilterDists
 from ghostb.replace_low_degree import ReplaceLowDegree
@@ -265,6 +266,17 @@ def gen_graph(ctx):
     db.open()
     gg = GenGraph(db, outfile, table)
     gg.generate()
+    db.close()
+
+
+@cli.command()
+@click.pass_context
+def usermetrics(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    um = GenGraph(db)
+    um.generate()
     db.close()
 
 
