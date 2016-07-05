@@ -275,7 +275,7 @@ def usermetrics(ctx):
     dbname = ctx.obj['dbname']
     db = DB(dbname, ctx.obj['config'])
     db.open()
-    um = GenGraph(db)
+    um = UserMetrics(db)
     um.generate()
     db.close()
 
