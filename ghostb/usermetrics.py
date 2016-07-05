@@ -109,6 +109,7 @@ class UserMetrics:
 
             self.db.cur.execute('UPDATE user SET active=1,distances="%s",photos=%s,first_ts=%s,last_ts=%s,mean_time_interval=%s,locations=%s,herfindahl=%s,mean_dist=%s,mean_weighted_dist=%s,comments_given=%s,comments_received=%s,likes_given=%s,likes_received=%s WHERE id=%s'
                                 % (dists_str, photos, first_ts, last_ts, mean_time_interval, loc_count, herfindahl, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received, user_id,))
+            self.db.conn.commit()
 
     def generate(self):
         print('computing user metrics.')
