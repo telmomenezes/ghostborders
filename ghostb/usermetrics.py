@@ -71,7 +71,7 @@ class UserMetrics:
             links = itertools.combinations(ulocations, 2)
 
             distances = [geo.distance(self.locs[link[0]], self.locs[link[1]]) for link in links]
-            mean_distance = sum(distances) / len(links)
+            mean_distance = sum(distances) / len(distances)
 
             total_dist = 0.
             count = 0
@@ -96,8 +96,8 @@ class UserMetrics:
             likes_given = data[0][0]
             likes_received = self.x_received('comment', photo_ids)
 
-            print('first_ts: %s; last_ts: %s; mean_time_interval: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
-                  % (first_ts, last_ts, mean_time_interval, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
+            print('first_ts: %s; last_ts: %s; mean_time_interval: %s; loc_count: %s; mean_distance: %s; mean_weighted_distance: %s; comments_given: %s; comments_received: %s;  likes_given: %s; likes_received: %s'
+                  % (first_ts, last_ts, mean_time_interval, loc_count, mean_distance, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
 
 
     def generate(self):
