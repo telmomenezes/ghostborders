@@ -30,6 +30,7 @@ from matplotlib.patches import Polygon
 import math
 from mpl_toolkits.basemap import Basemap
 from numpy import genfromtxt
+import numpy as np
 from ghostb.region_defs import *
 import ghostb.maps as maps
 
@@ -65,6 +66,13 @@ def draw_simple_borders(cols, co, m, xorig, yorig, _, extra):
             line.set_dashes(dashes)
 
 
+def rgb2gray(rgb):
+    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
+    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    gray *= 1.25
+    return gray
+
+
 # resolutions:
 # c (crude), l (low), i (intermediate), h (high), f (full)
 def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None, top_cities_file=None,
@@ -90,8 +98,8 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
 
     if osm:
         osm_img_path = maps.coords2path(y0, x0, y1, x1)
-        im = plt.imread(osm_img_path)
-        m.imshow(im, interpolation='lanczos', origin='upper')
+        im = rgb2gray(plt.imread(osm_img_path))
+        m.imshow(im, interpolation='lanczos', origin='upper', cmap = plt.get_cmap('gray'))
 
     xorig, yorig = m(x0, y0)
     dims = m(width, height)
@@ -172,9 +180,9 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
                 x, y = m(lng, lat)
                 x -= xorig
                 y -= yorig
-                m.plot(x, y, 'g.', markersize=dot_size)
-                y += dims[1] * 0.0002
-                text = plt.text(x, y, name, color='black', ha='center', va='bottom', size=font_size, weight='bold')
+                m.plot(x, y, '.', color='0.15', markersize=dot_size)
+                y += dims[1] * 0.00075
+                text = plt.text(x, y, name, color='0.15', ha='center', va='bottom', size=font_size)#, weight='bold')
                 text.set_path_effects([path_effects.Stroke(linewidth=15, foreground='white'), path_effects.Normal()])
 
     plt.savefig(output_file)

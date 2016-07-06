@@ -33,21 +33,26 @@ def draw_border(m, x, y, scales, borders, i, thick, sep, dims):
         if scales > 2:
             scale -= (scales - 1) // 2
 
-        color = 'darkblue'
+        color = 'limegreen'
+        thick2 = thick
+        #thick2 = thick * 0.5
         if scale > 0:
             color = 'darkred'
+            #thick2 = thick
 
         ls = 'solid'
         if scale == 0 and scales > 2:
-            ls = 'dashed'
+            color = 'dodgerblue'
+            #thick2 = thick * 0.7
         elif scale > 1:
-            ls = 'dashed'
+            color = 'orange'
+            #thick2 = thick * 0.9
 
         # horizontal border translation
         delta = sep * dims[0] * scale
         xi = (x[0] + delta, x[1] + delta)
         yi = (y[0], y[1])
-        line, = m.plot(xi, yi, color, linewidth=thick, ls=ls, alpha=1.)
+        line, = m.plot(xi, yi, color, linewidth=thick2, ls=ls, alpha=1.)
         if ls == 'dashed':
             dashes = [20, 20]
             line.set_dashes(dashes)
