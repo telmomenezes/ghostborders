@@ -27,35 +27,23 @@ def check_scale(borders, i):
     return int(borders) & (2 << i) > 0
 
 
-def draw_border(m, x, y, scales, borders, i, thick, sep, dims):
-    if check_scale(borders, i):
-        scale = i
-        if scales > 2:
-            scale -= (scales - 1) // 2
-
+def draw_border(m, x, y, scales, borders, scale, thick, sep, dims):
+    if check_scale(borders, scale):
         color = 'limegreen'
-        thick2 = thick
-        #thick2 = thick * 0.5
-        if scale > 0:
-            color = 'darkred'
-            #thick2 = thick
-
-        ls = 'solid'
-        if scale == 0 and scales > 2:
-            color = 'dodgerblue'
-            #thick2 = thick * 0.7
-        elif scale > 1:
-            color = 'orange'
-            #thick2 = thick * 0.9
+        if scales == 2:
+            if scale > 0:
+                color = 'darkred'
+        else:
+            if scale == 1:
+                color = 'dodgerblue'
+            elif scale > 1:
+                color = 'darkred'
 
         # horizontal border translation
         delta = sep * dims[0] * scale
         xi = (x[0] + delta, x[1] + delta)
         yi = (y[0], y[1])
-        line, = m.plot(xi, yi, color, linewidth=thick2, ls=ls, alpha=1.)
-        if ls == 'dashed':
-            dashes = [20, 20]
-            line.set_dashes(dashes)
+        m.plot(xi, yi, color, linewidth=thick)
 
 
 def draw_multi_borders(cols, co, m, xorig, yorig, dims, extra):
@@ -74,10 +62,10 @@ def draw_multi_borders(cols, co, m, xorig, yorig, dims, extra):
 
 def draw_multi_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None, top_cities_file=None,
                    osm=False, resolution='i', width=50., thick=1.0, sep=1.0, intervals=100, font_size=30.0,
-                   dot_size=30.0):
+                   dot_size=30.0, label_offset=0.00075):
     extra = {'thick': thick,
              'sep': sep,
              'intervals': intervals}
     draw(borders_file, output_file, region, photo_dens_file=photo_dens_file, pop_dens_file=pop_dens_file,
          top_cities_file=top_cities_file, osm=osm, resolution=resolution, width=width, draw_borders=draw_multi_borders,
-         font_size=font_size, dot_size=dot_size, extra=extra)
+         font_size=font_size, dot_size=dot_size, label_offset=label_offset, extra=extra)

@@ -48,9 +48,10 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--linestyle', help='Line style.', default='solid')
 @click.option('--font_size', help='Font size.', default=30.0)
 @click.option('--dot_size', help='Dot size.', default=30.0)
+@click.option('--label_offset', help='City label vertical offset.', default=0.00075)
 @click.pass_context
 def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_file, pop_dens_file, top_cities_file,
-        osm, resolution, width, intervals, thick, sep, color, linestyle, font_size, dot_size):
+        osm, resolution, width, intervals, thick, sep, color, linestyle, font_size, dot_size, label_offset):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'locs_file': locs_file,
@@ -71,7 +72,8 @@ def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_f
         'color': color,
         'linestyle': linestyle,
         'font_size': font_size,
-        'dot_size': dot_size
+        'dot_size': dot_size,
+        'label_offset': label_offset
     }
 
 
@@ -102,6 +104,7 @@ def draw(ctx):
     linestyle = ctx.obj['linestyle']
     font_size = float(ctx.obj['font_size'])
     dot_size = float(ctx.obj['dot_size'])
+    label_offset = float(ctx.obj['label_offset'])
     draw_map(borders_file=infile,
              output_file=outfile,
              region=region,
@@ -115,7 +118,8 @@ def draw(ctx):
              color=color,
              linestyle=linestyle,
              font_size = font_size,
-             dot_size=dot_size)
+             dot_size=dot_size,
+             label_offset=label_offset)
 
 
 @cli.command()
@@ -135,6 +139,7 @@ def draw_multi(ctx):
     intervals = int(ctx.obj['intervals'])
     font_size = float(ctx.obj['font_size'])
     dot_size = float(ctx.obj['dot_size'])
+    label_offset = float(ctx.obj['label_offset'])
     draw_multi_map(borders_file=infile,
                    output_file=outfile,
                    region=region,
@@ -148,7 +153,8 @@ def draw_multi(ctx):
                    sep=sep,
                    intervals=intervals,
                    font_size=font_size,
-                   dot_size=dot_size)
+                   dot_size=dot_size,
+                   label_offset=label_offset)
 
 
 @cli.command()

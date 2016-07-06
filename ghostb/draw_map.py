@@ -20,6 +20,7 @@
 #   along with GhostBorders.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#from __future__ import unicode_literals
 import matplotlib as mpl
 mpl.use('pdf')
 import matplotlib.colors
@@ -30,10 +31,8 @@ from matplotlib.patches import Polygon
 import math
 from mpl_toolkits.basemap import Basemap
 from numpy import genfromtxt
-import numpy as np
 from ghostb.region_defs import *
 import ghostb.maps as maps
-
 
 # Some constants
 # colors
@@ -69,7 +68,6 @@ def draw_simple_borders(cols, co, m, xorig, yorig, _, extra):
 def rgb2gray(rgb):
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
     gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-    gray *= 1.25
     return gray
 
 
@@ -77,9 +75,11 @@ def rgb2gray(rgb):
 # c (crude), l (low), i (intermediate), h (high), f (full)
 def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None, top_cities_file=None,
          osm=False, resolution='i', width=50., draw_borders=draw_simple_borders, font_size=30.0, dot_size=30.0,
-         extra=None):
+         label_offset=0.00075, extra=None):
 
     print('drawing to: %s' % output_file)
+
+    mpl.rc('font', family='Arial')
 
     co = genfromtxt(borders_file, delimiter=',', skip_header=1)
     cols = co.shape[0]
@@ -94,12 +94,12 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
 
     height = width * dy / dx
     m = Basemap(projection='merc', resolution=resolution, llcrnrlat=y0, llcrnrlon=x0, urcrnrlat=y1, urcrnrlon=x1)
-    fig = plt.figure(figsize=(width, height))
+    plt.figure(figsize=(width, height))
 
     if osm:
         osm_img_path = maps.coords2path(y0, x0, y1, x1)
         im = rgb2gray(plt.imread(osm_img_path))
-        m.imshow(im, interpolation='lanczos', origin='upper', cmap = plt.get_cmap('gray'))
+        m.imshow(im, interpolation='lanczos', origin='upper', cmap = plt.get_cmap('gray'), alpha=0.75)
 
     xorig, yorig = m(x0, y0)
     dims = m(width, height)
@@ -177,23 +177,27 @@ def draw(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=
                 name = city[0]
                 lat = float(city[2])
                 lng = float(city[3])
-                x, y = m(lng, lat)
-                x -= xorig
-                y -= yorig
-                m.plot(x, y, '.', color='0.15', markersize=dot_size)
-                y += dims[1] * 0.00075
-                text = plt.text(x, y, name, color='0.15', ha='center', va='bottom', size=font_size)#, weight='bold')
-                text.set_path_effects([path_effects.Stroke(linewidth=15, foreground='white'), path_effects.Normal()])
+                if lat >= region_coords[region][0]\
+                        and lat <= region_coords[region][2]\
+                        and lng >= region_coords[region][1]\
+                        and lng <= region_coords[region][3]:
+                    x, y = m(lng, lat)
+                    x -= xorig
+                    y -= yorig
+                    m.plot(x, y, '.', color='0.15', markersize=dot_size)
+                    y += dims[1] * label_offset
+                    text = plt.text(x, y, name, color='0.15', ha='center', va='bottom', size=font_size)
+                    text.set_path_effects([path_effects.Stroke(linewidth=15, foreground='white'), path_effects.Normal()])
 
-    plt.savefig(output_file)
+    plt.savefig(output_file, bbox_inches='tight')
 
 
 def draw_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None, top_cities_file=None,
              osm=False, resolution='i', width=50., thick=10., color='darkred', linestyle='solid', font_size=30.0,
-             dot_size=30.0):
+             dot_size=30.0, label_offset=0.00075):
     extra = {'thick': thick,
              'color': color,
              'linestyle': linestyle}
     draw(borders_file, output_file, region, photo_dens_file=photo_dens_file, pop_dens_file=pop_dens_file,
          top_cities_file=top_cities_file, osm=osm, resolution=resolution, width=width, draw_borders=draw_simple_borders,
-         font_size=font_size, dot_size=dot_size, extra=extra)
+         font_size=font_size, dot_size=dot_size, label_offset=label_offset, extra=extra)
