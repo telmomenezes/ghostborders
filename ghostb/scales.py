@@ -357,7 +357,8 @@ class Scales:
             likes_given = 0.
             likes_received = 0.
             for user_id in users:
-                if users[user_id]['min_scale'] <= per:
+                #if users[user_id]['min_scale'] <= per:
+                if per in users[user_id]['scales']:
                     count += 1.
                     photos += users[user_id]['photos']
                     first_ts += users[user_id]['first_ts']
