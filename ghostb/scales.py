@@ -373,18 +373,19 @@ class Scales:
                     likes_given += users[user_id]['likes_given']
                     likes_received += users[user_id]['likes_received']
 
-            photos /= count
-            first_ts /= count
-            last_ts /= count
-            mean_time_interval /= count
-            locations /= count
-            herfindahl /= count
-            mean_dist /= count
-            mean_weighted_dist /= count
-            comments_given /= count
-            comments_received /= count
-            likes_given /= count
-            likes_received /= count
+            if count > 0.:
+                photos /= count
+                first_ts /= count
+                last_ts /= count
+                mean_time_interval /= count
+                locations /= count
+                herfindahl /= count
+                mean_dist /= count
+                mean_weighted_dist /= count
+                comments_given /= count
+                comments_received /= count
+                likes_given /= count
+                likes_received /= count
 
             print('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' %
                   (per, count, photos, first_ts, last_ts, mean_time_interval, locations, herfindahl, mean_dist, mean_weighted_dist, comments_given, comments_received, likes_given, likes_received))
