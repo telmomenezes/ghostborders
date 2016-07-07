@@ -319,7 +319,7 @@ class Scales:
         scales = [self.dist2percentile(d) for d in dists]
         return set(scales)
 
-    def usermetrics(self, db):
+    def usermetrics(self, db, scale_membership):
         users = {}
         db.cur.execute("SELECT id,dists_str,photos,first_ts,last_ts,mean_time_interval,locations,herfindahl,mean_dist,mean_weighted_dist,comments_given,comments_received,likes_given,likes_received FROM user WHERE active=1")
         for row in db.cur.fetchall():
@@ -357,8 +357,8 @@ class Scales:
             likes_given = 0.
             likes_received = 0.
             for user_id in users:
-                if users[user_id]['min_scale'] <= per:
-                # if per in users[user_id]['scales']:
+                if (scale_membership == 'equal_or_less' and users[user_id]['min_scale'] <= per) or\
+                        (per in users[user_id]['scales']):
                     count += 1.
                     photos += users[user_id]['photos']
                     first_ts += users[user_id]['first_ts']

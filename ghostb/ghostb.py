@@ -79,11 +79,12 @@ def parse_scales(scales):
 @click.option('--table', help='Table name.', default='media')
 @click.option('--scales', help='List of scales.', default='')
 @click.option('--optimize', help='What to optimize for (speed/memory).', default='speed')
+@click.option('--scale_membership', help='User scale membership criterion.', default='equal_or_less')
 @click.pass_context
 def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         max_lng, rows, cols, infile, outfile, smooth, indir, outdir, runs, two,
         best, max_dist, min_weight, min_degree, intervals, scale, metric, table,
-        scales, optimize):
+        scales, optimize, scale_membership):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'dbname': db,
@@ -112,7 +113,8 @@ def cli(ctx, db, locs_file, region, country_code, min_lat, max_lat, min_lng,
         'metric': metric,
         'table': table,
         'scales': parse_scales(scales),
-        'optimize': optimize
+        'optimize': optimize,
+        'scale_membership': scale_membership
     }
 
 
@@ -554,9 +556,10 @@ def scales_usermetrics(ctx):
     db.open()
     outdir = ctx.obj['outdir']
     intervals = int(ctx.obj['intervals'])
+    scale_membership = ctx.obj['scale_membership']
 
     s = Scales(outdir, intervals)
-    s.usermetrics(db)
+    s.usermetrics(db, scale_membership)
 
 
 @cli.command()
