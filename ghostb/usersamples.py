@@ -62,7 +62,8 @@ class UserSamples:
                 cats[cat] = [user_id]
 
         for cat in cats:
-            print(cat)
-            samples = self.random_samples(cats[cat], 5)
+            print('SCALES %s' % cat)
+            samples = self.random_samples(cats[cat], 15)
             for sample in samples:
-                print(sample)
+                print('https://www.instagram.com/%s/' % sample)
+            print('')
