@@ -32,6 +32,7 @@ from ghostb.photodensity import PhotoDensity
 from ghostb.gen_graph import GenGraph
 from ghostb.usermetrics import UserMetrics
 from ghostb.userscales import UserScales
+from ghostb.usersamples import UserSamples
 from ghostb.filter_dists import FilterDists
 from ghostb.replace_low_degree import ReplaceLowDegree
 from ghostb.communities import Communities
@@ -569,6 +570,18 @@ def breakpoints(ctx):
     intervals = int(ctx.obj['intervals'])
 
     find_breakpoints(infile, intervals)
+
+
+@cli.command()
+@click.pass_context
+def usersamples(ctx):
+    dbname = ctx.obj['dbname']
+    infile = ctx.obj['infile']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    us = UserSamples(db, infile)
+    us.generate()
+    db.close()
 
 
 if __name__ == '__main__':
