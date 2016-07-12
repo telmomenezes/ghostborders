@@ -87,6 +87,6 @@ class UserSamples:
             body += '<h2>Scales %s</h2>' % cat
             samples = self.random_samples(cats[cat], 15)
             for sample in samples:
-                body += '<a href="https://www.instagram.com/%s/">%s</a>' % (sample, sample)
+                body += '<a href="https://www.instagram.com/%s/">%s</a>&nbsp;|&nbsp;' % (sample, sample)
             body += '<br>'
         print(self.html(title, body))
