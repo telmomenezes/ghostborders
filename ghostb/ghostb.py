@@ -579,7 +579,7 @@ def usersamples(ctx):
     infile = ctx.obj['infile']
     db = DB(dbname, ctx.obj['config'])
     db.open()
-    us = UserSamples(db, infile)
+    us = UserSamples(db, dbname, infile)
     us.generate()
     db.close()
 
