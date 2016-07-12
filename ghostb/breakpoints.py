@@ -84,7 +84,11 @@ def scores(data, breaks, intervals):
 
 def valid_break(breaks, brk):
     for i in breaks:
-        if abs(i - brk) < 1:
+        if abs(i - brk) < 5:
+            return False
+        if abs(100 - brk) < 5:
+            return False
+        if abs(0 - brk) < 5:
             return False
     return True
 
