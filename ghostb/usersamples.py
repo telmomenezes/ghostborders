@@ -25,8 +25,9 @@ from random import randrange
 
 
 class UserSamples:
-    def __init__(self, db, userscales_file):
+    def __init__(self, db, region, userscales_file):
         self.db = db
+        self.region = region
 
         self.data = np.genfromtxt(userscales_file, names=True, delimiter=',')
         self.scales = len(self.data[0]) - 3
@@ -51,6 +52,25 @@ class UserSamples:
         samples = [self.username(u) for u in samples]
         return samples
 
+    def html(self, title, body):
+        return """
+        <!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="utf-8">
+            <title>
+                %s
+            </title>
+        </head>
+
+        <body>
+            %s
+        </body>
+
+        </html>
+        """ % (title, body)
+
     def generate(self):
         cats = {}
         for row in self.data:
@@ -61,9 +81,12 @@ class UserSamples:
             else:
                 cats[cat] = [user_id]
 
+        title = '%s samples' % self.region
+        body = '<h1>%s samples</h1>' % self.region
         for cat in cats:
-            print('SCALES %s' % cat)
+            body += '<h2>Scales %s</h2>' % cat
             samples = self.random_samples(cats[cat], 15)
             for sample in samples:
-                print('https://www.instagram.com/%s/' % sample)
-            print('')
+                body += '<a href="https://www.instagram.com/%s/">%s</a>' % (sample, sample)
+            body += '<br>'
+        print(self.html(title, body))
