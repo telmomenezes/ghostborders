@@ -38,6 +38,7 @@ from ghostb.replace_low_degree import ReplaceLowDegree
 from ghostb.communities import Communities
 from ghostb.distances import Distances
 from ghostb.borders import Borders
+from ghostb.areas import Areas
 from ghostb.locphotos import LocPhotos
 from ghostb.graphinfo import graphinfo
 from ghostb.scales import Scales
@@ -404,6 +405,18 @@ def borders(ctx):
     smooth = ctx.obj['smooth']
     bs = Borders(db, smooth)
     bs.process(indir, infile, outfile)
+
+
+@cli.command()
+@click.pass_context
+def areas(ctx):
+    dbname = ctx.obj['dbname']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    infile = ctx.obj['infile']
+    smooth = ctx.obj['smooth']
+    ar = Areas(db, infile, smooth)
+    ar.compute()
 
 
 @cli.command()

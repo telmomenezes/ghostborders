@@ -24,6 +24,7 @@ from shapely.geometry import box
 import scipy.spatial
 import numpy as np
 from ghostb.locmap import LocMap
+import ghostb.geo as geo
 
 
 def comp_points(p1, p2):
@@ -133,9 +134,92 @@ def segments2neighbors(vor):
     return neighbors
 
 
+def segments_by_id(segments):
+    segmap = {}
+    for segment in segments:
+        id1 = segment['id1']
+        id2 = segment['id2']
+        if id1 in segmap:
+            segmap[id1].append(segment)
+        else:
+            segmap[id1] = [segment]
+        if id2 in segmap:
+            segmap[id2].append(segment)
+        else:
+            segmap[id2] = [segment]
+    return segmap
+
+
+def next_polygon_segment(segments, segs):
+    seg = segs[-1]
+    for s in segments:
+        if (s['x1'] == seg['x2']) and (s['y1'] == seg['y2']):
+            return s
+        elif (s['x2'] == seg['x2']) and (s['y2'] == seg['y2']) and (s['x1'] != seg['x1']):
+            return {'x1': s['x2'],
+                    'y1': s['y2'],
+                    'x2': s['x1'],
+                    'y2': s['y1']}
+
+    # print('OPEN LOOP')
+    seg0 = segs[0]
+    return {'x1': seg['x2'],
+            'y1': seg['y2'],
+            'x2': seg0['x1'],
+            'y2': seg0['y2']}
+
+
+def polygon_ordering(segments):
+    segs = [segments[0]]
+    while len(segs) < len(segments):
+        segs.append(next_polygon_segment(segments, segs))
+    return segs
+
+
+def area(segments):
+    a = 0.
+    for seg in segments:
+        a += seg['x1'] * seg['y2'] + seg['x2'] * seg['y1']
+    return abs(a / 2.)
+
+
+def tokms(segments):
+    min_x = float('inf')
+    min_y = float('inf')
+    for seg in segments:
+        if seg['x1'] < min_x:
+            min_x = seg['x1']
+        if seg['x2'] < min_x:
+            min_x = seg['x2']
+        if seg['y1'] < min_y:
+            min_y = seg['y1']
+        if seg['x2'] < min_x:
+            min_y = seg['y2']
+
+    normsegs = []
+    for seg in segments:
+        nseg = {'x1': geo.distance({'lat': min_x, 'lng': min_y}, {'lat': seg['x1'], 'lng': min_y}),
+                'y1': geo.distance({'lat': min_x, 'lng': min_y}, {'lat': min_x, 'lng': seg['y1']}),
+                'x2': geo.distance({'lat': min_x, 'lng': min_y}, {'lat': seg['x2'], 'lng': min_y}),
+                'y2': geo.distance({'lat': min_x, 'lng': min_y}, {'lat': min_x, 'lng': seg['y2']}),
+                'id1': seg['id1'],
+                'id2': seg['id2']}
+        normsegs.append(nseg)
+    return normsegs
+
+
 class Voronoi:
     def __init__(self, db, vertices):
         self.locmap = LocMap(db)
         segments = point_map2segments(self.locmap.coords, vertices)
         self.segments = [normalize_segment(x) for x in segments]
         self.neighbors = segments2neighbors(self.segments)
+
+    def areas(self):
+        normsegs = tokms(self.segments)
+        segmap = segments_by_id(normsegs)
+        areamap = {}
+        for loc_id in segmap:
+            areamap[loc_id] = area(polygon_ordering(segmap[loc_id]))
+            print(areamap[loc_id])
+        return areamap
