@@ -58,3 +58,4 @@ class Areas:
             total += careas[comm]
         mean_area = total / len(careas)
         print('mean_area: %s' % mean_area)
+        print('communities: %s' % len(careas))
