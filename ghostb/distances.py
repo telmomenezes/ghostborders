@@ -39,10 +39,12 @@ class Distances:
         for edge in g:
             loc1 = self.locmap.coords[edge[0]]
             loc2 = self.locmap.coords[edge[1]]
+            weight = g[edge]
             dist = geo.distance(loc1, loc2)
-            f.write('%s\n' % dist)
-            total_distance += dist
-            count += 1.
+            for i in range(weight):
+                f.write('%s\n' % dist)
+                total_distance += dist
+                count += 1.
 
         f.close()
         
