@@ -20,17 +20,45 @@
 #   along with GhostBorders.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from ghostb.draw_map import draw
+import matplotlib.pyplot as plt
+import matplotlib.patheffects as path_effects
+from ghostb.draw_map import DrawMap
+import ghostb.geo as geo
 
 
 def check_scale(borders, i):
     return int(borders) & (2 << i) > 0
 
 
-def draw_border(m, x, y, scales, borders, scale, thick, sep, dims):
-    if check_scale(borders, scale):
+class DrawMultiMap(DrawMap):
+    def __init__(self, borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
+                 top_cities_file=None, osm=False, resolution='i', width=50., thick=10., color='darkred',
+                 linestyle='solid', font_size=30.0, dot_size=30.0, label_offset=0.00075, sep=1.0, intervals=100,
+                 scale_sizes=''):
+        self.sep = sep
+        self.intervals = intervals
+
+        if len(scale_sizes) == 0:
+            self.scale_sizes = []
+        else:
+            self.scale_sizes = [float(token) for token in scale_sizes.split(',')]
+
+        DrawMap.__init__(self, borders_file, output_file, region, photo_dens_file, pop_dens_file, top_cities_file, osm,
+                         resolution, width, thick, color, linestyle, font_size, dot_size, label_offset)
+
+        self.width_c = self.cc[3] - self.cc[1]
+        self.height_c = self.cc[2] - self.cc[0]
+        self.width_km = geo.distance({'lat': self.cc[0], 'lng': self.cc[1]},
+                                     {'lat': self.cc[0], 'lng': self.cc[3]})
+        self.height_km = geo.distance({'lat': self.cc[0], 'lng': self.cc[1]},
+                                      {'lat': self.cc[2], 'lng': self.cc[1]})
+
+        print('width: %s; height: %s' % (self.width_c, self.height_c))
+        print('width: %skm; height: %skm' % (self.width_km, self.height_km))
+
+    def scale_color(self, scale):
         color = 'limegreen'
-        if scales == 2:
+        if self.intervals == 2:
             if scale > 0:
                 color = 'darkred'
         else:
@@ -38,34 +66,45 @@ def draw_border(m, x, y, scales, borders, scale, thick, sep, dims):
                 color = 'dodgerblue'
             elif scale > 1:
                 color = 'darkred'
+        return color
 
-        # horizontal border translation
-        delta = sep * dims[0] * scale
-        xi = (x[0] + delta, x[1] + delta)
-        yi = (y[0], y[1])
-        m.plot(xi, yi, color, linewidth=thick)
+    def draw_border(self, x, y, borders, scale):
+        if check_scale(borders, scale):
+            color = self.scale_color(scale)
 
+            # horizontal border translation
+            delta = self.sep * self.dims[0] * scale
+            xi = (x[0] + delta, x[1] + delta)
+            yi = (y[0], y[1])
+            self.m.plot(xi, yi, color, linewidth=self.thick)
 
-def draw_multi_borders(cols, co, m, xorig, yorig, dims, extra):
-    intervals = extra['intervals']
-    thick = extra['thick']
-    sep = extra['sep']
+    def draw_scale_label(self, scale, size_km):
+        color = self.scale_color(scale)
 
-    for i in range(cols):
-        x, y = m((co[i][1], co[i][3]), (co[i][0], co[i][2]))
-        x = (x[0] - xorig, x[1] - xorig)
-        y = (y[0] - yorig, y[1] - yorig)
-        borders = co[i][4]
-        for j in range(intervals):
-            draw_border(m, x, y, intervals, borders, j, thick, sep, dims)
+        y0 = self.cc[0] + (self.height_c * (1.0 - (scale + 1) * 0.03))
+        x1 = self.cc[3] - self.width_c * 0.03
+        x0 = x1 - (size_km / self.width_km) * self.width_c
 
+        x, y = self.m((x0, x1), (y0, y0))
+        self.m.plot(x, y, 'white', linewidth=self.thick * 1.5)
+        self.m.plot(x, y, color, linewidth=self.thick)
 
-def draw_multi_map(borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None, top_cities_file=None,
-                   osm=False, resolution='i', width=50., thick=1.0, sep=1.0, intervals=100, font_size=30.0,
-                   dot_size=30.0, label_offset=0.00075):
-    extra = {'thick': thick,
-             'sep': sep,
-             'intervals': intervals}
-    draw(borders_file, output_file, region, photo_dens_file=photo_dens_file, pop_dens_file=pop_dens_file,
-         top_cities_file=top_cities_file, osm=osm, resolution=resolution, width=width, draw_borders=draw_multi_borders,
-         font_size=font_size, dot_size=dot_size, label_offset=label_offset, extra=extra)
+        text_point = self.m(x0 - self.width_c * 0.01, y0)
+        dist_label = '%s km' % size_km
+        text = plt.text(text_point[0], text_point[1], dist_label,
+                        color=color, ha='right', va='center', size=self.font_size)
+        text.set_path_effects([path_effects.Stroke(linewidth=15, foreground='white'), path_effects.Normal()])
+
+    # override
+    def draw_borders(self):
+        for i in range(self.cols):
+            x, y = self.m((self.co[i][1], self.co[i][3]), (self.co[i][0], self.co[i][2]))
+            x = (x[0] - self.xorig, x[1] - self.xorig)
+            y = (y[0] - self.yorig, y[1] - self.yorig)
+            borders = self.co[i][4]
+            for j in range(self.intervals):
+                self.draw_border(x, y, borders, j)
+
+        # draw scale sizes legend
+        for i in range(len(self.scale_sizes)):
+            self.draw_scale_label(i, self.scale_sizes[i])

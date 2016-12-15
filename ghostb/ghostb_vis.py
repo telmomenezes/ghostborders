@@ -23,8 +23,8 @@
 import click
 from ghostb.config import Config
 from ghostb.cropborders import CropBorders
-from ghostb.draw_map import draw_map
-from ghostb.draw_multi_map import draw_multi_map
+from ghostb.draw_map import DrawMap
+from ghostb.draw_multi_map import DrawMultiMap
 from ghostb.scales_vis import ScalesVis
 
 
@@ -49,9 +49,11 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--font_size', help='Font size.', default=30.0)
 @click.option('--dot_size', help='Dot size.', default=30.0)
 @click.option('--label_offset', help='City label vertical offset.', default=0.00075)
+@click.option('--scale_sizes', help='Scale sizes in km.', default='')
 @click.pass_context
 def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_file, pop_dens_file, top_cities_file,
-        osm, resolution, width, intervals, thick, sep, color, linestyle, font_size, dot_size, label_offset):
+        osm, resolution, width, intervals, thick, sep, color, linestyle, font_size, dot_size, label_offset,
+        scale_sizes):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'locs_file': locs_file,
@@ -73,7 +75,8 @@ def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_f
         'linestyle': linestyle,
         'font_size': font_size,
         'dot_size': dot_size,
-        'label_offset': label_offset
+        'label_offset': label_offset,
+        'scale_sizes': scale_sizes
     }
 
 
@@ -105,21 +108,21 @@ def draw(ctx):
     font_size = float(ctx.obj['font_size'])
     dot_size = float(ctx.obj['dot_size'])
     label_offset = float(ctx.obj['label_offset'])
-    draw_map(borders_file=infile,
-             output_file=outfile,
-             region=region,
-             photo_dens_file=photo_dens_file,
-             pop_dens_file=pop_dens_file,
-             top_cities_file=top_cities_file,
-             osm=osm,
-             resolution=resolution,
-             width=width,
-             thick=thick,
-             color=color,
-             linestyle=linestyle,
-             font_size = font_size,
-             dot_size=dot_size,
-             label_offset=label_offset)
+    DrawMap(borders_file=infile,
+            output_file=outfile,
+            region=region,
+            photo_dens_file=photo_dens_file,
+            pop_dens_file=pop_dens_file,
+            top_cities_file=top_cities_file,
+            osm=osm,
+            resolution=resolution,
+            width=width,
+            thick=thick,
+            color=color,
+            linestyle=linestyle,
+            font_size = font_size,
+            dot_size=dot_size,
+            label_offset=label_offset).draw()
 
 
 @cli.command()
@@ -140,21 +143,23 @@ def draw_multi(ctx):
     font_size = float(ctx.obj['font_size'])
     dot_size = float(ctx.obj['dot_size'])
     label_offset = float(ctx.obj['label_offset'])
-    draw_multi_map(borders_file=infile,
-                   output_file=outfile,
-                   region=region,
-                   photo_dens_file=photo_dens_file,
-                   pop_dens_file=pop_dens_file,
-                   top_cities_file=top_cities_file,
-                   osm=osm,
-                   resolution=resolution,
-                   width=width,
-                   thick=thick,
-                   sep=sep,
-                   intervals=intervals,
-                   font_size=font_size,
-                   dot_size=dot_size,
-                   label_offset=label_offset)
+    scale_sizes = ctx.obj['scale_sizes']
+    DrawMultiMap(borders_file=infile,
+                 output_file=outfile,
+                 region=region,
+                 photo_dens_file=photo_dens_file,
+                 pop_dens_file=pop_dens_file,
+                 top_cities_file=top_cities_file,
+                 osm=osm,
+                 resolution=resolution,
+                 width=width,
+                 thick=thick,
+                 font_size=font_size,
+                 dot_size=dot_size,
+                 label_offset=label_offset,
+                 sep=sep,
+                 intervals=intervals,
+                 scale_sizes=scale_sizes).draw(),
 
 
 @cli.command()

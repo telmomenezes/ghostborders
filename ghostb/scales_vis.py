@@ -22,7 +22,7 @@
 
 from ghostb.scales import Scales
 from ghostb.cropborders import CropBorders
-from ghostb.draw_map import draw_map
+from ghostb.draw_map import DrawMap
 
 
 class ScalesVis(Scales):
@@ -42,4 +42,4 @@ class ScalesVis(Scales):
             bord_file = self.bord_path(per_dist)
             map_file = self.map_path(per_dist)
             print('drawing map: %s' % map_file)
-            draw_map(bord_file, map_file, region, osm=True)
+            DrawMap(bord_file, map_file, region, osm=True).draw()
