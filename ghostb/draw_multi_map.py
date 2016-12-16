@@ -43,8 +43,10 @@ class DrawMultiMap(DrawMap):
         else:
             self.scale_sizes = [float(token) for token in scale_sizes.split(',')]
 
+        extra_height = len(self.scale_sizes) * 0.05
+
         DrawMap.__init__(self, borders_file, output_file, region, photo_dens_file, pop_dens_file, top_cities_file, osm,
-                         resolution, width, thick, color, linestyle, font_size, dot_size, label_offset)
+                         resolution, width, thick, color, linestyle, font_size, dot_size, label_offset, extra_height)
 
         self.width_c = self.cc[3] - self.cc[1]
         self.height_c = self.cc[2] - self.cc[0]
@@ -81,19 +83,27 @@ class DrawMultiMap(DrawMap):
     def draw_scale_label(self, scale, size_km):
         color = self.scale_color(scale)
 
-        y0 = self.cc[0] + (self.height_c * (1.0 - (scale + 1) * 0.03))
-        x1 = self.cc[3] - self.width_c * 0.03
-        x0 = x1 - (size_km / self.width_km) * self.width_c
-
-        x, y = self.m((x0, x1), (y0, y0))
-        self.m.plot(x, y, 'white', linewidth=self.thick * 1.5)
-        self.m.plot(x, y, color, linewidth=self.thick)
+        y0_ = 1.0 - (scale + 1) * 0.03
+        x1_ = 0.03
+        x0_ = size_km / self.width_km
+        y0 = self.cc[0] + (self.height_c * y0_)
+        x1 = self.cc[3] - self.width_c * x1_
+        x0 = x1 - x0_ * self.width_c
 
         text_point = self.m(x0 - self.width_c * 0.01, y0)
         dist_label = '%s km' % size_km
         text = plt.text(text_point[0], text_point[1], dist_label,
                         color=color, ha='right', va='center', size=self.font_size)
         text.set_path_effects([path_effects.Stroke(linewidth=15, foreground='white'), path_effects.Normal()])
+        text.set_zorder(200)
+
+        x, y = self.m((x0, x1), (y0, y0))
+        # x = (x1_ * self.dims[0], x0_ * self.dims[0])
+        # y = (y0_ * self.dims[1], y0_ * self.dims[1])
+        l = self.m.plot(x, y, 'white', linewidth=self.thick * 1.5)
+        l[0].set_zorder(199)
+        l = self.m.plot(x, y, color, linewidth=self.thick)
+        l[0].set_zorder(200)
 
     # override
     def draw_borders(self):
@@ -108,3 +118,8 @@ class DrawMultiMap(DrawMap):
         # draw scale sizes legend
         for i in range(len(self.scale_sizes)):
             self.draw_scale_label(i, self.scale_sizes[i])
+
+        import sys
+        ymin = self.base_height / self.height
+        r = self.ax.axvspan(0, sys.maxsize, ymin=ymin, ymax=1, color='white')
+        r.set_zorder(100)

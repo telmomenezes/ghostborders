@@ -62,7 +62,7 @@ class DrawMap(object):
     # c (crude), l (low), i (intermediate), h (high), f (full)
     def __init__(self, borders_file, output_file, region, photo_dens_file=None, pop_dens_file=None,
                  top_cities_file=None, osm=False, resolution='i', width=50., thick=10., color='darkred',
-                 linestyle='solid', font_size=30.0, dot_size=30.0, label_offset=0.00075):
+                 linestyle='solid', font_size=30.0, dot_size=30.0, label_offset=0.00075, extra_height=0.):
 
         self.output_file = output_file
         self.osm = osm
@@ -93,10 +93,12 @@ class DrawMap(object):
         self.dy = abs(self.y1 - self.y0)
 
         self.width = width
-        self.height = width * self.dy / self.dx
+        self.base_height = width * self.dy / self.dx
+        self.height = self.base_height + self.base_height * extra_height
         self.m = Basemap(projection='merc', resolution=resolution,
                          llcrnrlat=self.y0, llcrnrlon=self.x0, urcrnrlat=self.y1, urcrnrlon=self.x1)
-        plt.figure(figsize=(width, self.height))
+        fig = plt.figure(figsize=(width, self.height))
+        self.ax = fig.add_subplot(111)
 
         self.xorig, self.yorig = self.m(self.x0, self.y0)
         self.dims = self.m(self.width, self.height)
@@ -212,5 +214,12 @@ class DrawMap(object):
 
         # draw top cities
         self.draw_top_cities()
+
+        # clear border
+        ax = plt.gca()
+        ax.xaxis.set_visible(False)
+        ax.yaxis.set_visible(False)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
 
         plt.savefig(self.output_file, bbox_inches='tight')
