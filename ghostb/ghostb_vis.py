@@ -50,10 +50,11 @@ from ghostb.scales_vis import ScalesVis
 @click.option('--dot_size', help='Dot size.', default=30.0)
 @click.option('--label_offset', help='City label vertical offset.', default=0.00075)
 @click.option('--scale_sizes', help='Scale sizes in km.', default='')
+@click.option('--natural_scales', help='Natural scales in km.', default='')
 @click.pass_context
 def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_file, pop_dens_file, top_cities_file,
         osm, resolution, width, intervals, thick, sep, color, linestyle, font_size, dot_size, label_offset,
-        scale_sizes):
+        scale_sizes, natural_scales):
     ctx.obj = {
         'config': Config('ghostb.conf'),
         'locs_file': locs_file,
@@ -76,7 +77,8 @@ def cli(ctx, locs_file, region, infile, outfile, outdir, shapefile, photo_dens_f
         'font_size': font_size,
         'dot_size': dot_size,
         'label_offset': label_offset,
-        'scale_sizes': scale_sizes
+        'scale_sizes': scale_sizes,
+        'natural_scales': natural_scales
     }
 
 
@@ -120,7 +122,7 @@ def draw(ctx):
             thick=thick,
             color=color,
             linestyle=linestyle,
-            font_size = font_size,
+            font_size=font_size,
             dot_size=dot_size,
             label_offset=label_offset).draw()
 
@@ -144,6 +146,7 @@ def draw_multi(ctx):
     dot_size = float(ctx.obj['dot_size'])
     label_offset = float(ctx.obj['label_offset'])
     scale_sizes = ctx.obj['scale_sizes']
+    natural_scales = ctx.obj['natural_scales']
     DrawMultiMap(borders_file=infile,
                  output_file=outfile,
                  region=region,
@@ -159,7 +162,8 @@ def draw_multi(ctx):
                  label_offset=label_offset,
                  sep=sep,
                  intervals=intervals,
-                 scale_sizes=scale_sizes).draw(),
+                 scale_sizes=scale_sizes,
+                 natural_scales=natural_scales).draw(),
 
 
 @cli.command()

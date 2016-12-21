@@ -30,6 +30,7 @@ from matplotlib.patches import Polygon
 import math
 from mpl_toolkits.basemap import Basemap
 from numpy import genfromtxt
+from PIL import Image
 from ghostb.region_defs import *
 import ghostb.maps as maps
 
@@ -97,8 +98,8 @@ class DrawMap(object):
         self.height = self.base_height + self.base_height * extra_height
         self.m = Basemap(projection='merc', resolution=resolution,
                          llcrnrlat=self.y0, llcrnrlon=self.x0, urcrnrlat=self.y1, urcrnrlon=self.x1)
-        fig = plt.figure(figsize=(width, self.height))
-        self.ax = fig.add_subplot(111)
+        self.fig = plt.figure(figsize=(width, self.height))
+        self.ax = self.fig.add_subplot(111)
 
         self.xorig, self.yorig = self.m(self.x0, self.y0)
         self.dims = self.m(self.width, self.height)
@@ -223,3 +224,8 @@ class DrawMap(object):
             spine.set_visible(False)
 
         plt.savefig(self.output_file, bbox_inches='tight')
+
+        # crop remaining border
+        im = Image.open(self.output_file)
+        w, h = im.size
+        im.crop((5, 1, w - 1, h - 1)).save(self.output_file)
