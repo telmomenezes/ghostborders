@@ -82,6 +82,7 @@ Finally, after activating the virtual environment above, you can install GhostBo
 
 The above is enough to run `ghostb` commands. If you also want to be able to run `ghostb_vis`, you must install the bascamp matplotlib module:
 
+    $ brew install geos
     $ pip install https://github.com/matplotlib/basemap/archive/v1.0.7rel.tar.gz
 
 # How to use #
