@@ -138,6 +138,10 @@ outfile specifies the file path to write the link distance distribution to.
 
     $ ghostb --db <db_name> --outfile <distances_output> dists
 
+Or using a graph file instead of generating the graph from the db:
+
+    $ ghostb --db <db_name> --infile <graph_file> --outfile <distances_output> dists
+
 #### Filter out low weight edges ####
 
 Default min_weight value is 5.
