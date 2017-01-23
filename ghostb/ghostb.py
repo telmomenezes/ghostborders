@@ -144,6 +144,19 @@ def add_locations(ctx):
 
 @cli.command()
 @click.pass_context
+def import_locations(ctx):
+    infile = ctx.obj['infile']
+    click.echo('Importing locations from %s' % infile)
+    db = DB(ctx.obj['dbname'], ctx.obj['config'])
+    db.open()
+    locs = Locations(db)
+    (points, inserted) = locs.import_locations(infile)
+    db.close()
+    click.echo('%d points found, %d points added.' % (points, inserted))
+
+
+@cli.command()
+@click.pass_context
 def add_area(ctx):
     min_lat = float(ctx.obj['min_lat'])
     min_lng = float(ctx.obj['min_lng'])

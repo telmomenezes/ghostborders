@@ -50,6 +50,7 @@ class Locations:
             return True
         return False
 
+    # to add from cities1000.txt
     def add_locations(self, locs_file, country_code):
         points = set()
 
@@ -68,6 +69,26 @@ class Locations:
         self.db.conn.commit()
 
         return len(points), inserted
+
+    # to import csv file -- can/should be made more configurable
+    def import_locations(self, locs_file):
+        count = 0
+        with open(locs_file) as infile:
+            reader = csv.reader(infile, delimiter=';', quoting=csv.QUOTE_NONE)
+            for row in reader:
+                count += 1
+                print(str(row))
+                loc_id = int(row[0])
+                name = row[1]
+                country = name.split('_')[-1]
+                lat = float(row[3])
+                lng = float(row[4])
+                self.db.cur.execute("INSERT INTO location (id, country, name, lat, lng, done) VALUES (%s, %s, %s, %s, %s, 1)",
+                                    (loc_id, country, name, lat, lng))
+
+        self.db.conn.commit()
+
+        return count, count
 
     def add_area(self, locs_file, min_lat, min_lng, max_lat, max_lng):
         points = set()
