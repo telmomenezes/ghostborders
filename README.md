@@ -212,6 +212,10 @@ Optional parameters:
 
     $ ghostb --db <db_name> --outdir <dir> [--best] scales_borders
 
+### Compute Similarity Matrix ###
+
+    $ ghostb --db <db_name> --outdir <dir> [--smooth] similarity_matrix > <out_file>
+
 # Contacts #
 
 * telmo@telmomenezes.com
