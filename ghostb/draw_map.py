@@ -194,11 +194,14 @@ class DrawMap(object):
             im = rgb2gray(plt.imread(osm_img_path))
             self.m.imshow(im, interpolation='lanczos', origin='upper', cmap = plt.get_cmap('gray'), alpha=0.75)
         else:
-            self.m.drawlsmask(resolution=self.resolution, grid=1.25, ocean_color=water_color, land_color=land_color)
+            # drawlsmaks stopped working for some reason...
+            # self.m.drawlsmask(resolution=self.resolution, grid=1.25, ocean_color=water_color, land_color=land_color)
             self.m.drawcoastlines(linewidth=coastline_width, color=coastline_color)
-            if draw_rivers:
-                self.m.drawrivers(color=water_color, linewidth=river_width)
-                self.m.fillcontinents(color=land_color, lake_color=water_color)
+            self.m.drawmapboundary(fill_color=water_color)
+            self.m.fillcontinents(color=land_color, lake_color=water_color)
+            # if draw_rivers:
+            #     self.m.drawrivers(color=water_color, linewidth=river_width)
+            #     self.m.fillcontinents(color=land_color, lake_color=water_color)
 
         # draw population densities
         if self.pop_dens_file:
