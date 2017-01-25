@@ -216,6 +216,10 @@ Optional parameters:
 
     $ ghostb --db <db_name> --outdir <dir> [--smooth] similarity_matrix > <out_file>
 
+### Find Breakpoints and Prototypical Scales
+
+    $ ghostb --infile <similarity_matrix_file> breakpoints
+
 # Contacts #
 
 * telmo@telmomenezes.com
