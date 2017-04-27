@@ -198,7 +198,7 @@ Optional parameters:
 
 ### Generate Distance Distribution File ###
 
-    $ ghostb --db <db_name> --dist_file <dist_file> gen_graph
+    $ ghostb --db <db_name> --infile <graph_file> --outfile <dist_file> dists
 
 ### Generate Graph Files ###
 
