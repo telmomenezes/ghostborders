@@ -52,3 +52,17 @@ def centroid(locs):
         'lat': lat,
         'lng': lng
     }
+
+
+def in_area(p, min_lat, min_lng, max_lat, max_lng):
+    lat = p['lat']
+    lng = p['lng']
+    if lat < min_lat:
+        return False
+    if lat > max_lat:
+        return False
+    if lng < min_lng:
+        return False
+    if lng > max_lng:
+        return False
+    return True
