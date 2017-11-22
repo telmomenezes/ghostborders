@@ -36,7 +36,8 @@ setup(
         'matplotlib',
         'python-igraph',
         'mercantile',
-        'pillow'
+        'pillow',
+        'progressbar2'
     ],
     entry_points='''
         [console_scripts]

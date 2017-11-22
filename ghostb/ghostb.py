@@ -45,6 +45,7 @@ from ghostb.scales import Scales
 from ghostb.locs_metrics import LocsMetrics
 from ghostb.breakpoints import find_breakpoints
 from ghostb.cropgraph import CropGraph
+from ghostb.json_export import JsonExport
 
 
 def parse_scales(scales):
@@ -624,6 +625,18 @@ def cropgraph(ctx):
     db.open()
     cg = CropGraph(db)
     cg.crop(infile, outfile, min_lat, min_lng, max_lat, max_lng)
+    db.close()
+
+
+@cli.command()
+@click.pass_context
+def json_export(ctx):
+    dbname = ctx.obj['dbname']
+    outfile = ctx.obj['outfile']
+    db = DB(dbname, ctx.obj['config'])
+    db.open()
+    je = JsonExport(db, outfile)
+    je.export()
     db.close()
 
 
